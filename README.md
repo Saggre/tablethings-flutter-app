@@ -1,16 +1,24 @@
-# tablething
+# Ruokamenu
 
-A new Flutter application.
+## Customer-eater app version
 
-## Getting Started
+### Views
 
-This project is a starting point for a Flutter application.
+**Map view**
+Map view is the application's main view. Map view contains a map, and fetches the locations and other data of customer-restaurants to show on the map.
+-> **Restaurant class**
 
-A few resources to get you started if this is your first Flutter project:
+**Scanner view**
+In the scanner view, a user is able to scan a qr-code. The QR-code contains information laid out in the QR-code section.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## QR-code
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The QR-code contains an url in the following form:
+https://domain.com/restaurant-id/table-id/
+This url should be parsed without entering the url to minimize traffic.
+
+**Restaurant ID** is an ID assigned to each customer-restaurant.
+
+**Table ID** is an ID assigned to each table in the aforementioned restaurant.
+
+## Database structure
