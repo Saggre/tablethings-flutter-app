@@ -20,9 +20,15 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_bloc: ^2.0.0
   cupertino_icons: ^0.1.2
   http: ^0.12.0+2
+
+  google_maps_flutter: any
   flutter_map: any
+  user_location: any
+  flutter_map_marker_cluster: any
+
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2
   #firebase_auth: ^0.14.0+5
@@ -30,6 +36,7 @@ dependencies:
   firestore_helpers: ^3.2.1+1
   geopoint: ^0.7.0
   location: ^2.3.5
+  latlong: ^0.6.1
 
 dev_dependencies:
   flutter_test:
