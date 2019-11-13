@@ -1,10 +1,12 @@
+import 'dart:async';
+import 'package:tablething/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/custom_app_bar.dart';
-import 'package:user_location/user_location.dart';
+import 'package:latlong/latlong.dart' as Latlong;
+import 'package:flutter/services.dart' show rootBundle;
 
 class MapScreen extends StatefulWidget {
   final bool isFullScreenDialog;
@@ -19,12 +21,74 @@ class MapScreen extends StatefulWidget {
 
 class MapScreenState extends State<MapScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  MapController mapController;
+
+  Completer<GoogleMapController> _controller = Completer();
+
+  Map<MarkerId, Marker> _mapMarkers = <MarkerId, Marker>{}; // CLASS MEMBER, MAP OF MARKS
+
+  /// JSON Google map style
+  String _mapStyle;
+
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
 
   @override
   void initState() {
     super.initState();
-    mapController = MapController();
+
+    // Load map style JSON
+    rootBundle.loadString('assets/map_style.json').then((string) {
+      _mapStyle = string;
+    });
+  }
+
+  /// Checks if the list of map markers contains a marker with markerIdValue
+  bool _containsMarker(MarkerId markerId) {
+    return _mapMarkers.containsKey(markerId);
+  }
+
+  Marker _getMarkerWithId(String markerIdValue) {}
+
+  /// Updates a marker with its id
+  void _updateMarker(Latlong.LatLng position, MarkerId markerId) {
+    if (_containsMarker(markerId)) {
+      debugPrint("Moving marker");
+
+      // Move the marker by removing the old one (this will liekly be updated in future gmap versions)
+      _mapMarkers[markerId] = _mapMarkers[markerId].copyWith(positionParam: LatLng(position.latitude, position.longitude));
+    }
+  }
+
+  /// Adds a marker to the map
+  void _addMarker(Latlong.LatLng position, MarkerId markerId) {
+    // creating a new MARKER
+    final Marker marker = Marker(
+      markerId: markerId,
+      position: LatLng(position.latitude, position.longitude),
+      infoWindow: InfoWindow(title: markerId.value, snippet: '*'),
+      onTap: () {
+        //_onMarkerTapped(markerId);
+      },
+    );
+
+    _mapMarkers[markerId] = marker;
+  }
+
+  /// Moves the map to a certain coordinate
+  Future<void> _moveMapToLatLng(Latlong.LatLng position) async {
+    // Translate to map coords
+    LatLng mapPosition = LatLng(position.latitude, position.longitude);
+
+    // Create gmap camera position
+    CameraPosition cameraPosition = CameraPosition(
+      target: mapPosition,
+      zoom: 14.4746,
+    );
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
 
   @override
@@ -45,16 +109,11 @@ class MapScreenState extends State<MapScreen> {
                   "Start tracking",
                 ),
               ),
-              BlocBuilder<UserLocationBloc, LatLng>(builder: (context, LatLng state) {
+              BlocBuilder<UserLocationBloc, Latlong.LatLng>(builder: (context, Latlong.LatLng state) {
                 String text = "Waiting...";
 
                 if (state != null) {
                   text = 'Lat: ' + state.latitude.toString() + ' / Lon: ' + state.longitude.toString();
-
-                  if (mapController.ready) {
-                    // TODO move to statefulwidget
-                    mapController.move(state, 13.0);
-                  }
                 }
 
                 return Text(
@@ -71,36 +130,34 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  FlutterMap _getMap() {
-    return FlutterMap(
-      mapController: mapController,
-      options: new MapOptions(
-        center: new LatLng(51.5, -0.09),
-        zoom: 13.0,
-        plugins: [],
-      ),
-      layers: [
-        new TileLayerOptions(
-          urlTemplate: "https://api.tiles.mapbox.com/v4/"
-              "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
-          additionalOptions: {
-            'accessToken': 'pk.eyJ1Ijoic2FnZ3JlIiwiYSI6ImNrMnczMDgzaTBhaTkzanBncjJoa3hyczgifQ.e9Voq68it4TpghijFbmb0w',
-            'id': 'mapbox.streets',
+  Widget _getMap() {
+    return BlocBuilder<UserLocationBloc, Latlong.LatLng>(
+      builder: (context, Latlong.LatLng state) {
+        MarkerId userMarkerId = MarkerId("me");
+
+        if (state != null) {
+          if (!_containsMarker(userMarkerId)) {
+            _addMarker(state, userMarkerId);
+          } else {
+            _updateMarker(state, userMarkerId);
+          }
+
+          // Check if map controller is ready
+          if (_controller.isCompleted) {
+            _moveMapToLatLng(state);
+          }
+        }
+
+        return GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _kGooglePlex,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+            controller.setMapStyle(_mapStyle);
           },
-        ),
-        new MarkerLayerOptions(
-          markers: [
-            new Marker(
-              width: 80.0,
-              height: 80.0,
-              point: new LatLng(51.5, -0.09),
-              builder: (ctx) => new Container(
-                child: new FlutterLogo(),
-              ),
-            ),
-          ],
-        ),
-      ],
+          markers: Set<Marker>.of(_mapMarkers.values),
+        );
+      },
     );
   }
 }
