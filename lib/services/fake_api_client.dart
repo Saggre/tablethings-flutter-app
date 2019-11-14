@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert' show json;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong/latlong.dart';
 import 'package:tablething/models/cuisine_types.dart';
@@ -28,7 +27,6 @@ class ApiClient {
       LatLng(60.277969, 24.8525615),
       "Lilja Grillikioski",
       Currency.eur,
-      EstablishmentType.fastFood,
       PriceRange.cheap,
       [CuisineType.pizza],
       "",

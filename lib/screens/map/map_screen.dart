@@ -156,19 +156,20 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  bool _initiallyMovedToUserLocation = false;
-
   Widget _getMap() {
     return BlocBuilder<EstablishmentsGeoBloc, EstablishmentsGeoBlocState>(
       builder: (context, state) {
         // Establishments bloc builder
 
         List<Establishment> establishments = state.establishments;
+
+        debugPrint(state.establishments.length.toString() + " establishments in area");
+
         establishments.forEach((establishment) {
           // Create marker with establishment id
           MarkerId markerId = MarkerId(establishment.id);
           if (!_containsMarker(markerId)) {
-            debugPrint("Adding new marker for an establishment");
+            debugPrint("Adding new marker for an establishment: " + establishment.name);
             _addMarker(establishment.location, markerId, establishment.getDefaultCuisineTypeDescription().iconPath);
           }
         });

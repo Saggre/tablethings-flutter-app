@@ -2,6 +2,7 @@ import 'package:tablething/models/cuisine_type_description.dart';
 import 'package:tablething/localization/translate.dart';
 
 enum CuisineType {
+  other, // Other at index 0
   american,
   asian,
   beer,
@@ -30,7 +31,6 @@ enum CuisineType {
   mexican,
   nepalese,
   noodles,
-  other,
   pasta,
   pizza,
   portuguese,

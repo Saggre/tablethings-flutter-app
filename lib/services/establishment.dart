@@ -1,10 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong/latlong.dart';
 import 'package:tablething/models/cuisine_type_description.dart';
 import 'package:tablething/models/cuisine_types.dart';
 
 enum PriceRange { cheap, medium, expensive }
-
-enum EstablishmentType { cafe, restaurant, bar, hotel, fastFood }
 
 enum Currency { eur, usd, gbp }
 
@@ -26,7 +25,6 @@ class Establishment {
   /// Info
   final String name;
   final Currency currency;
-  final EstablishmentType restaurantType;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
 
@@ -35,7 +33,7 @@ class Establishment {
   final String imageUrl;
 
   Establishment(this.id, this.streetAddress, this.streetAddress_2, this.zipCode, this.city, this.state, this.country, this.location, this.name, this.currency,
-      this.restaurantType, this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
+      this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
 
   /// Translate price range into a string of currency symbols eg. €€€
   String get priceDisplay {
@@ -63,33 +61,63 @@ class Establishment {
   }
 
   /// Construct from json
-  static Establishment fromJson(json) {
-    Currency currency = Currency.values[json['currency']];
+  static Establishment fromJson(Map<String, dynamic> json) {
+    int currencyIndex = 0; // Default to eur
+    try {
+      currencyIndex = json['currency'] as int;
+    } catch (e) {
+      // TODO handle error
+      print("Error getting establishment currency!");
+    }
+    Currency currency = Currency.values[currencyIndex];
 
-    EstablishmentType restaurantType = EstablishmentType.values[json['restaurantType']];
+    int priceRangeIndex = 1; // Default to medium price
+    try {
+      priceRangeIndex = json['priceRange'] as int;
+    } catch (e) {
+      // TODO handle error
+      print("Error getting establishment price range!");
+    }
+    PriceRange priceRange = PriceRange.values[priceRangeIndex];
 
-    PriceRange priceRange = PriceRange.values[json['priceRange']];
+    // Transform database cuisine type indices to enums
+    List<int> cuisineTypeIndices = List();
+    List<CuisineType> cuisineTypes = List();
+    try {
+      cuisineTypeIndices = List.from(json['cuisineTypes']);
+      for (var value in cuisineTypeIndices) {
+        cuisineTypes.add(CuisineType.values[value]);
+      }
+    } catch (e) {
+      // TODO handle error
+      print("Error getting establishment cuisine types!");
+      cuisineTypes = [CuisineType.other]; // 'Other' type on error
+    }
 
-    List<CuisineType> cuisineTypes;
-
-    LatLng location = LatLng(0, 0);
+    LatLng location; // No default location as it's a fatal error
+    try {
+      GeoPoint position = json['position'] as GeoPoint;
+      location = LatLng(position.latitude, position.longitude);
+    } catch (e) {
+      // TODO handle FATAL error
+      print("Error getting establishment GPS location!");
+    }
 
     return Establishment(
-      json['id'],
-      json['streetAddress'],
-      json['streetAddress2'],
-      json['zipCode'],
-      json['city'],
-      json['state'],
-      json['country'],
+      json['id'].toString(),
+      json['streetAddress'].toString(),
+      json['streetAddress2'].toString(),
+      json['zipCode'].toString(),
+      json['city'].toString(),
+      json['state'].toString(),
+      json['country'].toString(),
       location,
-      json['name'],
+      json['name'].toString(),
       currency,
-      restaurantType,
       priceRange,
       cuisineTypes,
-      json['thumbUrl'],
-      json['imageUrl'],
+      json['thumbUrl'].toString(),
+      json['imageUrl'].toString(),
     );
   }
 
