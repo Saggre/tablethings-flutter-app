@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
+import 'package:location/location.dart';
+import 'package:tablething/services/establishment.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/custom_app_bar.dart';
 import 'package:latlong/latlong.dart' as Latlong;
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:bloc/bloc.dart';
 
 class MapScreen extends StatefulWidget {
   final bool isFullScreenDialog;
@@ -26,6 +30,8 @@ class MapScreenState extends State<MapScreen> {
 
   Map<MarkerId, Marker> _mapMarkers = <MarkerId, Marker>{}; // CLASS MEMBER, MAP OF MARKS
 
+  var _location = Location();
+
   /// JSON Google map style
   String _mapStyle;
 
@@ -38,6 +44,10 @@ class MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
 
+    // TODO is this the right thing to do?
+    debugPrint("Start GPS");
+    BlocProvider.of<UserLocationBloc>(context).add(UserLocationEvent.startGPS);
+
     // Load map style JSON
     rootBundle.loadString('assets/map_style.json').then((string) {
       _mapStyle = string;
@@ -48,8 +58,6 @@ class MapScreenState extends State<MapScreen> {
   bool _containsMarker(MarkerId markerId) {
     return _mapMarkers.containsKey(markerId);
   }
-
-  Marker _getMarkerWithId(String markerIdValue) {}
 
   /// Updates a marker with its id
   void _updateMarker(Latlong.LatLng position, MarkerId markerId) {
@@ -62,9 +70,13 @@ class MapScreenState extends State<MapScreen> {
   }
 
   /// Adds a marker to the map
-  void _addMarker(Latlong.LatLng position, MarkerId markerId) {
+  void _addMarker(Latlong.LatLng position, MarkerId markerId) async {
+    // Get icon
+    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/icons/burger.png');
+
     // creating a new MARKER
     final Marker marker = Marker(
+      icon: icon,
       markerId: markerId,
       position: LatLng(position.latitude, position.longitude),
       infoWindow: InfoWindow(title: markerId.value, snippet: '*'),
@@ -77,7 +89,7 @@ class MapScreenState extends State<MapScreen> {
   }
 
   /// Moves the map to a certain coordinate
-  Future<void> _moveMapToLatLng(Latlong.LatLng position) async {
+  void _moveMapToLatLng(Latlong.LatLng position, {bool instantMove = false}) async {
     // Translate to map coords
     LatLng mapPosition = LatLng(position.latitude, position.longitude);
 
@@ -88,7 +100,28 @@ class MapScreenState extends State<MapScreen> {
     );
 
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+    // Animate or teleport
+    if (instantMove) {
+      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    } else {
+      controller.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    }
+  }
+
+  /// Sends an event to get establishments in the currently visible map area
+  void _refreshGeoArea() async {
+    debugPrint("Refreshing geo area");
+
+    final GoogleMapController controller = await _controller.future;
+    LatLngBounds mapBounds = await controller.getVisibleRegion();
+
+    // Translate google map coords to generic LatLng
+    var event = EstablishmentsGeoBlocEvent(Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
+        Latlong.LatLng(mapBounds.southwest.latitude, mapBounds.southwest.longitude));
+
+    // Get establishments inside the bounds from database
+    BlocProvider.of<EstablishmentsGeoBloc>(context).add(event);
   }
 
   @override
@@ -101,14 +134,6 @@ class MapScreenState extends State<MapScreen> {
           _getMap(),
           Column(
             children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  BlocProvider.of<UserLocationBloc>(context).add(UserLocationEvent.startGPS);
-                },
-                child: Text(
-                  "Start tracking",
-                ),
-              ),
               BlocBuilder<UserLocationBloc, Latlong.LatLng>(builder: (context, Latlong.LatLng state) {
                 String text = "Waiting...";
 
@@ -130,30 +155,46 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
+  bool _initiallyMovedToUserLocation = false;
+
   Widget _getMap() {
-    return BlocBuilder<UserLocationBloc, Latlong.LatLng>(
-      builder: (context, Latlong.LatLng state) {
-        MarkerId userMarkerId = MarkerId("me");
+    return BlocBuilder<EstablishmentsGeoBloc, EstablishmentsGeoBlocState>(
+      builder: (context, state) {
+        // Establishments bloc builder
 
-        if (state != null) {
-          if (!_containsMarker(userMarkerId)) {
-            _addMarker(state, userMarkerId);
-          } else {
-            _updateMarker(state, userMarkerId);
+        List<Establishment> establishments = state.establishments;
+        establishments.forEach((establishment) {
+          // Create marker with establishment id
+          MarkerId markerId = MarkerId(establishment.id);
+          if (!_containsMarker(markerId)) {
+            debugPrint("Adding new marker for an establishment");
+            _addMarker(establishment.location, markerId);
           }
+        });
 
-          // Check if map controller is ready
-          if (_controller.isCompleted) {
-            _moveMapToLatLng(state);
-          }
-        }
+        // End establishments bloc builder
 
         return GoogleMap(
+          myLocationEnabled: true,
           mapType: MapType.normal,
           initialCameraPosition: _kGooglePlex,
-          onMapCreated: (GoogleMapController controller) {
+          onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
             controller.setMapStyle(_mapStyle);
+
+            // Move map to user location after map create
+            LocationData locationData = await _location.getLocation();
+            var userLocation = Latlong.LatLng(locationData.latitude, locationData.longitude);
+            // TODO what if getting user location fails
+
+            _moveMapToLatLng(userLocation, instantMove: true);
+
+            // Set markers after map create
+            _refreshGeoArea();
+          },
+          onCameraIdle: () async {
+            // Set markers when map stops moving
+            _refreshGeoArea();
           },
           markers: Set<Marker>.of(_mapMarkers.values),
         );

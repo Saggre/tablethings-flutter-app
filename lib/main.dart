@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/screens/main_screen.dart';
+import 'package:tablething/services/user.dart';
 
 import 'blocs/bloc.dart';
 
@@ -10,8 +11,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        builder: (BuildContext context) => UserLocationBloc(),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<UserLocationBloc>(builder: (BuildContext context) => UserLocationBloc()),
+          BlocProvider<EstablishmentsGeoBloc>(builder: (BuildContext context) => EstablishmentsGeoBloc()),
+        ],
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(

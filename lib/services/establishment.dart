@@ -1,4 +1,4 @@
-import 'package:geopoint/geopoint.dart';
+import 'package:latlong/latlong.dart';
 
 enum PriceRange { cheap, medium, expensive }
 
@@ -6,7 +6,58 @@ enum EstablishmentType { cafe, restaurant, bar, hotel, fastFood }
 
 enum Currency { eur, usd, gbp }
 
-enum CuisineType { pizza }
+enum CuisineType {
+  american,
+  asian,
+  beer,
+  breakfast,
+  burger,
+  candy,
+  chinese,
+  coffee,
+  danish,
+  dessert,
+  doughnuts,
+  estonian,
+  finnish,
+  french,
+  german,
+  greek,
+  healthy,
+  hot_dog,
+  ice_cream,
+  indian,
+  israeli,
+  italian,
+  japanese,
+  kebab,
+  lebanonese,
+  mexican,
+  nepalese,
+  noodles,
+  other,
+  pasta,
+  pizza,
+  portuguese,
+  russian,
+  salad,
+  sandwiches,
+  seafood,
+  smoothie,
+  soup,
+  spanish,
+  steak,
+  street_food,
+  sushi,
+  swedish,
+  tacos,
+  thai,
+  turkish,
+  united_kingdom,
+  vietnamese,
+  wine,
+  wings
+}
 
 /// Establishment represents a business selling food items or drinks
 class Establishment {
@@ -21,7 +72,7 @@ class Establishment {
   final String country;
 
   /// GPS location
-  final GeoPoint location;
+  final LatLng location;
 
   /// Info
   final String name;
@@ -34,22 +85,8 @@ class Establishment {
   final String thumbUrl;
   final String imageUrl;
 
-  Establishment(
-      this.id,
-      this.streetAddress,
-      this.streetAddress_2,
-      this.zipCode,
-      this.city,
-      this.state,
-      this.country,
-      this.location,
-      this.name,
-      this.currency,
-      this.restaurantType,
-      this.priceRange,
-      this.cuisineTypes,
-      this.thumbUrl,
-      this.imageUrl);
+  Establishment(this.id, this.streetAddress, this.streetAddress_2, this.zipCode, this.city, this.state, this.country, this.location, this.name, this.currency,
+      this.restaurantType, this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
 
   /// Translate price range into a string of currency symbols eg. €€€
   String get priceDisplay {
@@ -74,14 +111,13 @@ class Establishment {
   static Establishment fromJson(json) {
     Currency currency = Currency.values[json['currency']];
 
-    EstablishmentType restaurantType =
-        EstablishmentType.values[json['restaurantType']];
+    EstablishmentType restaurantType = EstablishmentType.values[json['restaurantType']];
 
     PriceRange priceRange = PriceRange.values[json['priceRange']];
 
     List<CuisineType> cuisineTypes;
 
-    GeoPoint location = new GeoPoint(latitude: 0, longitude: 0);
+    LatLng location = LatLng(0, 0);
 
     return Establishment(
       json['id'],
@@ -103,11 +139,7 @@ class Establishment {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Establishment &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+  bool operator ==(Object other) => identical(this, other) || other is Establishment && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
