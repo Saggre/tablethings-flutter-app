@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert' show json;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong/latlong.dart';
+import 'package:tablething/models/cuisine_types.dart';
 import 'establishment.dart';
 
 /// Emulates real api client for testing

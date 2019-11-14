@@ -1,63 +1,12 @@
 import 'package:latlong/latlong.dart';
+import 'package:tablething/models/cuisine_type_description.dart';
+import 'package:tablething/models/cuisine_types.dart';
 
 enum PriceRange { cheap, medium, expensive }
 
 enum EstablishmentType { cafe, restaurant, bar, hotel, fastFood }
 
 enum Currency { eur, usd, gbp }
-
-enum CuisineType {
-  american,
-  asian,
-  beer,
-  breakfast,
-  burger,
-  candy,
-  chinese,
-  coffee,
-  danish,
-  dessert,
-  doughnuts,
-  estonian,
-  finnish,
-  french,
-  german,
-  greek,
-  healthy,
-  hot_dog,
-  ice_cream,
-  indian,
-  israeli,
-  italian,
-  japanese,
-  kebab,
-  lebanonese,
-  mexican,
-  nepalese,
-  noodles,
-  other,
-  pasta,
-  pizza,
-  portuguese,
-  russian,
-  salad,
-  sandwiches,
-  seafood,
-  smoothie,
-  soup,
-  spanish,
-  steak,
-  street_food,
-  sushi,
-  swedish,
-  tacos,
-  thai,
-  turkish,
-  united_kingdom,
-  vietnamese,
-  wine,
-  wings
-}
 
 /// Establishment represents a business selling food items or drinks
 class Establishment {
@@ -105,6 +54,12 @@ class Establishment {
       buffer.write(currencySymbol);
     }
     return buffer.toString();
+  }
+
+  /// Get this establishment's main cuisine type or 'other' type if no types are set
+  CuisineTypeDescription getDefaultCuisineTypeDescription() {
+    CuisineType defaultCuisineType = cuisineTypes != null && cuisineTypes.length > 0 ? cuisineTypes[0] : CuisineType.other;
+    return cuisineTypeDescriptions[defaultCuisineType];
   }
 
   /// Construct from json

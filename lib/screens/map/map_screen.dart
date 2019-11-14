@@ -64,15 +64,16 @@ class MapScreenState extends State<MapScreen> {
     if (_containsMarker(markerId)) {
       debugPrint("Moving marker");
 
-      // Move the marker by removing the old one (this will liekly be updated in future gmap versions)
+      // Move the marker by removing the old one (this will likely be updated in future gmap versions)
       _mapMarkers[markerId] = _mapMarkers[markerId].copyWith(positionParam: LatLng(position.latitude, position.longitude));
     }
   }
 
   /// Adds a marker to the map
-  void _addMarker(Latlong.LatLng position, MarkerId markerId) async {
+  void _addMarker(Latlong.LatLng position, MarkerId markerId, String iconPath) async {
     // Get icon
-    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), 'assets/icons/burger.png');
+    // TODO what if error
+    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
 
     // creating a new MARKER
     final Marker marker = Marker(
@@ -168,7 +169,7 @@ class MapScreenState extends State<MapScreen> {
           MarkerId markerId = MarkerId(establishment.id);
           if (!_containsMarker(markerId)) {
             debugPrint("Adding new marker for an establishment");
-            _addMarker(establishment.location, markerId);
+            _addMarker(establishment.location, markerId, establishment.getDefaultCuisineTypeDescription().iconPath);
           }
         });
 
