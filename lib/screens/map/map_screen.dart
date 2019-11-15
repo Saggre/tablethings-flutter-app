@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:location/location.dart';
+import 'package:tablething/components/raised_gradient_button.dart';
+import 'package:tablething/localization/translate.dart';
+import 'package:tablething/screens/qr_scan/qr_scan_screen.dart';
 import 'package:tablething/services/establishment.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +13,6 @@ import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/custom_app_bar.dart';
 import 'package:latlong/latlong.dart' as Latlong;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
-import 'package:bloc/bloc.dart';
 
 class MapScreen extends StatefulWidget {
   final bool isFullScreenDialog;
@@ -133,23 +135,40 @@ class MapScreenState extends State<MapScreen> {
       body: Stack(
         children: <Widget>[
           _getMap(),
-          Column(
-            children: <Widget>[
-              BlocBuilder<UserLocationBloc, Latlong.LatLng>(builder: (context, Latlong.LatLng state) {
-                String text = "Waiting...";
+          Container(
+            padding: EdgeInsets.all(15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                BlocBuilder<UserLocationBloc, Latlong.LatLng>(builder: (context, Latlong.LatLng state) {
+                  String text = "Waiting...";
 
-                if (state != null) {
-                  text = 'Lat: ' + state.latitude.toString() + ' / Lon: ' + state.longitude.toString();
-                }
+                  if (state != null) {
+                    text = 'Lat: ' + state.latitude.toString() + ' / Lon: ' + state.longitude.toString();
+                  }
 
-                return Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                );
-              }),
-            ],
+                  return Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  );
+                }),
+                RaisedGradientButton(
+                  text: t('Scan and eat'),
+                  iconData: Icons.fastfood,
+                  gradient: buttonGradient,
+                  onPressed: () {
+                    print('Opening QR-code scanner');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => QRScanScreen()),
+                    );
+                  },
+                )
+              ],
+            ),
           )
         ],
       ),

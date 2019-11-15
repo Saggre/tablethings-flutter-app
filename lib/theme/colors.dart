@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
-const MAIN_COLOR = Color(0xFF3186E3);
-const MAIN_COLOR_DARK = Color(0xFF1D36C4);
-const BACKGROUND_COLOR = Color(0xff1a2328);
-const CARD_COLOR = Color(0xff404b60);
-const GRAPH_COLORS = [Color(0x333186e3), Color(0x33ff0000)];
+const appColors = [Color(0xFF257AA6), Color(0xFF00BDAA), Color(0xFF00A6BD)];
 
-const BUTTON_GRADIENT = LinearGradient(
+final buttonGradient = LinearGradient(
   colors: [
-    MAIN_COLOR,
-    MAIN_COLOR_DARK,
+    appColors[1],
+    appColors[2],
   ],
   begin: FractionalOffset.centerLeft,
   end: FractionalOffset.centerRight,

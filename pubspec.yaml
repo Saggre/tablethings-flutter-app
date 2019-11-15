@@ -31,11 +31,13 @@ dependencies:
 
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2
+  firebase_ml_vision: ^0.9.3+3
   #firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.12.9+5
   firestore_helpers: ^3.2.1+1
   location: ^2.3.5
   latlong: ^0.6.1
+  camera: any
 
 dev_dependencies:
   flutter_test:
