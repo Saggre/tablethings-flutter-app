@@ -37,9 +37,20 @@ class QRScanScreenState extends State<QRScanScreen> {
         return;
       }
 
+      int scanTimeout = 500;
+      Stopwatch stopwatch = Stopwatch();
+      stopwatch.start();
+
       _cameraController.startImageStream((CameraImage availableImage) {
+        bool finishedLastScan = true;
         //_cameraController.stopImageStream();
-        _scanQRCode(availableImage);
+        if (finishedLastScan && stopwatch.elapsedMilliseconds > scanTimeout) {
+          stopwatch.reset();
+          finishedLastScan = false;
+          _scanQRCode(availableImage, () {
+            finishedLastScan = true;
+          });
+        }
       });
 
       setState(() {});
@@ -47,8 +58,8 @@ class QRScanScreenState extends State<QRScanScreen> {
   }
 
   /// Scan a camera image containing a QR-code (hopefully)
-  void _scanQRCode(CameraImage cameraImage) async {
-    //print('Scanning QR');
+  void _scanQRCode(CameraImage cameraImage, Function onScanned) async {
+    print('Scanning QR');
 
     // Create mlkit image from camera image and process it
     // TODO check planeData and rawFormat for iOS
@@ -56,7 +67,7 @@ class QRScanScreenState extends State<QRScanScreen> {
         size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
         planeData: cameraImage.planes
             .map((currentPlane) =>
-            FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
+                FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
             .toList(),
         rawFormat: cameraImage.format.raw,
         rotation: ImageRotation.rotation90);
@@ -82,11 +93,14 @@ class QRScanScreenState extends State<QRScanScreen> {
         case BarcodeValueType.url:
           final String title = barcode.url.title;
           final String url = barcode.url.url;
-          print('Scanned URL qr-code');
+          print('Scanned URL: ' + url);
           break;
         default:
       }
     }
+
+    // Execute callback
+    onScanned();
   }
 
   @override
@@ -100,8 +114,7 @@ class QRScanScreenState extends State<QRScanScreen> {
     if (!_cameraController.value.isInitialized) {
       return Container();
     }
-    return AspectRatio(
-      aspectRatio: _cameraController.value.aspectRatio,
+    return Container(
       child: CameraPreview(_cameraController),
     );
   }
@@ -113,6 +126,16 @@ class QRScanScreenState extends State<QRScanScreen> {
       appBar: CustomAppBar(),
       body: Stack(children: <Widget>[
         _getCameraView(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(50), child:
+            Container(child: Container(
+                decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 1))
+            ),height: 250, decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.8)))),
+          ],
+        )
       ]),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {},
