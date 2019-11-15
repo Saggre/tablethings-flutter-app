@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/screens/main_screen.dart';
@@ -5,7 +6,15 @@ import 'package:tablething/services/user.dart';
 
 import 'blocs/bloc.dart';
 
-void main() => runApp(MyApp());
+List<CameraDescription> cameras;
+
+void main() async {
+  // TODO move to different method
+  // Get phone cameras
+  cameras = await availableCameras();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

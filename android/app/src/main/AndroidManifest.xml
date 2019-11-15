@@ -28,9 +28,15 @@
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
+            <!-- To download ML model -->
+            <meta-data
+                android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+                android:value="barcode" />
+            <!-- To use multiple models: android:value="ocr,label,barcode,face" -->
         </activity>
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyACJ703qdt8A24grSd1ZvmzXAopuKYwtC0"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyACJ703qdt8A24grSd1ZvmzXAopuKYwtC0" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
