@@ -1,11 +1,27 @@
-import 'dart:async';
 import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
-import 'package:tablething/theme/theme.dart';
+import 'package:tablething/localization/translate.dart';
+import 'package:tablething/models/establishment_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:tablething/components/custom_app_bar.dart';
 import 'package:tablething/main.dart';
+
+class QRScanResult {}
+
+class QRScanEmptyResult extends QRScanResult {}
+
+class QRScanDataResult extends QRScanResult {
+  final EstablishmentBarcode barcodeData;
+
+  QRScanDataResult(this.barcodeData);
+}
+
+class QRScanErrorResult extends QRScanResult {
+  final String errorText;
+
+  QRScanErrorResult(this.errorText);
+}
 
 class QRScanScreen extends StatefulWidget {
   final bool isFullScreenDialog;
@@ -42,13 +58,20 @@ class QRScanScreenState extends State<QRScanScreen> {
       stopwatch.start();
 
       _cameraController.startImageStream((CameraImage availableImage) {
-        bool finishedLastScan = true;
         //_cameraController.stopImageStream();
-        if (finishedLastScan && stopwatch.elapsedMilliseconds > scanTimeout) {
+        if (stopwatch.elapsedMilliseconds > scanTimeout) {
           stopwatch.reset();
-          finishedLastScan = false;
-          _scanQRCode(availableImage, () {
-            finishedLastScan = true;
+
+          // Send event
+          _scanBarcode(availableImage, (result) {
+            if (result is QRScanEmptyResult) {
+              // No code scanned
+            } else if (result is QRScanDataResult) {
+              print("Scanned establishment: " + result.barcodeData.establishmentId + ", table: " + result.barcodeData.tableId);
+              Navigator.pop(context);
+            } else if (result is QRScanErrorResult) {
+              // Error
+            }
           });
         }
       });
@@ -57,50 +80,79 @@ class QRScanScreenState extends State<QRScanScreen> {
     });
   }
 
-  /// Scan a camera image containing a QR-code (hopefully)
-  void _scanQRCode(CameraImage cameraImage, Function onScanned) async {
+  /// Scan barcode from image and call callback with result
+  /// No bloc pattern because no widget is updated from barcode data
+  void _scanBarcode(CameraImage cameraImage, Function(QRScanResult) onScan) async {
     print('Scanning QR');
 
-    // Create mlkit image from camera image and process it
-    // TODO check planeData and rawFormat for iOS
-    final FirebaseVisionImageMetadata metadata = FirebaseVisionImageMetadata(
-        size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
-        planeData: cameraImage.planes
-            .map((currentPlane) =>
-                FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
-            .toList(),
-        rawFormat: cameraImage.format.raw,
-        rotation: ImageRotation.rotation90);
-    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromBytes(cameraImage.planes[0].bytes, metadata);
-    final BarcodeDetector barcodeDetector = FirebaseVision.instance.barcodeDetector();
-    final List<Barcode> barcodes = await barcodeDetector.detectInImage(visionImage);
-
-    for (Barcode barcode in barcodes) {
-      final Rect boundingBox = barcode.boundingBox;
-      final List<Offset> cornerPoints = barcode.cornerPoints;
-
-      final String rawValue = barcode.rawValue;
-
-      final BarcodeValueType valueType = barcode.valueType;
-
-      // See API reference for complete list of supported types
-      switch (valueType) {
-        case BarcodeValueType.wifi:
-          final String ssid = barcode.wifi.ssid;
-          final String password = barcode.wifi.password;
-          final BarcodeWiFiEncryptionType type = barcode.wifi.encryptionType;
-          break;
-        case BarcodeValueType.url:
-          final String title = barcode.url.title;
-          final String url = barcode.url.url;
-          print('Scanned URL: ' + url);
-          break;
-        default:
-      }
+    if (cameraImage == null) {
+      onScan(QRScanResult());
+      return;
     }
 
-    // Execute callback
-    onScanned();
+    try {
+      // Create mlkit image from camera image and process it
+      // TODO check planeData and rawFormat for iOS
+      final FirebaseVisionImageMetadata metadata = FirebaseVisionImageMetadata(
+          size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
+          planeData: cameraImage.planes
+              .map((currentPlane) =>
+                  FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
+              .toList(),
+          rawFormat: cameraImage.format.raw,
+          rotation: ImageRotation.rotation90);
+      final FirebaseVisionImage visionImage = FirebaseVisionImage.fromBytes(cameraImage.planes[0].bytes, metadata);
+      final BarcodeDetector barcodeDetector = FirebaseVision.instance.barcodeDetector();
+      final List<Barcode> barcodes = await barcodeDetector.detectInImage(visionImage);
+
+      // Parse qr code url into needed data
+      QRScanResult _parseUrl(String url) {
+        // URL should of the form:
+        // establishment-id is RFC4122 v4
+        // https://tablething.io/place=establishment-id/table=table-id
+        // Ex: https://tablething.io/place=110ec58a-a0f2-4ac4-8393-c866d813b8d1/table=10
+
+        String cleanUrl = url;
+
+        // Replace wrong-way slashes
+        cleanUrl = cleanUrl.replaceAll(RegExp(r'\\'), '/'); // \?extra-data\ => /?extra-data/
+
+        // Replace trailing slash
+        cleanUrl = cleanUrl.replaceAll(RegExp(r'\/$'), ''); // extra-data/ => ?extra-data
+
+        RegExp establishmentIdRegExp = RegExp(r'place=([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})');
+        RegExp tableIdRegExp = RegExp(r'table=(\d+)');
+
+        String establishmentId = establishmentIdRegExp.firstMatch(cleanUrl).group(0);
+        String tableId = tableIdRegExp.firstMatch(cleanUrl).group(0);
+
+        // If something is wrong with the parsed values
+        if (establishmentId == null || tableId == null || establishmentId.length == 0 || tableId.length == 0) {
+          return QRScanErrorResult(t('Invalid QR-code'));
+        }
+
+        return QRScanDataResult(EstablishmentBarcode(establishmentId, tableId));
+      }
+
+      // For loop really returns the first value
+      // TODO what if there are 2 QR-codes next to each other?
+      for (Barcode barcode in barcodes) {
+        final BarcodeValueType valueType = barcode.valueType;
+
+        // Return a state
+        switch (valueType) {
+          case BarcodeValueType.url:
+            final String title = barcode.url.title;
+            final String url = barcode.url.url;
+            onScan(_parseUrl(url));
+            break;
+          default:
+            onScan(QRScanResult());
+        }
+      }
+    } catch (err) {
+      onScan(QRScanErrorResult(t('An unknown error occurred')));
+    }
   }
 
   @override
@@ -124,24 +176,26 @@ class QRScanScreenState extends State<QRScanScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: () {},
+        tooltip: 'Reader the QRCode',
+        child: new Icon(Icons.add_a_photo),
+      ),
       body: Stack(children: <Widget>[
         _getCameraView(),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Padding(padding: EdgeInsets.all(50), child:
-            Container(child: Container(
-                decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 1))
-            ),height: 250, decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.8)))),
+            Padding(
+                padding: EdgeInsets.all(50),
+                child: Container(
+                    child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 1))),
+                    height: 250,
+                    decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.8)))),
           ],
-        )
+        ),
       ]),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Reader the QRCode',
-        child: new Icon(Icons.add_a_photo),
-      ),
     );
   }
 }
