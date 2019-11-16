@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
@@ -45,10 +46,6 @@ class MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-
-    // TODO is this the right thing to do?
-    debugPrint("Start GPS");
-    BlocProvider.of<UserLocationBloc>(context).add(UserLocationEvent.startGPS);
 
     // Load map style JSON
     rootBundle.loadString('assets/map_style.json').then((string) {
@@ -106,9 +103,9 @@ class MapScreenState extends State<MapScreen> {
 
     // Animate or teleport
     if (instantMove) {
-      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    } else {
       controller.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    } else {
+      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     }
   }
 
@@ -131,30 +128,15 @@ class MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: CustomAppBar(),
       body: Stack(
         children: <Widget>[
           _getMap(),
           Container(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                BlocBuilder<UserLocationBloc, Latlong.LatLng>(builder: (context, Latlong.LatLng state) {
-                  String text = "Waiting...";
-
-                  if (state != null) {
-                    text = 'Lat: ' + state.latitude.toString() + ' / Lon: ' + state.longitude.toString();
-                  }
-
-                  return Text(
-                    text,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  );
-                }),
                 RaisedGradientButton(
                   text: t('Scan and eat'),
                   iconData: Icons.fastfood,
@@ -169,7 +151,8 @@ class MapScreenState extends State<MapScreen> {
                 )
               ],
             ),
-          )
+          ),
+          CustomAppBar(),
         ],
       ),
     );
@@ -199,16 +182,37 @@ class MapScreenState extends State<MapScreen> {
           myLocationEnabled: true,
           mapType: MapType.normal,
           initialCameraPosition: _kGooglePlex,
+          mapToolbarEnabled: false,
+          padding: EdgeInsets.only(bottom: 65, left: 5),
           onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
             controller.setMapStyle(_mapStyle);
 
-            // Move map to user location after map create
-            LocationData locationData = await _location.getLocation();
-            var userLocation = Latlong.LatLng(locationData.latitude, locationData.longitude);
-            // TODO what if getting user location fails
+            double minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
+            Latlong.LatLng userOriginalPosition = Latlong.LatLng(0, 0);
+            int timesUpdatedUserLocation = 0; // First update teleports and later ones are smooth
 
-            _moveMapToLatLng(userLocation, instantMove: true);
+            // Move map to user location after map create
+            _locationChanged(LocationData newLocation) {
+              Latlong.LatLng newLatLng = Latlong.LatLng(newLocation.latitude, newLocation.longitude);
+              double distance = Latlong.Distance().distance(userOriginalPosition, newLatLng).toDouble();
+              print("Dist: " + distance.toString());
+              if (distance >= minUpdateDist) {
+                userOriginalPosition = newLatLng;
+                _moveMapToLatLng(newLatLng, instantMove: timesUpdatedUserLocation == 0);
+                timesUpdatedUserLocation++;
+              }
+            }
+
+            // Initial location get
+            _location.getLocation().then((location) {
+              _locationChanged(location);
+            });
+
+            // Listen to location changes
+            _location.onLocationChanged().listen((LocationData event) {
+              _locationChanged(event);
+            });
 
             // Set markers after map create
             _refreshGeoArea();

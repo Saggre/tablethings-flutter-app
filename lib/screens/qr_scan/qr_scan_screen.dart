@@ -175,12 +175,6 @@ class QRScanScreenState extends State<QRScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: CustomAppBar(),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Reader the QRCode',
-        child: new Icon(Icons.add_a_photo),
-      ),
       body: Stack(children: <Widget>[
         _getCameraView(),
         Column(
