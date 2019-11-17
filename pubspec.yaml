@@ -27,7 +27,8 @@ dependencies:
   google_maps_flutter: any
   flutter_map: any
   user_location: any
-  flutter_map_marker_cluster: any
+  flutter_map_marker_cluster: any # Not used atm
+  flutter_rating_bar: ^3.0.0
 
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2

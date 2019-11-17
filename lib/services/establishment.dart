@@ -24,6 +24,8 @@ class Establishment {
 
   /// Info
   final String name;
+  final String description;
+  final String googlePlaceId; // Not required
   final Currency currency;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
@@ -32,8 +34,8 @@ class Establishment {
   final String thumbUrl;
   final String imageUrl;
 
-  Establishment(this.id, this.streetAddress, this.streetAddress_2, this.zipCode, this.city, this.state, this.country, this.location, this.name, this.currency,
-      this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
+  Establishment(this.id, this.streetAddress, this.streetAddress_2, this.zipCode, this.city, this.state, this.country, this.location, this.name,
+      this.description, this.googlePlaceId, this.currency, this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
 
   /// Translate price range into a string of currency symbols eg. €€€
   String get priceDisplay {
@@ -113,6 +115,8 @@ class Establishment {
       json['country'].toString(),
       location,
       json['name'].toString(),
+      json['description'].toString(),
+      '',
       currency,
       priceRange,
       cuisineTypes,
@@ -121,6 +125,7 @@ class Establishment {
     );
   }
 
+  /// Only check id equality
   @override
   bool operator ==(Object other) => identical(this, other) || other is Establishment && runtimeType == other.runtimeType && id == other.id;
 

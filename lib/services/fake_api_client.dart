@@ -26,11 +26,13 @@ class ApiClient {
       "FIN",
       LatLng(60.277969, 24.8525615),
       "Lilja Grillikioski",
+      "Kiva kebupaikka sillan alla.",
+      "",
       Currency.eur,
       PriceRange.cheap,
       [CuisineType.pizza],
-      "",
-      "",
+      "https://www.mcdonalds.com/content/dam/usa/logo/m_logo.png",
+      "https://i.imgur.com/4eIg9MY.png",
     ));
 
     return Future.value(establishments).timeout(_requestDelay);

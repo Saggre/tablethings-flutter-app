@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
+import 'package:tablething/screens/map/components/establishment_icon_popup.dart';
 import 'package:tablething/screens/qr_scan/qr_scan_screen.dart';
 import 'package:tablething/services/establishment.dart';
 import 'package:tablething/theme/theme.dart';
@@ -31,7 +32,7 @@ class MapScreenState extends State<MapScreen> {
 
   Completer<GoogleMapController> _controller = Completer();
 
-  Map<MarkerId, Marker> _mapMarkers = <MarkerId, Marker>{}; // CLASS MEMBER, MAP OF MARKS
+  Map<Establishment, Marker> _mapMarkers = Map();
 
   var _location = Location();
 
@@ -40,7 +41,7 @@ class MapScreenState extends State<MapScreen> {
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+    zoom: 12,
   );
 
   @override
@@ -54,43 +55,68 @@ class MapScreenState extends State<MapScreen> {
   }
 
   /// Checks if the list of map markers contains a marker with markerIdValue
-  bool _containsMarker(MarkerId markerId) {
-    return _mapMarkers.containsKey(markerId);
+  bool _containsMarker(Establishment establishment) {
+    return _mapMarkers.containsKey(establishment);
   }
 
   /// Updates a marker with its id
-  void _updateMarker(Latlong.LatLng position, MarkerId markerId) {
+  /*void _updateMarker(Latlong.LatLng position, MarkerId markerId) {
     if (_containsMarker(markerId)) {
-      debugPrint("Moving marker");
+      print("Moving marker");
 
       // Move the marker by removing the old one (this will likely be updated in future gmap versions)
       _mapMarkers[markerId] = _mapMarkers[markerId].copyWith(positionParam: LatLng(position.latitude, position.longitude));
     }
-  }
+  }*/
 
   /// Adds a marker to the map
-  void _addMarker(Latlong.LatLng position, MarkerId markerId, String iconPath) async {
+  void _addMarker(Establishment establishment) async {
+    if (_containsMarker(establishment)) {
+      return;
+    }
+
+    print("Adding new marker for an establishment: " + establishment.name);
+
     // Get icon
     // TODO what if error
-    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
+    BitmapDescriptor icon =
+        await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), establishment.getDefaultCuisineTypeDescription().iconPath);
+
+    MarkerId markerId = MarkerId(establishment.id);
 
     // creating a new MARKER
     final Marker marker = Marker(
       icon: icon,
       markerId: markerId,
-      position: LatLng(position.latitude, position.longitude),
-      infoWindow: InfoWindow(title: markerId.value, snippet: '*'),
+      position: LatLng(establishment.location.latitude, establishment.location.longitude),
       onTap: () {
-        //_onMarkerTapped(markerId);
+        _onMarkerTapped(establishment);
       },
     );
 
-    _mapMarkers[markerId] = marker;
+    _mapMarkers[establishment] = marker;
+  }
+
+  /// When a marker is selected / tapped
+  void _onMarkerTapped(Establishment establishment) {
+    print('Tapped marker');
+    _showEstablishmentDialog(establishment);
+  }
+
+  /// Show a dialog containing information about the marker
+  void _showEstablishmentDialog(Establishment establishment) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return EstablishmentIconPopup(
+            establishment: establishment,
+          );
+        });
   }
 
   /// Moves the map to a certain coordinate
   void _moveMapToLatLng(Latlong.LatLng position, {bool instantMove = false}) async {
-    // Translate to map coords
+    // Translate to map coordinates
     LatLng mapPosition = LatLng(position.latitude, position.longitude);
 
     // Create gmap camera position
@@ -111,7 +137,7 @@ class MapScreenState extends State<MapScreen> {
 
   /// Sends an event to get establishments in the currently visible map area
   void _refreshGeoArea() async {
-    debugPrint("Refreshing geo area");
+    print("Refreshing geo area");
 
     final GoogleMapController controller = await _controller.future;
     LatLngBounds mapBounds = await controller.getVisibleRegion();
@@ -169,11 +195,7 @@ class MapScreenState extends State<MapScreen> {
 
         establishments.forEach((establishment) {
           // Create marker with establishment id
-          MarkerId markerId = MarkerId(establishment.id);
-          if (!_containsMarker(markerId)) {
-            debugPrint("Adding new marker for an establishment: " + establishment.name);
-            _addMarker(establishment.location, markerId, establishment.getDefaultCuisineTypeDescription().iconPath);
-          }
+          _addMarker(establishment);
         });
 
         // End establishments bloc builder
