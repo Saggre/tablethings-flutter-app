@@ -21,7 +21,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           // Background
           child: Center(
             child: Text(
-              t('Tablethings'),
+              t('Tablething'),
               style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w600, color: Colors.white),
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:tablething/models/establishment_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:tablething/components/custom_app_bar.dart';
 import 'package:tablething/main.dart';
+import 'package:tablething/screens/establishment/establishment_screen.dart';
 
 class QRScanResult {}
 
@@ -24,9 +25,7 @@ class QRScanErrorResult extends QRScanResult {
 }
 
 class QRScanScreen extends StatefulWidget {
-  final bool isFullScreenDialog;
-
-  QRScanScreen({Key key, this.isFullScreenDialog = false}) : super(key: key);
+  QRScanScreen({Key key}) : super(key: key);
 
   @override
   QRScanScreenState createState() {
@@ -69,6 +68,7 @@ class QRScanScreenState extends State<QRScanScreen> {
             } else if (result is QRScanDataResult) {
               print("Scanned establishment: " + result.barcodeData.establishmentId + ", table: " + result.barcodeData.tableId);
               Navigator.pop(context);
+              _pushEstablishmentScreen(result.barcodeData.establishmentId, result.barcodeData.tableId);
             } else if (result is QRScanErrorResult) {
               // Error
             }
@@ -78,6 +78,19 @@ class QRScanScreenState extends State<QRScanScreen> {
 
       setState(() {});
     });
+  }
+
+  /// Navigate to establishment screen and send data to it
+  void _pushEstablishmentScreen(String establishmentId, String tableId) {
+    EstablishmentScreenArguments args = EstablishmentScreenArguments(establishmentId, tableId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EstablishmentScreen(),
+        settings: RouteSettings(arguments: args),
+      ),
+    );
   }
 
   /// Scan barcode from image and call callback with result

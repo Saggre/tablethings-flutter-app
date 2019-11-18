@@ -50,7 +50,7 @@ class Establishment {
     // TODO add more currencies
 
     final buffer = StringBuffer();
-    for (int i = 0; i < priceRange.index; i++) {
+    for (int i = 0; i < priceRange.index + 1; i++) {
       buffer.write(currencySymbol);
     }
     return buffer.toString();

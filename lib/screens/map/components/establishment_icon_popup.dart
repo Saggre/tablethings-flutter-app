@@ -21,8 +21,11 @@ class EstablishmentIconPopup extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          EstablishmentInfo(
-            establishment: establishment,
+          Hero(
+            tag: establishment,
+            child: EstablishmentInfo(
+              establishment: establishment,
+            ),
           ),
           RaisedGradientButton(
             text: t('Menu'),

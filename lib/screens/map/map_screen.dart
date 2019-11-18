@@ -143,11 +143,11 @@ class MapScreenState extends State<MapScreen> {
     LatLngBounds mapBounds = await controller.getVisibleRegion();
 
     // Translate google map coords to generic LatLng
-    var event = EstablishmentsGeoBlocEvent(Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
+    var event = GeoEstablishmentBlocEvent(Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
         Latlong.LatLng(mapBounds.southwest.latitude, mapBounds.southwest.longitude));
 
     // Get establishments inside the bounds from database
-    BlocProvider.of<EstablishmentsGeoBloc>(context).add(event);
+    BlocProvider.of<GeoEstablishmentBloc>(context).add(event);
   }
 
   @override
@@ -185,7 +185,7 @@ class MapScreenState extends State<MapScreen> {
   }
 
   Widget _getMap() {
-    return BlocBuilder<EstablishmentsGeoBloc, EstablishmentsGeoBlocState>(
+    return BlocBuilder<GeoEstablishmentBloc, GeoEstablishmentBlocState>(
       builder: (context, state) {
         // Establishments bloc builder
 
