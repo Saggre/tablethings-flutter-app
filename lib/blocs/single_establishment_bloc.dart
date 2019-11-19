@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tablething/services/api_client_selector.dart';
-import 'package:tablething/services/establishment.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'establishment_bloc.dart';
 
 class SingleEstablishmentBlocEvent extends EstablishmentBlocEvent {

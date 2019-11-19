@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'establishment.dart';
+import '../models/establishment/establishment.dart';
 
 /// Gets data from firebase
 class ApiClient {

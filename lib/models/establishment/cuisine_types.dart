@@ -1,5 +1,6 @@
-import 'package:tablething/models/cuisine_type_description.dart';
 import 'package:tablething/localization/translate.dart';
+
+import 'cuisine_type_description.dart';
 
 enum CuisineType {
   other, // Other at index 0

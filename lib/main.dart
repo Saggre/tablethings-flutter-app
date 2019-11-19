@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'package:tablething/screens/main_screen.dart';
-import 'package:tablething/services/user.dart';
+import 'package:tablething/models/user.dart';
 import 'package:tablething/theme/colors.dart';
 
 import 'blocs/bloc.dart';

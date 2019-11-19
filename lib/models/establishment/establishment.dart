@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong/latlong.dart';
-import 'package:tablething/models/cuisine_type_description.dart';
 import 'package:tablething/models/cuisine_types.dart';
+import 'package:tablething/models/establishment/business_hours_event.dart';
+
+import 'cuisine_type_description.dart';
+import 'menu/menu.dart';
 
 enum PriceRange { cheap, medium, expensive }
 
@@ -29,6 +32,7 @@ class Establishment {
   final Currency currency;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
+  final Menu menu;
 
   /// Pics
   final String thumbUrl;

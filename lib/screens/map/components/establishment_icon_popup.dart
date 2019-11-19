@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/services/establishment.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/theme/theme.dart';
 
 class EstablishmentIconPopup extends StatelessWidget {

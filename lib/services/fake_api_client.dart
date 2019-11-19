@@ -3,7 +3,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong/latlong.dart';
 import 'package:tablething/models/cuisine_types.dart';
 
-import 'establishment.dart';
+import '../models/establishment/establishment.dart';
 
 /// Emulates real api client for testing
 class ApiClient {
@@ -27,8 +27,8 @@ class ApiClient {
       Currency.eur,
       PriceRange.cheap,
       [CuisineType.pizza],
-      "https://www.mcdonalds.com/content/dam/usa/logo/m_logo.png",
-      "https://i.imgur.com/4eIg9MY.png",
+      "http://www.campaigncentre.com.au/_client/_images/ORANA_MA0515/outlet/logo/dominos.jpg",
+      "https://i.imgur.com/nd2Atcg.jpg",
     ));
   }
 
@@ -44,12 +44,16 @@ class ApiClient {
 
   /// Get a single establishment with id
   Future<Establishment> getEstablishment(String id) async {
+    Establishment ret;
+
     _establishments.forEach((object) {
+      print("Object: " + object.id + " | id: " + id);
       if (object.id == id) {
-        return Future.value(object).timeout(_requestDelay);
+        print("Found");
+        ret = object;
       }
     });
 
-    return Future.error(null).timeout(_requestDelay);
+    return Future.value(ret).timeout(_requestDelay);
   }
 }

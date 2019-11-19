@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:tablething/services/establishment.dart';
+import 'package:tablething/localization/translate.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/theme/theme.dart';
 
 import 'circular_image.dart';
@@ -17,22 +18,129 @@ class EstablishmentInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(25.0),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
+        BoxShadow(
+          color: Color(0x66000000),
+          offset: Offset(0.0, 1.0),
+          blurRadius: 5,
+        ),
+      ]),
       child: Column(children: <Widget>[
-        _getCoverImage(),
-        _getRatingBar(3.5),
-        _getDescription(establishment),
+        _getTitle(),
+        _getDescription(),
+        _getRating(),
         Padding(
-          padding: EdgeInsets.only(top: 20),
-        )
+          padding: EdgeInsets.only(bottom: 10),
+        ),
+        Divider(),
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+        ),
+        _getSearchBar(),
       ]),
     );
   }
 
-  Widget _getDescription(Establishment establishment) {
+  Widget _getSearchBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
+        BoxShadow(
+          color: Color(0x33000000),
+          offset: Offset(0.0, 1.0),
+          blurRadius: 5,
+        ),
+      ]),
+      child: Row(
+        children: <Widget>[
+          Flexible(
+              child: TextField(
+                  decoration: InputDecoration(
+            hintText: t('Search menu'),
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.grey),
+          ))),
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getDescription() {
     TextStyle textStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 18,
-      fontWeight: FontWeight.w300,
+      color: Colors.grey[500],
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(establishment.description, style: textStyle),
+      ),
+    );
+  }
+
+  Widget _getRating() {
+    double rating = 4.4;
+    int reviews = 256;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          rating.toString(),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Padding(padding: EdgeInsets.only(left: 5.0)),
+        RatingBar(
+          initialRating: rating,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemSize: 25,
+          itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+          itemBuilder: (context, _) => Icon(
+            Icons.star,
+            color: Colors.amberAccent,
+          ),
+          unratedColor: Colors.grey[600],
+          onRatingUpdate: (rating) {
+            print(rating);
+          },
+        ),
+        Padding(padding: EdgeInsets.only(left: 10.0)),
+        Text(
+          reviews.toString(),
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+          ),
+        )
+      ],
+    );
+  }
+
+  /// Business hours
+  Widget _getHours() {
+    TextStyle textStyle = TextStyle(
+      color: Colors.grey[500],
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
     );
 
     return Container(
@@ -48,69 +156,29 @@ class EstablishmentInfo extends StatelessWidget {
   }
 
   Widget _getTitle() {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        CircularImage(
-          imageUrl: establishment.thumbUrl,
-          size: 64,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 10),
-        ),
-        Text(
-          establishment.name,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 22,
-            fontWeight: FontWeight.w300,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          /*CircularImage(
+            imageUrl: establishment.thumbUrl,
+            size: 64,
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _getRatingBar(double rating) {
-    return RatingBar(
-      initialRating: rating,
-      direction: Axis.horizontal,
-      allowHalfRating: true,
-      itemCount: 5,
-      itemSize: 32,
-      itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-      itemBuilder: (context, _) => Icon(
-        Icons.star,
-        color: Colors.orange,
-      ),
-      unratedColor: Colors.grey[600],
-      onRatingUpdate: (rating) {
-        print(rating);
-      },
-    );
-  }
-
-  Widget _getCoverImage() {
-    return Container(
-      child: Container(
-          child: _getTitle(),
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: [
-              Colors.transparent,
-              Colors.white,
-            ],
-            begin: FractionalOffset.lerp(FractionalOffset.topCenter, FractionalOffset.bottomCenter, 0.25),
-            end: FractionalOffset.bottomCenter,
-          ))),
-      height: 180,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: NetworkImage(
-              establishment.imageUrl,
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+          ),*/
+          Text(
+            establishment.name,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
             ),
-            fit: BoxFit.cover),
+          ),
+        ],
       ),
     );
   }

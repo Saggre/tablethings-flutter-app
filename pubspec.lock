@@ -30,7 +30,7 @@ packages:
     source: hosted
     version: "1.0.5"
   cached_network_image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cached_network_image
       url: "https://pub.dartlang.org"

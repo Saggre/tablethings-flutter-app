@@ -6,13 +6,13 @@ import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/screens/map/components/establishment_icon_popup.dart';
 import 'package:tablething/screens/qr_scan/qr_scan_screen.dart';
-import 'package:tablething/services/establishment.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tablething/blocs/bloc.dart';
-import 'package:tablething/components/custom_app_bar.dart';
+import 'package:tablething/components/main_app_bar.dart';
 import 'package:latlong/latlong.dart' as Latlong;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 
@@ -152,34 +152,36 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          _getMap(),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                RaisedGradientButton(
-                  text: t('Scan and eat'),
-                  iconData: Icons.fastfood,
-                  gradient: buttonGradient,
-                  onPressed: () {
-                    print('Opening QR-code scanner');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => QRScanScreen()),
-                    );
-                  },
-                )
-              ],
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            _getMap(),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  RaisedGradientButton(
+                    text: t('Scan and eat'),
+                    iconData: Icons.fastfood,
+                    gradient: buttonGradient,
+                    onPressed: () {
+                      print('Opening QR-code scanner');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => QRScanScreen()),
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
-          ),
-          CustomAppBar(),
-        ],
+            MainAppBar(),
+          ],
+        ),
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'establishment_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:latlong/latlong.dart';
 import 'package:tablething/services/api_client_selector.dart';
-import 'package:tablething/services/establishment.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 
 class GeoEstablishmentBlocEvent extends EstablishmentBlocEvent {
   // The bounds which limit the number of establishments to fetch

@@ -2,9 +2,9 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/establishment_barcode.dart';
+import 'package:tablething/models/establishment/establishment_barcode.dart';
 import 'package:flutter/material.dart';
-import 'package:tablething/components/custom_app_bar.dart';
+import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/main.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 
@@ -67,7 +67,6 @@ class QRScanScreenState extends State<QRScanScreen> {
               // No code scanned
             } else if (result is QRScanDataResult) {
               print("Scanned establishment: " + result.barcodeData.establishmentId + ", table: " + result.barcodeData.tableId);
-              Navigator.pop(context);
               _pushEstablishmentScreen(result.barcodeData.establishmentId, result.barcodeData.tableId);
             } else if (result is QRScanErrorResult) {
               // Error
@@ -84,7 +83,7 @@ class QRScanScreenState extends State<QRScanScreen> {
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
     EstablishmentScreenArguments args = EstablishmentScreenArguments(establishmentId, tableId);
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => EstablishmentScreen(),
@@ -136,8 +135,8 @@ class QRScanScreenState extends State<QRScanScreen> {
         RegExp establishmentIdRegExp = RegExp(r'place=([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})');
         RegExp tableIdRegExp = RegExp(r'table=(\d+)');
 
-        String establishmentId = establishmentIdRegExp.firstMatch(cleanUrl).group(0);
-        String tableId = tableIdRegExp.firstMatch(cleanUrl).group(0);
+        String establishmentId = establishmentIdRegExp.firstMatch(cleanUrl).group(1);
+        String tableId = tableIdRegExp.firstMatch(cleanUrl).group(1);
 
         // If something is wrong with the parsed values
         if (establishmentId == null || tableId == null || establishmentId.length == 0 || tableId.length == 0) {
