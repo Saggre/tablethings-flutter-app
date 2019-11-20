@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong/latlong.dart';
-import 'package:tablething/models/cuisine_types.dart';
-
-import '../models/establishment/establishment.dart';
+import 'package:tablething/models/establishment/cuisine_types.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 
 /// Emulates real api client for testing
 class ApiClient {

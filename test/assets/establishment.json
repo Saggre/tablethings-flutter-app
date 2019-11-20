@@ -1,0 +1,89 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426655440000",
+  "currency": 1,
+  "city": "Vantaa",
+  "priceRange": 0,
+  "country": "fi",
+  "imageUrl": "",
+  "businessHours": [
+    {
+      "open": false,
+      "day": 1,
+      "time": 0
+    },
+    {
+      "open": true,
+      "day": 0,
+      "time": 660
+    },
+    {
+      "open": false,
+      "day": 2,
+      "time": 0
+    },
+    {
+      "open": true,
+      "day": 1,
+      "time": 390
+    },
+    {
+      "open": false,
+      "day": 3,
+      "time": 0
+    },
+    {
+      "open": true,
+      "day": 2,
+      "time": "390"
+    },
+    {
+      "open": false,
+      "day": 4,
+      "time": 0
+    },
+    {
+      "open": true,
+      "day": 3,
+      "time": 390
+    },
+    {
+      "open": false,
+      "day": 5,
+      "time": 0
+    },
+    {
+      "open": false,
+      "day": 6,
+      "time": 120
+    },
+    {
+      "open": true,
+      "day": 5,
+      "time": 390
+    },
+    {
+      "open": false,
+      "day": 0,
+      "time": 120
+    },
+    {
+      "open": true,
+      "day": 6,
+      "time": "660"
+    }
+  ],
+  "description": "Kiva kebupaikka sillan alla",
+  "zipCode": "01620",
+  "thumbUrl": "",
+  "streetAddress2": "",
+  "position": {
+    "_latitude": 60.2779235,
+    "_longitude": 24.8528508
+  },
+  "state": "",
+  "cuisineTypes": [
+    0
+  ],
+  "name": "Lilja Grillikioski",
+  "streetAddress": "Laajaniityntie 5"
+}

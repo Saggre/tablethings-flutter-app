@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong/latlong.dart';
-import 'package:tablething/models/cuisine_types.dart';
-import 'package:tablething/models/establishment/business_hours_event.dart';
-
 import 'cuisine_type_description.dart';
+import 'cuisine_types.dart';
 import 'menu/menu.dart';
 
 enum PriceRange { cheap, medium, expensive }
@@ -16,7 +14,7 @@ class Establishment {
 
   /// Address
   final String streetAddress;
-  final String streetAddress_2;
+  final String streetAddress2;
   final String zipCode;
   final String city;
   final String state;
@@ -28,18 +26,35 @@ class Establishment {
   /// Info
   final String name;
   final String description;
-  final String googlePlaceId; // Not required
+  final String fbPlaceId; // Not required
   final Currency currency;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
-  final Menu menu;
+
+  Menu menu;
 
   /// Pics
   final String thumbUrl;
   final String imageUrl;
 
-  Establishment(this.id, this.streetAddress, this.streetAddress_2, this.zipCode, this.city, this.state, this.country, this.location, this.name,
-      this.description, this.googlePlaceId, this.currency, this.priceRange, this.cuisineTypes, this.thumbUrl, this.imageUrl);
+  Establishment(
+      {this.id,
+      this.streetAddress,
+      this.streetAddress2,
+      this.zipCode,
+      this.city,
+      this.state,
+      this.country,
+      this.location,
+      this.name,
+      this.description,
+      this.fbPlaceId,
+      this.currency,
+      this.priceRange,
+      this.cuisineTypes,
+      this.thumbUrl,
+      this.imageUrl,
+      this.menu});
 
   /// Translate price range into a string of currency symbols eg. €€€
   String get priceDisplay {
@@ -66,31 +81,38 @@ class Establishment {
     return cuisineTypeDescriptions[defaultCuisineType];
   }
 
-  /// Construct from json
-  static Establishment fromJson(Map<String, dynamic> json) {
-    int currencyIndex = 0; // Default to eur
-    try {
-      currencyIndex = json['currency'] as int;
-    } catch (e) {
-      // TODO handle error
-      print("Error getting establishment currency!");
-    }
-    Currency currency = Currency.values[currencyIndex];
+  /// Set menu
+  void setMenu(Menu menu) {
+    this.menu = menu;
+  }
 
-    int priceRangeIndex = 1; // Default to medium price
+  /// Gets LatLng from geopoint json
+  static LatLng _getLocation(json) {
+    LatLng location; // No default location as it's a fatal error
     try {
-      priceRangeIndex = json['priceRange'] as int;
+      GeoPoint position = json as GeoPoint;
+      location = LatLng(position.latitude, position.longitude);
     } catch (e) {
-      // TODO handle error
-      print("Error getting establishment price range!");
+      try {
+        location = LatLng(json['_latitude'] as double, json['_longitude'] as double);
+      } catch (e) {
+        // TODO handle FATAL error
+        print("Error getting establishment GPS location!");
+        print("JSON: " + json.toString());
+      }
     }
-    PriceRange priceRange = PriceRange.values[priceRangeIndex];
 
+    return location;
+  }
+
+  /// Gets a list of cuisine types from json array
+  static List<CuisineType> _getCuisineTypes(json) {
     // Transform database cuisine type indices to enums
     List<int> cuisineTypeIndices = List();
     List<CuisineType> cuisineTypes = List();
+
     try {
-      cuisineTypeIndices = List.from(json['cuisineTypes']);
+      cuisineTypeIndices = List.from(json);
       for (var value in cuisineTypeIndices) {
         cuisineTypes.add(CuisineType.values[value]);
       }
@@ -100,33 +122,57 @@ class Establishment {
       cuisineTypes = [CuisineType.other]; // 'Other' type on error
     }
 
-    LatLng location; // No default location as it's a fatal error
+    return cuisineTypes;
+  }
+
+  /// Gets PriceRange from json
+  static PriceRange _getPriceRange(json) {
+    int priceRangeIndex;
+
     try {
-      GeoPoint position = json['position'] as GeoPoint;
-      location = LatLng(position.latitude, position.longitude);
+      priceRangeIndex = json as int;
     } catch (e) {
-      // TODO handle FATAL error
-      print("Error getting establishment GPS location!");
+      priceRangeIndex = 1; // Default to medium price on error
+      // TODO handle error
+      print("Error getting establishment price range!");
     }
 
+    return PriceRange.values[priceRangeIndex];
+  }
+
+  static Currency _getCurrency(json) {
+    int currencyIndex;
+    try {
+      currencyIndex = json as int;
+    } catch (e) {
+      currencyIndex = 0; // Default to eur on error
+      // TODO handle error
+      print("Error getting establishment currency!");
+    }
+
+    return Currency.values[currencyIndex];
+  }
+
+  /// Construct from json
+  static Establishment fromJson(Map<String, dynamic> json) {
     return Establishment(
-      json['id'].toString(),
-      json['streetAddress'].toString(),
-      json['streetAddress2'].toString(),
-      json['zipCode'].toString(),
-      json['city'].toString(),
-      json['state'].toString(),
-      json['country'].toString(),
-      location,
-      json['name'].toString(),
-      json['description'].toString(),
-      '',
-      currency,
-      priceRange,
-      cuisineTypes,
-      json['thumbUrl'].toString(),
-      json['imageUrl'].toString(),
-    );
+        id: json['id'] as String,
+        streetAddress: json['streetAddress'] as String,
+        streetAddress2: json['streetAddress2'] as String,
+        zipCode: json['zipCode'] as String,
+        city: json['city'] as String,
+        state: json['state'] as String,
+        country: json['country'] as String,
+        location: _getLocation(json['position']),
+        name: json['name'] as String,
+        description: json['description'] as String,
+        fbPlaceId: '',
+        currency: _getCurrency(json['currency']),
+        priceRange: _getPriceRange(json['priceRange']),
+        cuisineTypes: _getCuisineTypes(json['cuisineTypes']),
+        thumbUrl: json['thumbUrl'] as String,
+        imageUrl: json['imageUrl'] as String,
+        menu: Menu());
   }
 
   /// Only check id equality

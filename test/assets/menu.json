@@ -1,0 +1,16 @@
+{
+  "categories": [
+    {
+      "name": "seafood",
+      "items": [
+        {
+          "price": "19.99",
+          "name": "Fried Turtle",
+          "description": "May contain nuts"
+        }
+      ]
+    }
+  ],
+  "name": "Main Menu",
+  "language": "fi"
+}
