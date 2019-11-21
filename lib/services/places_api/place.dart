@@ -1,5 +1,5 @@
 import 'review.dart';
-import 'opening_hour_period.dart';
+import '../../models/establishment/opening_hour_period.dart';
 
 class Place {
   final String name;

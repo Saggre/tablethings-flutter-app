@@ -4,7 +4,7 @@
   "city": "Vantaa",
   "priceRange": 0,
   "country": "fi",
-  "imageUrl": "",
+  "imageUrl": "https://i.imgur.com/nd2Atcg.jpg",
   "businessHours": [
     {
       "open": false,
@@ -34,7 +34,7 @@
     {
       "open": true,
       "day": 2,
-      "time": "390"
+      "time": 390
     },
     {
       "open": false,
@@ -69,12 +69,12 @@
     {
       "open": true,
       "day": 6,
-      "time": "660"
+      "time": 660
     }
   ],
   "description": "Kiva kebupaikka sillan alla",
   "zipCode": "01620",
-  "thumbUrl": "",
+  "thumbUrl": "http://www.campaigncentre.com.au/_client/_images/ORANA_MA0515/outlet/logo/dominos.jpg",
   "streetAddress2": "",
   "position": {
     "_latitude": 60.2779235,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong/latlong.dart';
+import 'package:tablething/models/establishment/opening_hour_period.dart';
 import 'cuisine_type_description.dart';
 import 'cuisine_types.dart';
 import 'menu/menu.dart';
@@ -30,6 +31,7 @@ class Establishment {
   final Currency currency;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
+  final List<OpeningHourPeriod> openingHours;
 
   Menu menu;
 
@@ -52,6 +54,7 @@ class Establishment {
       this.currency,
       this.priceRange,
       this.cuisineTypes,
+      this.openingHours,
       this.thumbUrl,
       this.imageUrl,
       this.menu});
@@ -140,6 +143,7 @@ class Establishment {
     return PriceRange.values[priceRangeIndex];
   }
 
+  /// Gets currency enum from json int
   static Currency _getCurrency(json) {
     int currencyIndex;
     try {
@@ -151,6 +155,18 @@ class Establishment {
     }
 
     return Currency.values[currencyIndex];
+  }
+
+  /// Gets opening hours from json
+  static List<OpeningHourPeriod> _getOpeningHours(json) {
+    try {
+      return (json as List).map((period) {
+        return OpeningHourPeriod.fromJson(period);
+      }).toList();
+    } catch (err) {
+      print("Error getting opening hours! " + err.toString());
+      return List<OpeningHourPeriod>(); // Default to empty periods
+    }
   }
 
   /// Construct from json
@@ -170,6 +186,7 @@ class Establishment {
         currency: _getCurrency(json['currency']),
         priceRange: _getPriceRange(json['priceRange']),
         cuisineTypes: _getCuisineTypes(json['cuisineTypes']),
+        openingHours: _getOpeningHours(json['businessHours']),
         thumbUrl: json['thumbUrl'] as String,
         imageUrl: json['imageUrl'] as String,
         menu: Menu());
