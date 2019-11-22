@@ -9,7 +9,8 @@ import 'json_loader.dart';
 class ApiClient {
   Duration _requestDelay = Duration(seconds: 1);
   List<String> _fakeJsons = [
-    'establishment.json',
+    'establishment_lilja.json',
+    'establishment_willihanhi.json',
   ];
 
   ApiClient() {}

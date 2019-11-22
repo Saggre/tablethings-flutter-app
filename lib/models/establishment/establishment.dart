@@ -27,7 +27,7 @@ class Establishment {
   /// Info
   final String name;
   final String description;
-  final String fbPlaceId; // Not required
+  final String graphId; // Facebook graph place id
   final Currency currency;
   final PriceRange priceRange;
   final List<CuisineType> cuisineTypes;
@@ -50,7 +50,7 @@ class Establishment {
       this.location,
       this.name,
       this.description,
-      this.fbPlaceId,
+      this.graphId,
       this.currency,
       this.priceRange,
       this.cuisineTypes,
@@ -177,7 +177,7 @@ class Establishment {
   }
 
   /// Construct from json
-  static Establishment fromJson(Map<String, dynamic> json) {
+  factory Establishment.fromJson(Map<String, dynamic> json) {
     return Establishment(
         id: json['id'] as String,
         streetAddress: json['streetAddress'] as String,
@@ -189,7 +189,7 @@ class Establishment {
         location: _getLocation(json['position']),
         name: json['name'] as String,
         description: json['description'] as String,
-        fbPlaceId: '',
+        graphId: json['graphId'] as String,
         currency: _getCurrency(json['currency']),
         priceRange: _getPriceRange(json['priceRange']),
         cuisineTypes: _getCuisineTypes(json['cuisineTypes']),

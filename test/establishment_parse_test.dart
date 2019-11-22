@@ -5,7 +5,7 @@ import 'package:tablething/services/json_loader.dart';
 
 void main() {
   test('Establishment JSON should be parsed correctly', () async {
-    var result = await JsonLoader().parseJsonFromFile('assets/establishment.json', test: true);
+    var result = await JsonLoader().parseJsonFromFile('assets/establishment_lilja.json', test: true);
     Establishment establishment = Establishment.fromJson(result);
 
     result = await JsonLoader().parseJsonFromFile('assets/menu.json', test: true);
