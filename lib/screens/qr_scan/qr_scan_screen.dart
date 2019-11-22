@@ -2,10 +2,12 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:tablething/localization/translate.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/establishment_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/main.dart';
+import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 
 class QRScanResult {}
@@ -81,7 +83,12 @@ class QRScanScreenState extends State<QRScanScreen> {
 
   /// Navigate to establishment screen and send data to it
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
-    EstablishmentScreenArguments args = EstablishmentScreenArguments(establishmentId, tableId);
+    var package = FetchablePackage<String, Establishment>(establishmentId);
+
+    EstablishmentScreenArguments args = EstablishmentScreenArguments(
+      establishmentPackage: package,
+      tableId: tableId,
+    );
 
     Navigator.pushReplacement(
       context,

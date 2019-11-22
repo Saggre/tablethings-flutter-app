@@ -3,29 +3,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/theme/theme.dart';
-
-import 'circular_image.dart';
 
 class EstablishmentInfo extends StatelessWidget {
   final Establishment establishment;
+  final BoxDecoration decoration;
+  final Widget child;
 
   const EstablishmentInfo({
     Key key,
     this.establishment,
+    this.decoration,
+    this.child,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(25.0),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
-        BoxShadow(
-          color: Color(0x66000000),
-          offset: Offset(0.0, 1.0),
-          blurRadius: 5,
-        ),
-      ]),
+      decoration: decoration,
       child: Column(children: <Widget>[
         _getTitle(),
         _getDescription(),
@@ -37,39 +32,8 @@ class EstablishmentInfo extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(bottom: 10),
         ),
-        _getSearchBar(),
+        child == null ? Container() : child,
       ]),
-    );
-  }
-
-  Widget _getSearchBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
-        BoxShadow(
-          color: Color(0x33000000),
-          offset: Offset(0.0, 1.0),
-          blurRadius: 5,
-        ),
-      ]),
-      child: Row(
-        children: <Widget>[
-          Flexible(
-              child: TextField(
-                  decoration: InputDecoration(
-            hintText: t('Search menu'),
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.grey),
-          ))),
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.black,
-            ),
-            onPressed: () {},
-          ),
-        ],
-      ),
     );
   }
 
