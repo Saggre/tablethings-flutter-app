@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
+import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
-import 'package:tablething/components/secondary_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
-
-import 'components/menu_view.dart';
+import 'package:tablething/screens/establishment/components/establishment_app_bar.dart';
+import 'package:tablething/theme/colors.dart';
+import 'components/menu_view/menu_view.dart';
 
 /// Arguments sent to this screen
 class EstablishmentScreenArguments {
@@ -40,7 +41,26 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
 
   /// Main meat of the screen
   Widget _getEstablishmentInfo(Establishment establishment) {
-    return MenuView(menu: establishment.menu);
+    return CustomScrollView(
+      slivers: <Widget>[
+        EstablishmentAppBar(
+          establishment: establishment,
+        ),
+        SliverToBoxAdapter(
+          child: EstablishmentInfo(
+            child: Column(
+              children: <Widget>[
+                _getSearchBar(),
+              ],
+            ),
+            establishment: establishment,
+          ),
+        ),
+        MenuView(
+          menu: establishment.menu,
+        ),
+      ],
+    );
 
     return Stack(
       children: <Widget>[
@@ -78,6 +98,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   }
 
   Widget _getSearchBar() {
+    // TODO onchanged and make its own widget
     return Container(
       padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
@@ -117,7 +138,8 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     SingleEstablishmentBlocEvent event = SingleEstablishmentBlocEvent(args.establishmentPackage);
     BlocProvider.of<SingleEstablishmentBloc>(context).add(event);
 
-    return SafeArea(
+    return ColoredSafeArea(
+      color: appColors[0],
       child: Scaffold(
         key: _scaffoldKey,
         body: BlocBuilder<SingleEstablishmentBloc, SingleEstablishmentBlocState>(

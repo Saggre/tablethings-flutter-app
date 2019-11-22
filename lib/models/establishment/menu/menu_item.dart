@@ -5,8 +5,9 @@ class MenuItem {
   final String name;
   final String description;
   final String price;
+  final String imageUrl;
 
-  MenuItem({this.name, this.description, this.price});
+  MenuItem({this.name, this.description, this.price, this.imageUrl});
 
   String get formattedName {
     return StringTools.capitalize(name);
@@ -25,6 +26,7 @@ class MenuItem {
       name: json["name"] as String,
       description: json["description"] as String,
       price: json["price"] as String, // TODO monetary format
+      imageUrl: json["imageUrl"] as String,
     );
   }
 }

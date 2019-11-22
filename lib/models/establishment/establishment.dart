@@ -61,6 +61,14 @@ class Establishment {
 
   /// Translate price range into a string of currency symbols eg. €€€
   String get priceDisplay {
+    final buffer = StringBuffer();
+    for (int i = 0; i < priceRange.index + 1; i++) {
+      buffer.write(currencySymbol);
+    }
+    return buffer.toString();
+  }
+
+  String get currencySymbol {
     String currencySymbol = '€';
 
     if (currency == Currency.gbp) {
@@ -70,12 +78,11 @@ class Establishment {
     }
 
     // TODO add more currencies
+  }
 
-    final buffer = StringBuffer();
-    for (int i = 0; i < priceRange.index + 1; i++) {
-      buffer.write(currencySymbol);
-    }
-    return buffer.toString();
+  /// Formats a price string. Adds currency symbol and decides decimal point etc.
+  String formatPrice(String priceString) {
+    return priceString + currencySymbol;
   }
 
   /// Get this establishment's main cuisine type or 'other' type if no types are set

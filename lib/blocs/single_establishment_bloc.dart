@@ -33,8 +33,8 @@ class SingleEstablishmentBloc extends Bloc<SingleEstablishmentBlocEvent, SingleE
       establishment = event.establishmentPackage.getData();
     } else {
       establishment = await apiClient.getEstablishment(event.establishmentPackage.getFetchId());
+      print(establishment.name);
     }
-
     yield SingleEstablishmentBlocState(establishment);
   }
 }

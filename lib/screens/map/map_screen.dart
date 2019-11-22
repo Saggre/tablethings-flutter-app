@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
+import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/screens/map/components/establishment_icon_popup.dart';
@@ -152,7 +153,8 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return ColoredSafeArea(
+      color: appColors[0],
       child: Scaffold(
         key: _scaffoldKey,
         body: Stack(

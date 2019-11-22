@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/util/text_factory.dart';
 
 class EstablishmentInfo extends StatelessWidget {
   final Establishment establishment;
@@ -19,7 +19,7 @@ class EstablishmentInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(25.0),
+      padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 20.0),
       decoration: decoration,
       child: Column(children: <Widget>[
         _getTitle(),
@@ -38,17 +38,11 @@ class EstablishmentInfo extends StatelessWidget {
   }
 
   Widget _getDescription() {
-    TextStyle textStyle = TextStyle(
-      color: Colors.grey[500],
-      fontSize: 15,
-      fontWeight: FontWeight.w400,
-    );
-
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Text(establishment.description, style: textStyle),
+        child: TextFactory.p(establishment.description),
       ),
     );
   }
@@ -111,6 +105,7 @@ class EstablishmentInfo extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
         children: <Widget>[
+          // TODO replace with textfactory
           Text(establishment.description, style: textStyle),
           Text(establishment.priceDisplay, style: textStyle),
           Text('Aukioloajat', style: textStyle),
@@ -134,14 +129,7 @@ class EstablishmentInfo extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 10),
           ),*/
-          Text(
-            establishment.name,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          TextFactory.h1(establishment.name),
         ],
       ),
     );

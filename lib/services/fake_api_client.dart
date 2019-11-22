@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/models/establishment/menu/menu.dart';
 
 import 'json_loader.dart';
 
@@ -12,26 +14,38 @@ class ApiClient {
 
   ApiClient() {}
 
+  Future<Establishment> _getEstablishmentFromFile(String fileName) async {
+    var result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
+
+    Establishment establishment = Establishment.fromJson(result);
+
+    result = await JsonLoader().parseJsonFromAssets('assets/debug/menu.json');
+    Menu menu = Menu.fromJson(result);
+
+    establishment.setMenu(menu);
+
+    return establishment;
+  }
+
   /// Get a list of establishments
   Future<List<Establishment>> getEstablishments() async {
     List<Establishment> establishments = List();
 
-    _fakeJsons.forEach((jsonFile) async {
-      var result = await JsonLoader().parseJsonFromAssets('assets/debug/' + jsonFile);
-      establishments.add(Establishment.fromJson(result));
-    });
+    for (int i = 0; i < _fakeJsons.length; i++) {
+      var e = await _getEstablishmentFromFile(_fakeJsons[i]);
+      establishments.add(e);
+    }
 
     return Future.value(establishments).timeout(_requestDelay);
   }
 
   /// Get a single establishment with id
   Future<Establishment> getEstablishment(String id) async {
+    List<Establishment> establishments = await getEstablishments();
     Establishment ret;
 
-    (await getEstablishments()).forEach((object) {
-      print("Object: " + object.id + " | id: " + id);
+    establishments.forEach((object) {
       if (object.id == id) {
-        print("Found");
         ret = object;
       }
     });

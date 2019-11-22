@@ -10,6 +10,8 @@ import 'package:tablething/main.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 
+import 'components/lens_cover.dart';
+
 class QRScanResult {}
 
 class QRScanEmptyResult extends QRScanResult {}
@@ -196,18 +198,7 @@ class QRScanScreenState extends State<QRScanScreen> {
       key: _scaffoldKey,
       body: Stack(children: <Widget>[
         _getCameraView(),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.all(50),
-                child: Container(
-                    child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 1))),
-                    height: 250,
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.8)))),
-          ],
-        ),
+        LensCover(),
       ]),
     );
   }
