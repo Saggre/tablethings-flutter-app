@@ -3,30 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'package:tablething/screens/main_screen.dart';
-import 'package:tablething/models/user.dart';
-import 'package:tablething/theme/colors.dart';
-
 import 'blocs/bloc.dart';
 import 'localization/translate.dart';
 
+// TODO create qr-scan bloc
 List<CameraDescription> cameras;
 
 void main() async {
-  // TODO move to different method
-  // Get phone cameras
+  runApp(MainApp());
   cameras = await availableCameras();
-
-  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
+  @override
+  MainAppState createState() => MainAppState();
+}
+
+class MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<UserLocationBloc>(builder: (BuildContext context) => UserLocationBloc()),
-          BlocProvider<GeoEstablishmentBloc>(builder: (BuildContext context) => GeoEstablishmentBloc()),
+          BlocProvider<MapBloc>(builder: (BuildContext context) => MapBloc()),
           BlocProvider<SingleEstablishmentBloc>(builder: (BuildContext context) => SingleEstablishmentBloc()),
         ],
         child: MaterialApp(

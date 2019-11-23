@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
@@ -59,16 +58,6 @@ class MapScreenState extends State<MapScreen> {
   bool _containsMarker(Establishment establishment) {
     return _mapMarkers.containsKey(establishment);
   }
-
-  /// Updates a marker with its id
-  /*void _updateMarker(Latlong.LatLng position, MarkerId markerId) {
-    if (_containsMarker(markerId)) {
-      print("Moving marker");
-
-      // Move the marker by removing the old one (this will likely be updated in future gmap versions)
-      _mapMarkers[markerId] = _mapMarkers[markerId].copyWith(positionParam: LatLng(position.latitude, position.longitude));
-    }
-  }*/
 
   /// Adds a marker to the map
   void _addMarker(Establishment establishment) async {
@@ -143,12 +132,11 @@ class MapScreenState extends State<MapScreen> {
     final GoogleMapController controller = await _controller.future;
     LatLngBounds mapBounds = await controller.getVisibleRegion();
 
-    // Translate google map coords to generic LatLng
-    var event = GeoEstablishmentBlocEvent(Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
-        Latlong.LatLng(mapBounds.southwest.latitude, mapBounds.southwest.longitude));
-
     // Get establishments inside the bounds from database
-    BlocProvider.of<GeoEstablishmentBloc>(context).add(event);
+    BlocProvider.of<MapBloc>(context).add(GeoAreaMapBlocEvent(
+      Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
+      Latlong.LatLng(mapBounds.southwest.latitude, mapBounds.southwest.longitude),
+    ));
   }
 
   @override
@@ -189,7 +177,7 @@ class MapScreenState extends State<MapScreen> {
   }
 
   Widget _getMap() {
-    return BlocBuilder<GeoEstablishmentBloc, GeoEstablishmentBlocState>(
+    return BlocBuilder<MapBloc, MapBlocState>(
       builder: (context, state) {
         // Establishments bloc builder
 
