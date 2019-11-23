@@ -6,12 +6,8 @@ import 'package:tablething/screens/main_screen.dart';
 import 'blocs/bloc.dart';
 import 'localization/translate.dart';
 
-// TODO create qr-scan bloc
-List<CameraDescription> cameras;
-
 void main() async {
   runApp(MainApp());
-  cameras = await availableCameras();
 }
 
 class MainApp extends StatefulWidget {

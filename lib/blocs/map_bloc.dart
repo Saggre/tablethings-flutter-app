@@ -18,13 +18,25 @@ class GeoAreaMapBlocEvent extends MapBlocEvent {
 }
 
 /// Event for when the user moves in physical space
-class UserMovedMapBlocEvent extends MapBlocEvent {}
+class UserMovedMapBlocEvent extends MapBlocEvent {
+  LatLng userLocation;
+
+  UserMovedMapBlocEvent(this.userLocation);
+}
 
 /// State containing a list of establishments to return
-class MapBlocState {
+class MapBlocState {}
+
+class UserMovedMapBlocState extends MapBlocState {
+  LatLng userLocation;
+
+  UserMovedMapBlocState(this.userLocation);
+}
+
+class GeoAreaMapBlocState extends MapBlocState {
   List<Establishment> establishments;
 
-  MapBlocState(this.establishments);
+  GeoAreaMapBlocState(this.establishments);
 }
 
 /// Bloc for the map screen
@@ -37,23 +49,29 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
   StreamSubscription<LocationData> _locationSubscription;
 
   MapBloc() {
+    print("STARTING");
     _initLocationService((LocationData result) {
+      print("GPS moved");
       add(
-        UserMovedMapBlocEvent(),
+        UserMovedMapBlocEvent(LatLng(result.latitude, result.longitude)),
       );
     });
   }
 
   @override
   // Init with empty list
-  MapBlocState get initialState => MapBlocState(List<Establishment>());
+  MapBlocState get initialState => MapBlocState();
 
   @override
   Stream<MapBlocState> mapEventToState(MapBlocEvent event) async* {
-    // TODO different methods for different states
-    // Get establishments inside bounds from database and return state
-    List<Establishment> establishments = await apiClient.getEstablishments();
-    yield MapBlocState(establishments);
+    if (event is UserMovedMapBlocEvent) {
+      yield UserMovedMapBlocState(event.userLocation);
+    } else if (event is GeoAreaMapBlocEvent) {
+      var establishments = await apiClient.getEstablishments();
+      yield GeoAreaMapBlocState(establishments);
+    } else {
+      yield MapBlocState();
+    }
   }
 
   /// Start gps

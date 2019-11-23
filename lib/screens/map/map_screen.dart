@@ -28,21 +28,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class MapScreenState extends State<MapScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   Completer<GoogleMapController> _controller = Completer();
-
   Map<Establishment, Marker> _mapMarkers = Map();
-
-  var _location = Location();
 
   /// JSON Google map style
   String _mapStyle;
-
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 12,
-  );
 
   @override
   void initState() {
@@ -126,8 +116,8 @@ class MapScreenState extends State<MapScreen> {
   }
 
   /// Sends an event to get establishments in the currently visible map area
-  void _refreshGeoArea() async {
-    print("Refreshing geo area");
+  void _refreshMarkersInArea() async {
+    print("Refreshing markers in currently visible area");
 
     final GoogleMapController controller = await _controller.future;
     LatLngBounds mapBounds = await controller.getVisibleRegion();
@@ -144,7 +134,6 @@ class MapScreenState extends State<MapScreen> {
     return ColoredSafeArea(
       color: appColors[0],
       child: Scaffold(
-        key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
             _getMap(),
@@ -176,64 +165,61 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
+  double _minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
+  Latlong.LatLng _userLastPosition = Latlong.LatLng(0, 0);
+  int _timesUpdatedUserLocation = 0; // First update teleports and later ones are smooth. Can also be used to identify when a map loader has to be shown
+
   Widget _getMap() {
     return BlocBuilder<MapBloc, MapBlocState>(
       builder: (context, state) {
-        // Establishments bloc builder
+        if (state is UserMovedMapBlocState) {
+          // Move map to user location after map create
+          double distance = Latlong.Distance().distance(_userLastPosition, state.userLocation).toDouble();
+          print("Dist: " + distance.toString());
+          if (distance >= _minUpdateDist || _timesUpdatedUserLocation == 0) {
+            _userLastPosition = state.userLocation;
+            _refreshMarkersInArea(); // Refresh markers when moved to a new area
+            _timesUpdatedUserLocation++;
 
-        List<Establishment> establishments = state.establishments;
+            // When map is initially set, it uses map widget's initialCameraPosition proeprty
+            if (_timesUpdatedUserLocation > 0) {
+              _moveMapToLatLng(_userLastPosition);
+            }
+          }
+        }
 
-        debugPrint(state.establishments.length.toString() + " establishments in area");
+        if (state is GeoAreaMapBlocState) {
+          List<Establishment> establishments = state.establishments;
 
-        establishments.forEach((establishment) {
-          // Create marker with establishment id
-          _addMarker(establishment);
-        });
+          debugPrint(state.establishments.length.toString() + " establishments in area");
 
-        // End establishments bloc builder
+          establishments.forEach((establishment) {
+            // Create marker with establishment id
+            _addMarker(establishment);
+          });
+        }
+
+        // TODO map loader
+        if (_timesUpdatedUserLocation == 0) {
+          return Container(color: Colors.pink);
+        }
 
         return GoogleMap(
           myLocationEnabled: true,
           mapType: MapType.normal,
-          initialCameraPosition: _kGooglePlex,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(_userLastPosition.latitude, _userLastPosition.longitude),
+            zoom: 12,
+          ),
           mapToolbarEnabled: false,
           padding: EdgeInsets.only(bottom: 65, left: 5),
           onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
             controller.setMapStyle(_mapStyle);
-
-            double minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
-            Latlong.LatLng userOriginalPosition = Latlong.LatLng(0, 0);
-            int timesUpdatedUserLocation = 0; // First update teleports and later ones are smooth
-
-            // Move map to user location after map create
-            _locationChanged(LocationData newLocation) {
-              Latlong.LatLng newLatLng = Latlong.LatLng(newLocation.latitude, newLocation.longitude);
-              double distance = Latlong.Distance().distance(userOriginalPosition, newLatLng).toDouble();
-              print("Dist: " + distance.toString());
-              if (distance >= minUpdateDist) {
-                userOriginalPosition = newLatLng;
-                _moveMapToLatLng(newLatLng, instantMove: timesUpdatedUserLocation == 0);
-                timesUpdatedUserLocation++;
-              }
-            }
-
-            // Initial location get
-            _location.getLocation().then((location) {
-              _locationChanged(location);
-            });
-
-            // Listen to location changes
-            _location.onLocationChanged().listen((LocationData event) {
-              _locationChanged(event);
-            });
-
-            // Set markers after map create
-            _refreshGeoArea();
           },
           onCameraIdle: () async {
             // Set markers when map stops moving
-            _refreshGeoArea();
+            _refreshMarkersInArea();
           },
           markers: Set<Marker>.of(_mapMarkers.values),
         );

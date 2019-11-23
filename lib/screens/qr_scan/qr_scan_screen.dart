@@ -5,11 +5,8 @@ import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/establishment_barcode.dart';
 import 'package:flutter/material.dart';
-import 'package:tablething/components/main_app_bar.dart';
-import 'package:tablething/main.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
-
 import 'components/lens_cover.dart';
 
 class QRScanResult {}
@@ -37,10 +34,12 @@ class QRScanScreen extends StatefulWidget {
   }
 }
 
+/// Doesn't implement bloc pattern
 class QRScanScreenState extends State<QRScanScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   CameraController _cameraController;
+  List<CameraDescription> _cameras;
 
   @override
   void initState() {
@@ -50,7 +49,9 @@ class QRScanScreenState extends State<QRScanScreen> {
 
   /// Start the camera
   void _initCamera() async {
-    _cameraController = CameraController(cameras[0], ResolutionPreset.medium);
+    _cameras = await availableCameras();
+
+    _cameraController = CameraController(_cameras[0], ResolutionPreset.medium);
     _cameraController.initialize().then((_) {
       if (!mounted) {
         return;
@@ -79,6 +80,7 @@ class QRScanScreenState extends State<QRScanScreen> {
         }
       });
 
+      // Rebuild with camera
       setState(() {});
     });
   }
@@ -184,12 +186,13 @@ class QRScanScreenState extends State<QRScanScreen> {
 
   /// Get widget containing camera's view
   Widget _getCameraView() {
-    if (!_cameraController.value.isInitialized) {
-      return Container();
+    // cameraController is created in an async function so it may be null here
+    if (_cameraController != null && _cameraController.value.isInitialized) {
+      return CameraPreview(_cameraController);
     }
-    return Container(
-      child: CameraPreview(_cameraController),
-    );
+
+    // TODO add some sort of camera loader
+    return Container(color: Colors.black);
   }
 
   @override
