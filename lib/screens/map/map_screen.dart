@@ -132,7 +132,7 @@ class MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return ColoredSafeArea(
-      color: appColors[0],
+      color: mainThemeColor,
       child: Scaffold(
         body: Stack(
           children: <Widget>[
