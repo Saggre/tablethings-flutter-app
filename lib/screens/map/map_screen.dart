@@ -18,6 +18,7 @@ import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:latlong/latlong.dart' as Latlong;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:tablething/util/text_factory.dart';
 
 class MapScreen extends StatefulWidget {
   final bool isFullScreenDialog;
@@ -159,7 +160,24 @@ class MapScreenState extends State<MapScreen> {
                   )*/
                   LayeredButtonGroup(
                     buttonText: t('Scan and eat'),
-                    subMenu: TabbedFoodMenu(),
+                    subMenu: TabbedFoodMenu(
+                      firstTabOptions: TabbedMenuOptions(
+                        truncated: TextFactory.button('...'),
+                        expanded: TextFactory.button('Categories'),
+                      ),
+                      secondTabOptions: TabbedMenuOptions(
+                        truncated: TextFactory.button('...'),
+                        expanded: TextFactory.button('Categories'),
+                      ),
+                      thirdTabOptions: TabbedMenuOptions(
+                        truncated: TextFactory.button('...'),
+                        expanded: TextFactory.button('Categories'),
+                      ),
+                      fourthTabOptions: TabbedMenuOptions(
+                        truncated: TextFactory.button('...'),
+                        expanded: TextFactory.button('Categories'),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -218,7 +236,7 @@ class MapScreenState extends State<MapScreen> {
             zoom: 12,
           ),
           mapToolbarEnabled: false,
-          padding: EdgeInsets.only(bottom: 65, left: 5),
+          padding: EdgeInsets.only(bottom: 130, left: 5),
           onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
             controller.setMapStyle(_mapStyle);
