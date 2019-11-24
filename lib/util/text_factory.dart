@@ -36,6 +36,13 @@ class TextFactory {
     color: Colors.white,
     fontWeight: FontWeight.w300,
     fontSize: 20,
+    shadows: [
+      Shadow(
+        blurRadius: 5.0,
+        color: Color(0x66000000),
+        offset: Offset(0.0, 0.0),
+      ),
+    ],
   );
 
   /// Main heading

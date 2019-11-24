@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:location/location.dart';
 import 'package:tablething/components/colored_safe_area.dart';
+import 'package:tablething/components/layered_button_group/layered_button_group.dart';
+import 'package:tablething/components/layered_button_group/menus/tabbed_menu.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/screens/map/components/establishment_icon_popup.dart';
@@ -138,12 +140,11 @@ class MapScreenState extends State<MapScreen> {
           children: <Widget>[
             _getMap(),
             Container(
-              padding: EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  RaisedGradientButton(
+                  /*RaisedGradientButton(
                     text: t('Scan and eat'),
                     iconData: Icons.fastfood,
                     gradient: buttonGradient,
@@ -154,7 +155,11 @@ class MapScreenState extends State<MapScreen> {
                         MaterialPageRoute(builder: (context) => QRScanScreen()),
                       );
                     },
-                  )
+                  )*/
+                  LayeredButtonGroup(
+                    buttonText: t('Scan and eat'),
+                    subMenu: TabbedMenu(),
+                  ),
                 ],
               ),
             ),
