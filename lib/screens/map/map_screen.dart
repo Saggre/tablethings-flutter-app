@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:location/location.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
+import 'package:tablething/components/layered_button_group/menus/tabbed_food_menu.dart';
 import 'package:tablething/components/layered_button_group/menus/tabbed_menu.dart';
 import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
@@ -158,7 +159,7 @@ class MapScreenState extends State<MapScreen> {
                   )*/
                   LayeredButtonGroup(
                     buttonText: t('Scan and eat'),
-                    subMenu: TabbedMenu(),
+                    subMenu: TabbedFoodMenu(),
                   ),
                 ],
               ),
