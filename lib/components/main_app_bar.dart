@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/inverted_rounded_rectangle.dart';
+import 'package:tablething/components/clippers/inverted_rounded_rectangle.dart';
 import 'package:tablething/theme/theme.dart';
 import 'clip_shadow_path.dart';
 

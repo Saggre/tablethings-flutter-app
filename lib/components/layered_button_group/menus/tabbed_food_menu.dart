@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/clip_shadow_path.dart';
-import 'package:tablething/components/inverted_rounded_rectangle.dart';
+import 'package:tablething/components/clippers/inverted_rounded_rectangle.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group_menu.dart';
 import 'package:tablething/theme/theme.dart';
 
@@ -149,6 +148,28 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                     ),
                     alignment: Alignment.centerRight,
                     child: _getTouch(1, tabWidth),
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: animationDuration,
+                  curve: animationCurve,
+                  left: (selectedTabIndex != 0 ? 0 : tabWidth * 2) + 4.0,
+                  height: 40.0,
+                  top: -4.0,
+                  width: tabWidth,
+                  child: ClipPath(
+                    clipper: InvertedRRectClipper(
+                      topRight: Radius.circular(32.0),
+                      rightMargin: 10.0,
+                      topMargin: 10.0,
+                    ),
+                    child: IgnorePointer(
+                      child: Container(
+                        height: 64,
+                        width: tabWidth,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
