@@ -146,18 +146,6 @@ class MapScreenState extends State<MapScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  /*RaisedGradientButton(
-                    text: t('Scan and eat'),
-                    iconData: Icons.fastfood,
-                    gradient: buttonGradient,
-                    onPressed: () {
-                      print('Opening QR-code scanner');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => QRScanScreen()),
-                      );
-                    },
-                  )*/
                   LayeredButtonGroup(
                     onTap: () {
                       print('Opening QR-code scanner');
@@ -169,20 +157,68 @@ class MapScreenState extends State<MapScreen> {
                     buttonText: t('Scan and eat'),
                     subMenu: TabbedFoodMenu(
                       firstTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.button('...'),
-                        expanded: TextFactory.button('Categories'),
+                        truncated: Text(
+                          t('...'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
+                        expanded: Text(
+                          t('Categories'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       secondTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.button('...'),
-                        expanded: TextFactory.button('Categories'),
+                        truncated: Text(
+                          t('...'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
+                        expanded: Text(
+                          t('Categories'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       thirdTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.button('...'),
-                        expanded: TextFactory.button('Categories'),
+                        truncated: Text(
+                          t('...'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
+                        expanded: Text(
+                          t('Categories'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       fourthTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.button('...'),
-                        expanded: TextFactory.button('Categories'),
+                        truncated: Text(
+                          t('...'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
+                        expanded: Text(
+                          t('Categories'),
+                          style: TextFactory.buttonStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),

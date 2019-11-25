@@ -49,7 +49,7 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
   });
 
   int selectedTabIndex;
-  Duration animationDuration = Duration(milliseconds: 110);
+  Duration animationDuration = Duration(milliseconds: 200);
   Curve animationCurve = Curves.easeInOut;
 
   @override
@@ -86,85 +86,69 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                   ),
                 ),
                 Positioned(
+                  left: tabWidth * 1.5,
                   child: AnimatedContainer(
                     duration: animationDuration,
                     curve: animationCurve,
-                    width: selectedTabIndex == 3 ? tabWidth * 3 : tabWidth * 5,
+                    width: selectedTabIndex == 3 ? tabWidth * 1.5 : tabWidth * 3.5,
                     alignment: Alignment.centerRight,
                     decoration: _getDecoration(Colors.grey[200]),
                     child: _getTouch(2, tabWidth),
                   ),
                 ),
-                Positioned(
+                AnimatedPositioned(
+                  duration: animationDuration,
+                  curve: animationCurve,
+                  left: selectedTabIndex == 0 ? 0 : tabWidth * 0,
+                  height: 64,
+                  child: AnimatedContainer(
+                    duration: animationDuration,
+                    curve: animationCurve,
+                    width: selectedTabIndex == 0 ? tabWidth * 3.5 : tabWidth * 1.5,
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          darkThemeColorGradient,
+                          darkThemeColor,
+                        ],
+                      ),
+                    ),
+                    child: _getTouch(0, tabWidth),
+                  ),
+                ),
+                AnimatedPositioned(
+                  left: () {
+                    if (selectedTabIndex == 0) {
+                      return tabWidth * 3;
+                    }
+                    return tabWidth * 1;
+                  }(),
+                  duration: animationDuration,
+                  curve: animationCurve,
                   child: AnimatedContainer(
                     duration: animationDuration,
                     curve: animationCurve,
                     width: () {
-                      if (selectedTabIndex == 2 || selectedTabIndex == 3) {
-                        return tabWidth * 2;
+                      if (selectedTabIndex == 1) {
+                        return tabWidth * 3;
                       }
 
-                      return tabWidth * 4;
+                      return tabWidth * 1;
                     }(),
-                    decoration: _getDecoration(Colors.white),
-                    alignment: Alignment.centerRight,
-                    child: _getTouch(1, tabWidth),
-                  ),
-                ),
-                AnimatedPositioned(
-                  duration: animationDuration,
-                  curve: animationCurve,
-                  left: selectedTabIndex == 0 ? 0 : tabWidth * -2,
-                  width: tabWidth * 4,
-                  height: 64,
-                  child: Container(
-                    width: tabWidth * 4,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Flexible(
-                          flex: 3,
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(32.0)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x66000000),
-                                  offset: Offset(0.0, 0.0),
-                                  blurRadius: 5,
-                                ),
-                              ],
-                              gradient: LinearGradient(
-                                colors: [
-                                  darkThemeColorGradient,
-                                  darkThemeColor,
-                                ],
-                              ),
-                            ),
-                            child: _getTouch(0, tabWidth),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: IgnorePointer(
-                            child: ClipShadowPath(
-                              clipper: InvertedRRectClipper(
-                                bottomLeft: Radius.circular(32.0),
-                              ),
-                              shadow: Shadow(
-                                blurRadius: 5.0,
-                                color: Color(0x66000000),
-                              ),
-                              child: Container(
-                                width: tabWidth,
-                                color: darkThemeColor,
-                              ),
-                            ),
-                          ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x66000000),
+                          offset: Offset(0.0, 0.0),
+                          blurRadius: 5,
                         ),
                       ],
+                      color: Colors.white,
                     ),
+                    alignment: Alignment.centerRight,
+                    child: _getTouch(1, tabWidth),
                   ),
                 ),
               ],
@@ -193,18 +177,32 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
         break;
     }
 
-    return Container(
-      width: selectedTabIndex == tabIndex ? tabWidth * 3 : tabWidth,
-      height: 64,
-      child: GestureDetector(
-        onTap: () {
-          setTabIndex(tabIndex);
-        },
-        child: Container(
-          color: Colors.transparent,
-          child: Center(
-            child: selectedTabIndex == tabIndex ? options.expanded : options.truncated,
-          ),
+    return GestureDetector(
+      onTap: () {
+        setTabIndex(tabIndex);
+      },
+      child: AnimatedContainer(
+        duration: animationDuration,
+        curve: animationCurve,
+        padding: EdgeInsets.symmetric(horizontal: 7),
+        width: selectedTabIndex == tabIndex ? tabWidth * 3 : tabWidth,
+        height: 64,
+        color: Colors.transparent,
+        child: Stack(
+          children: <Widget>[
+            AnimatedOpacity(
+              duration: animationDuration,
+              curve: animationCurve,
+              opacity: selectedTabIndex == tabIndex ? 1 : 0,
+              child: Center(child: options.expanded),
+            ),
+            AnimatedOpacity(
+              duration: animationDuration,
+              curve: animationCurve,
+              opacity: selectedTabIndex == tabIndex ? 0 : 1,
+              child: Center(child: options.truncated),
+            ),
+          ],
         ),
       ),
     );
