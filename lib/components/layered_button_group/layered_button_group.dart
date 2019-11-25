@@ -6,11 +6,13 @@ import 'package:tablething/util/text_factory.dart';
 class LayeredButtonGroup extends StatelessWidget {
   final String buttonText;
   final Widget subMenu;
+  final Function onTap;
 
   const LayeredButtonGroup({
     Key key,
     @required this.subMenu,
     @required this.buttonText,
+    @required this.onTap,
   }) : super(key: key);
 
   @override
@@ -34,9 +36,12 @@ class LayeredButtonGroup extends StatelessWidget {
               SizedBox(
                 height: 64,
                 child: GestureDetector(
-                  onTap: () {},
-                  child: Center(
-                    child: TextFactory.button(buttonText),
+                  onTap: () => onTap(),
+                  child: Container(
+                    color: Colors.transparent,
+                    child: Center(
+                      child: TextFactory.button(buttonText),
+                    ),
                   ),
                 ),
               ),

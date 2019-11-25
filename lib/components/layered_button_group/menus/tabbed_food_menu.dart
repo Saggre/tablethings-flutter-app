@@ -49,8 +49,8 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
   });
 
   int selectedTabIndex;
-  Duration animationDuration = Duration(milliseconds: 80);
-  Curve animationCurve = Curves.fastLinearToSlowEaseIn;
+  Duration animationDuration = Duration(milliseconds: 110);
+  Curve animationCurve = Curves.easeInOut;
 
   @override
   Widget build(BuildContext context) {

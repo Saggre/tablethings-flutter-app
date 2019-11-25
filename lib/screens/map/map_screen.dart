@@ -159,6 +159,13 @@ class MapScreenState extends State<MapScreen> {
                     },
                   )*/
                   LayeredButtonGroup(
+                    onTap: () {
+                      print('Opening QR-code scanner');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => QRScanScreen()),
+                      );
+                    },
                     buttonText: t('Scan and eat'),
                     subMenu: TabbedFoodMenu(
                       firstTabOptions: TabbedMenuOptions(
