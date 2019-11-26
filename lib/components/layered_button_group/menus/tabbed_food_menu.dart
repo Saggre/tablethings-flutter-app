@@ -47,8 +47,8 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
     this.fourthTabOptions,
   });
 
-  int selectedTabIndex;
-  Duration animationDuration = Duration(milliseconds: 200);
+  int selectedTabIndex = 0;
+  Duration animationDuration = Duration(milliseconds: 110);
   Curve animationCurve = Curves.easeInOut;
 
   @override
@@ -154,14 +154,14 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                   duration: animationDuration,
                   curve: animationCurve,
                   left: (selectedTabIndex != 0 ? 0 : tabWidth * 2) + 4.0,
-                  height: 40.0,
+                  height: 37.0,
                   top: -4.0,
                   width: tabWidth,
                   child: ClipPath(
                     clipper: InvertedRRectClipper(
                       topRight: Radius.circular(32.0),
-                      rightMargin: 10.0,
-                      topMargin: 10.0,
+                      rightMargin: 4.0,
+                      topMargin: 4.0,
                     ),
                     child: IgnorePointer(
                       child: Container(

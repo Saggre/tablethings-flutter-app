@@ -4,7 +4,7 @@ import 'package:tablething/theme/theme.dart';
 
 enum ButtonIconPosition { beforeText, afterText }
 
-class RaisedGradientButton extends StatelessWidget {
+class FullButton extends StatelessWidget {
   final IconData iconData;
   final ButtonIconPosition iconPosition;
   final Color iconColor;
@@ -14,8 +14,9 @@ class RaisedGradientButton extends StatelessWidget {
   final double width;
   final double height;
   final Function onPressed;
+  final BorderRadius borderRadius;
 
-  const RaisedGradientButton({
+  const FullButton({
     Key key,
     this.iconData,
     this.iconPosition = ButtonIconPosition.afterText,
@@ -24,7 +25,8 @@ class RaisedGradientButton extends StatelessWidget {
     this.gradient,
     this.spacing = 10.0,
     this.width = double.infinity,
-    this.height = 50.0,
+    this.height = 64.0,
+    this.borderRadius = BorderRadius.zero,
     this.onPressed,
   }) : super(key: key);
 
@@ -69,14 +71,18 @@ class RaisedGradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      height: 56.0,
-      decoration: BoxDecoration(gradient: gradient, boxShadow: [
-        BoxShadow(
-          color: Color(0x66000000),
-          offset: Offset(0.0, 1.0),
-          blurRadius: 5,
-        ),
-      ]),
+      height: height,
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: borderRadius,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x66000000),
+            offset: Offset(0.0, 1.0),
+            blurRadius: 5,
+          ),
+        ],
+      ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(onTap: onPressed, child: Center(child: _getButtonContent())),

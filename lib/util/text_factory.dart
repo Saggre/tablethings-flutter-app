@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tablething/models/establishment/cuisine_types.dart';
 
 /// Allows to easily create texts with consistent style (like h1, h2, etc. in css)
 class TextFactory {
@@ -73,5 +74,19 @@ class TextFactory {
   /// Button text
   static Text button(String text) {
     return Text(text, style: buttonStyle);
+  }
+
+  //----------------------------------------
+
+  /// Returns a cuisine icon
+  static Widget getCuisineIcon(CuisineType type, {double width = 32, double height = 32}) {
+    return Image(
+      image: AssetImage(cuisineTypeDescriptions[type].iconPath),
+      width: width,
+      height: height,
+      color: null,
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.center,
+    );
   }
 }

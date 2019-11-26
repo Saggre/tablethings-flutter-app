@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:location/location.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/components/layered_button_group/menus/tabbed_food_menu.dart';
-import 'package:tablething/components/layered_button_group/menus/tabbed_menu.dart';
-import 'package:tablething/components/raised_gradient_button.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/screens/map/components/establishment_icon_popup.dart';
+import 'package:tablething/models/establishment/cuisine_types.dart';
+import 'package:tablething/screens/map/components/establishment_info_popup.dart';
 import 'package:tablething/screens/qr_scan/qr_scan_screen.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/theme/theme.dart';
@@ -17,7 +15,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:latlong/latlong.dart' as Latlong;
-import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:tablething/util/text_factory.dart';
 
 class MapScreen extends StatefulWidget {
@@ -31,9 +29,18 @@ class MapScreen extends StatefulWidget {
   }
 }
 
+/// Data for the establishment popup
+class MapScreenEstablishmentPopupOptions {
+  Establishment establishment;
+  bool visible = false;
+}
+
 class MapScreenState extends State<MapScreen> {
   Completer<GoogleMapController> _controller = Completer();
   Map<Establishment, Marker> _mapMarkers = Map();
+
+  // The establishment to show as a popup
+  MapScreenEstablishmentPopupOptions _establishmentPopup = MapScreenEstablishmentPopupOptions();
 
   /// JSON Google map style
   String _mapStyle;
@@ -84,18 +91,26 @@ class MapScreenState extends State<MapScreen> {
   /// When a marker is selected / tapped
   void _onMarkerTapped(Establishment establishment) {
     print('Tapped marker');
-    _showEstablishmentDialog(establishment);
+    _showEstablishmentPopup(establishment);
   }
 
   /// Show a dialog containing information about the marker
-  void _showEstablishmentDialog(Establishment establishment) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return EstablishmentIconPopup(
-            establishment: establishment,
-          );
-        });
+  void _showEstablishmentPopup(Establishment establishment) {
+    setState(() {
+      _establishmentPopup.establishment = establishment;
+      _establishmentPopup.visible = true;
+    });
+  }
+
+  /// Get's a popup widget containing info about an establishment
+  Widget _getEstablishmentPopupWidget() {
+    if (!_establishmentPopup.visible || _establishmentPopup.establishment == null) {
+      return Container();
+    }
+
+    return EstablishmentInfoPopup(
+      establishment: _establishmentPopup.establishment,
+    );
   }
 
   /// Moves the map to a certain coordinate
@@ -135,6 +150,14 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lightButtonTextStyle = TextFactory.buttonStyle.copyWith(color: Colors.black, shadows: [
+      Shadow(
+        blurRadius: 5.0,
+        color: Color(0x11000000),
+        offset: Offset(0.0, 0.0),
+      ),
+    ]);
+
     return ColoredSafeArea(
       color: mainThemeColor,
       child: Scaffold(
@@ -173,48 +196,30 @@ class MapScreenState extends State<MapScreen> {
                         ),
                       ),
                       secondTabOptions: TabbedMenuOptions(
-                        truncated: Text(
-                          t('...'),
-                          style: TextFactory.buttonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
+                        truncated: TextFactory.getCuisineIcon(CuisineType.other, width: 24, height: 24),
                         expanded: Text(
-                          t('Categories'),
-                          style: TextFactory.buttonStyle,
+                          t('Restaurants'),
+                          style: lightButtonTextStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
                         ),
                       ),
                       thirdTabOptions: TabbedMenuOptions(
-                        truncated: Text(
-                          t('...'),
-                          style: TextFactory.buttonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
+                        truncated: TextFactory.getCuisineIcon(CuisineType.coffee, width: 24, height: 24),
                         expanded: Text(
-                          t('Categories'),
-                          style: TextFactory.buttonStyle,
+                          t('Cafés'),
+                          style: lightButtonTextStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
                         ),
                       ),
                       fourthTabOptions: TabbedMenuOptions(
-                        truncated: Text(
-                          t('...'),
-                          style: TextFactory.buttonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
+                        truncated: TextFactory.getCuisineIcon(CuisineType.beer, width: 24, height: 24),
                         expanded: Text(
-                          t('Categories'),
-                          style: TextFactory.buttonStyle,
+                          t('Bars'),
+                          style: lightButtonTextStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
@@ -226,6 +231,7 @@ class MapScreenState extends State<MapScreen> {
               ),
             ),
             MainAppBar(),
+            _getEstablishmentPopupWidget(),
           ],
         ),
       ),
