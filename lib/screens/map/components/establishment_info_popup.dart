@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/buttons/full_button.dart';
@@ -8,6 +9,7 @@ import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'package:tablething/theme/theme.dart';
+import 'package:tablething/util/text_factory.dart';
 
 class EstablishmentInfoPopup extends StatelessWidget {
   final Establishment establishment;
@@ -41,34 +43,49 @@ class EstablishmentInfoPopup extends StatelessWidget {
                     ),
                   ],
                 ),
-                FullButton(
-                  text: t('Menu'),
-                  iconData: Icons.restaurant_menu,
-                  gradient: LinearGradient(
-                    colors: [
-                      darkThemeColor,
-                      darkThemeColorGradient,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(32.0),
-                  onPressed: () {
-                    var package = FetchablePackage<String, Establishment>(establishment.id);
-                    package.setFetchedData(establishment);
-                    EstablishmentScreenArguments args = EstablishmentScreenArguments(
-                      establishmentPackage: package,
-                      tableId: "0",
-                    );
+                DualButton(
+                  properties: DualButtonProperties(),
+                  leftButtonProperties: SingleButtonProperties(
+                    text: t('Menu'),
+                    textStyle: TextFactory.buttonStyle,
+                    gradient: LinearGradient(
+                      colors: [
+                        darkThemeColor,
+                        darkThemeColorGradient,
+                      ],
+                    ),
+                    iconData: Icons.restaurant_menu,
+                    borderRadius: BorderRadius.circular(32.0),
+                    onPressed: () {
+                      var package = FetchablePackage<String, Establishment>(establishment.id);
+                      package.setFetchedData(establishment);
+                      EstablishmentScreenArguments args = EstablishmentScreenArguments(
+                        establishmentPackage: package,
+                        tableId: "0",
+                      );
 
-                    // Push establishment screen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EstablishmentScreen(),
-                        settings: RouteSettings(arguments: args),
-                      ),
-                    );
-                  },
-                )
+                      // Push establishment screen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EstablishmentScreen(),
+                          settings: RouteSettings(arguments: args),
+                        ),
+                      );
+                    },
+                  ),
+                  rightButtonProperties: SingleButtonProperties(
+                    text: t('Button2'),
+                    textStyle: TextFactory.lightButtonStyle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white,
+                        Colors.white,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                ),
               ],
             ),
           ),

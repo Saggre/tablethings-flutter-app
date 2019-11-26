@@ -1,80 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/theme/theme.dart';
+import 'base_button.dart';
+export 'button_properties.dart';
 
-enum ButtonIconPosition { beforeText, afterText }
-
-class FullButton extends StatelessWidget {
-  final IconData iconData;
-  final ButtonIconPosition iconPosition;
-  final Color iconColor;
-  final String text;
-  final double spacing;
-  final Gradient gradient;
-  final double width;
-  final double height;
-  final Function onPressed;
-  final BorderRadius borderRadius;
+class FullButton extends BaseButton {
+  final SingleButtonProperties properties;
 
   const FullButton({
     Key key,
-    this.iconData,
-    this.iconPosition = ButtonIconPosition.afterText,
-    this.iconColor = Colors.white,
-    this.text = '',
-    this.gradient,
-    this.spacing = 10.0,
-    this.width = double.infinity,
-    this.height = 64.0,
-    this.borderRadius = BorderRadius.zero,
-    this.onPressed,
-  }) : super(key: key);
-
-  bool _isIconSet() {
-    return iconData != null;
-  }
-
-  Widget _getIcon() {
-    if (!_isIconSet()) {
-      return Container();
-    }
-
-    return Icon(
-      iconData,
-      color: iconColor,
-    );
-  }
-
-  Widget _getButtonContent() {
-    List<Widget> widgets = [
-      _getIcon(),
-      SizedBox(
-        width: _isIconSet() ? spacing : 0.0,
-      ),
-      Text(
-        text,
-        style: defaultButtonStyle,
-      ),
-    ];
-
-    if (iconPosition == ButtonIconPosition.afterText) {
-      widgets = widgets.reversed.toList();
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: widgets,
-    );
-  }
+    @required this.properties,
+  }) : super(key: key, properties: properties);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
+      height: properties.height,
       decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: borderRadius,
+        gradient: properties.gradient,
+        borderRadius: properties.borderRadius,
         boxShadow: [
           BoxShadow(
             color: Color(0x66000000),
@@ -85,7 +28,7 @@ class FullButton extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(onTap: onPressed, child: Center(child: _getButtonContent())),
+        child: InkWell(onTap: properties.onPressed, child: Center(child: getButtonContent())),
       ),
     );
   }

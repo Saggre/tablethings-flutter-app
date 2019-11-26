@@ -46,6 +46,15 @@ class TextFactory {
     ],
   );
 
+  /// For buttons with light background
+  static TextStyle lightButtonStyle = buttonStyle.copyWith(color: Colors.black, shadows: [
+    Shadow(
+      blurRadius: 5.0,
+      color: Color(0x11000000),
+      offset: Offset(0.0, 0.0),
+    ),
+  ]);
+
   /// Main heading
   static Text h1(String text) {
     return Text(text, style: h1Style);

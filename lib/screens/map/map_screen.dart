@@ -150,14 +150,6 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var lightButtonTextStyle = TextFactory.buttonStyle.copyWith(color: Colors.black, shadows: [
-      Shadow(
-        blurRadius: 5.0,
-        color: Color(0x11000000),
-        offset: Offset(0.0, 0.0),
-      ),
-    ]);
-
     return ColoredSafeArea(
       color: mainThemeColor,
       child: Scaffold(
@@ -180,6 +172,7 @@ class MapScreenState extends State<MapScreen> {
                     buttonText: t('Scan and eat'),
                     subMenu: TabbedFoodMenu(
                       firstTabOptions: TabbedMenuOptions(
+                        dragTab: true,
                         truncated: Text(
                           t('...'),
                           style: TextFactory.buttonStyle,
@@ -199,7 +192,7 @@ class MapScreenState extends State<MapScreen> {
                         truncated: TextFactory.getCuisineIcon(CuisineType.other, width: 24, height: 24),
                         expanded: Text(
                           t('Restaurants'),
-                          style: lightButtonTextStyle,
+                          style: TextFactory.lightButtonStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
@@ -209,7 +202,7 @@ class MapScreenState extends State<MapScreen> {
                         truncated: TextFactory.getCuisineIcon(CuisineType.coffee, width: 24, height: 24),
                         expanded: Text(
                           t('Cafés'),
-                          style: lightButtonTextStyle,
+                          style: TextFactory.lightButtonStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
@@ -219,7 +212,7 @@ class MapScreenState extends State<MapScreen> {
                         truncated: TextFactory.getCuisineIcon(CuisineType.beer, width: 24, height: 24),
                         expanded: Text(
                           t('Bars'),
-                          style: lightButtonTextStyle,
+                          style: TextFactory.lightButtonStyle,
                           maxLines: 1,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.center,
