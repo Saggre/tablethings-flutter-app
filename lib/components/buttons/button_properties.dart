@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 enum ButtonIconPosition { beforeText, afterText }
 
-enum DualButtonSeparatorDirection { rightHandTop, rightHandBottom, leftHandTop, leftHandBottom }
+enum DualButtonSeparatorDirection { rightHand, leftHand }
 
 class SingleButtonProperties {
   final IconData iconData;
@@ -10,10 +10,11 @@ class SingleButtonProperties {
   final Color iconColor;
   final String text;
   final double spacing;
-  final Gradient gradient;
+  final List<Color> colors;
   final double height;
   final BorderRadius borderRadius;
   final TextStyle textStyle;
+  final Color shadowColor;
   final Function onPressed;
 
   const SingleButtonProperties({
@@ -22,13 +23,42 @@ class SingleButtonProperties {
     this.iconPosition = ButtonIconPosition.afterText,
     this.iconColor = Colors.white,
     @required this.text,
-    @required this.gradient,
+    @required this.colors,
     this.spacing = 10.0,
     this.height = 64.0,
     this.borderRadius = BorderRadius.zero,
     this.onPressed,
+    this.shadowColor = Colors.black26,
     @required this.textStyle,
   });
+
+  SingleButtonProperties copyWith({
+    IconData iconData,
+    ButtonIconPosition iconPosition,
+    Color iconColor,
+    String text,
+    double spacing,
+    Gradient gradient,
+    double height,
+    BorderRadius borderRadius,
+    TextStyle textStyle,
+    Function onPressed,
+    Color shadowColor,
+  }) {
+    return SingleButtonProperties(
+      iconData: iconData ?? this.iconData,
+      iconPosition: iconPosition ?? this.iconPosition,
+      iconColor: iconColor ?? this.iconColor,
+      text: text ?? this.text,
+      spacing: spacing ?? this.spacing,
+      colors: gradient ?? this.colors,
+      height: height ?? this.height,
+      borderRadius: borderRadius ?? this.borderRadius,
+      textStyle: textStyle ?? this.textStyle,
+      onPressed: onPressed ?? this.onPressed,
+      shadowColor: shadowColor ?? this.shadowColor,
+    );
+  }
 }
 
 class DualButtonProperties {
@@ -36,7 +66,7 @@ class DualButtonProperties {
   final double width;
 
   const DualButtonProperties({
-    this.separatorDirection = DualButtonSeparatorDirection.leftHandBottom,
+    this.separatorDirection = DualButtonSeparatorDirection.rightHand,
     this.width = double.infinity,
   });
 }

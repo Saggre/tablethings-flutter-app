@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
-import 'package:tablething/components/buttons/full_button.dart';
+import 'package:tablething/components/buttons/single_button.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
@@ -48,12 +48,10 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   leftButtonProperties: SingleButtonProperties(
                     text: t('Menu'),
                     textStyle: TextFactory.buttonStyle,
-                    gradient: LinearGradient(
-                      colors: [
-                        darkThemeColor,
-                        darkThemeColorGradient,
-                      ],
-                    ),
+                    colors: [
+                      darkThemeColorGradient,
+                      darkThemeColor,
+                    ],
                     iconData: Icons.restaurant_menu,
                     borderRadius: BorderRadius.circular(32.0),
                     onPressed: () {
@@ -77,12 +75,9 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   rightButtonProperties: SingleButtonProperties(
                     text: t('Button2'),
                     textStyle: TextFactory.lightButtonStyle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white,
-                        Colors.white,
-                      ],
-                    ),
+                    colors: [
+                      Colors.white,
+                    ],
                     borderRadius: BorderRadius.circular(32.0),
                   ),
                 ),

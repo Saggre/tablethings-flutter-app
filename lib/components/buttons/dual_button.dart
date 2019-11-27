@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'base_button.dart';
-import 'full_button.dart';
+import 'single_button.dart';
 export 'button_properties.dart';
 
 class DualButton extends StatelessWidget {
@@ -33,7 +33,6 @@ class DualButton extends StatelessWidget {
                 blurRadius: 5,
               ),
             ],
-            color: Colors.grey[300],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
@@ -60,8 +59,19 @@ class DualButton extends StatelessWidget {
       return Container();
     }
 
-    return FullButton(
-      properties: leftButtonProperties,
+    return Container(
+      color: rightButtonProperties != null ? rightButtonProperties.colors.first : Colors.transparent,
+      child: SingleButton(
+        properties: leftButtonProperties.copyWith(
+          shadowColor: Colors.transparent,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.zero,
+            bottomLeft: Radius.zero,
+            topRight: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? leftButtonProperties.borderRadius.topRight : Radius.zero,
+            bottomRight: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.zero : leftButtonProperties.borderRadius.bottomRight,
+          ),
+        ),
+      ),
     );
   }
 
@@ -70,8 +80,19 @@ class DualButton extends StatelessWidget {
       return Container();
     }
 
-    return FullButton(
-      properties: rightButtonProperties,
+    return Container(
+      color: leftButtonProperties != null ? leftButtonProperties.colors.last : Colors.transparent,
+      child: SingleButton(
+        properties: rightButtonProperties.copyWith(
+          shadowColor: Colors.transparent,
+          borderRadius: BorderRadius.only(
+            topLeft: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.zero : rightButtonProperties.borderRadius.topLeft,
+            bottomLeft: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? rightButtonProperties.borderRadius.bottomLeft : Radius.zero,
+            topRight: Radius.zero,
+            bottomRight: Radius.zero,
+          ),
+        ),
+      ),
     );
   }
 }
