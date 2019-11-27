@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
+import 'package:tablething/components/corner_bar.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/buttons/single_button.dart';
@@ -36,15 +37,39 @@ class EstablishmentInfoPopup extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     Stack(
-                      alignment: Alignment.bottomCenter,
                       children: <Widget>[
                         EstablishmentImage(imageUrl: establishment.imageUrl, height: 150),
                         Container(
-                          height: 32,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: offWhiteColor,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                          height: 150,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              CornerBar(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                color: darkThemeColor,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.close ,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      // TODO close
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                height: 32,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: offWhiteColor,
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
