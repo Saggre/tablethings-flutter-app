@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/components/clippers/inverted_rounded_rectangle.dart';
+import 'package:tablething/components/drag_tab.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group_menu.dart';
 import 'package:tablething/theme/theme.dart';
 
@@ -217,21 +218,8 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
               duration: animationDuration,
               curve: animationCurve,
               opacity: selectedTabIndex == tabIndex ? 1 : 0,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 7,
-                ),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    width: tabWidth,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(128, 128, 128, 0.2),
-                      borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                    ),
-                  ),
-                ),
+              child: DragTab(
+                width: tabWidth,
               ),
             ),
             AnimatedOpacity(

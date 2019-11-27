@@ -16,6 +16,7 @@ class SingleButtonProperties {
   final TextStyle textStyle;
   final Color shadowColor;
   final Function onPressed;
+  final bool enableDragTab;
 
   const SingleButtonProperties({
     Key key,
@@ -30,6 +31,7 @@ class SingleButtonProperties {
     this.onPressed,
     this.shadowColor = Colors.black26,
     @required this.textStyle,
+    this.enableDragTab = false,
   });
 
   SingleButtonProperties copyWith({
@@ -44,6 +46,7 @@ class SingleButtonProperties {
     TextStyle textStyle,
     Function onPressed,
     Color shadowColor,
+    bool enableDragTab,
   }) {
     return SingleButtonProperties(
       iconData: iconData ?? this.iconData,
@@ -57,6 +60,7 @@ class SingleButtonProperties {
       textStyle: textStyle ?? this.textStyle,
       onPressed: onPressed ?? this.onPressed,
       shadowColor: shadowColor ?? this.shadowColor,
+      enableDragTab: enableDragTab ?? this.enableDragTab,
     );
   }
 }

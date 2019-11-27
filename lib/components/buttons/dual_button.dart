@@ -100,7 +100,8 @@ class DualButton extends StatelessWidget {
         if (rightButtonProperties != null) {
           builder.add(Positioned(
             right: 0,
-            top: 0,
+            top: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? 0 : null,
+            bottom: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? null : 0,
             width: 32,
             height: 32,
             child: ClipShadowPath(
@@ -111,8 +112,6 @@ class DualButton extends StatelessWidget {
               clipper: InvertedRRectClipper(
                 topRight: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.circular(32.0) : Radius.zero,
                 bottomRight: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.zero : Radius.circular(32.0),
-                rightMargin: 0.0,
-                topMargin: 0.0,
               ),
               child: Container(
                 color: rightButtonProperties.colors.first,
@@ -150,7 +149,8 @@ class DualButton extends StatelessWidget {
         if (leftButtonProperties != null) {
           builder.add(Positioned(
             left: 0,
-            bottom: 0,
+            bottom: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? 0 : null,
+            top: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? null : 0,
             width: 32,
             height: 32,
             child: ClipShadowPath(
@@ -161,8 +161,6 @@ class DualButton extends StatelessWidget {
               clipper: InvertedRRectClipper(
                 topLeft: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.zero : Radius.circular(32.0),
                 bottomLeft: properties.separatorDirection == DualButtonSeparatorDirection.rightHand ? Radius.circular(32.0) : Radius.zero,
-                rightMargin: 0.0,
-                topMargin: 0.0,
               ),
               child: Container(
                 color: leftButtonProperties.colors.last,

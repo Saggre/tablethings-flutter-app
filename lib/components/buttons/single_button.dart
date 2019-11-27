@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tablething/components/drag_tab.dart';
 import 'base_button.dart';
 export 'button_properties.dart';
 
@@ -16,9 +17,23 @@ class SingleButton extends BaseButton {
     return Container(
       height: properties.height,
       decoration: _getDecoration(),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(onTap: properties.onPressed, child: Center(child: getButtonContent())),
+      child: Stack(
+        children: () {
+          List<Widget> builder = [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(onTap: properties.onPressed, child: Center(child: getButtonContent())),
+            ),
+          ];
+
+          if (properties.enableDragTab) {
+            builder.add(DragTab(
+              width: 54, // TODO variable width
+            ));
+          }
+
+          return builder;
+        }(),
       ),
     );
   }

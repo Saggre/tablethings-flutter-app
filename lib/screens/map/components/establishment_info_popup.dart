@@ -44,22 +44,17 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   ],
                 ),
                 DualButton(
-                  properties: DualButtonProperties(),
-                  leftButtonProperties: SingleButtonProperties(
-                    text: t('Button2'),
-                    textStyle: TextFactory.lightButtonStyle,
-                    colors: [
-                      Colors.white,
-                    ],
-                    borderRadius: BorderRadius.circular(32.0),
+                  properties: DualButtonProperties(
+                    separatorDirection: DualButtonSeparatorDirection.leftHand,
                   ),
-                  /*rightButtonProperties: SingleButtonProperties(
+                  rightButtonProperties: SingleButtonProperties(
                     text: t('Menu'),
                     textStyle: TextFactory.buttonStyle,
                     colors: [
                       darkThemeColorGradient,
                       darkThemeColor,
                     ],
+                    enableDragTab: true,
                     iconData: Icons.restaurant_menu,
                     borderRadius: BorderRadius.circular(32.0),
                     onPressed: () {
@@ -79,7 +74,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
                         ),
                       );
                     },
-                  ),*/
+                  ),
                 ),
               ],
             ),
