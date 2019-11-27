@@ -46,6 +46,14 @@ class EstablishmentInfoPopup extends StatelessWidget {
                 DualButton(
                   properties: DualButtonProperties(),
                   leftButtonProperties: SingleButtonProperties(
+                    text: t('Button2'),
+                    textStyle: TextFactory.lightButtonStyle,
+                    colors: [
+                      Colors.white,
+                    ],
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                  /*rightButtonProperties: SingleButtonProperties(
                     text: t('Menu'),
                     textStyle: TextFactory.buttonStyle,
                     colors: [
@@ -71,15 +79,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
                         ),
                       );
                     },
-                  ),
-                  rightButtonProperties: SingleButtonProperties(
-                    text: t('Button2'),
-                    textStyle: TextFactory.lightButtonStyle,
-                    colors: [
-                      Colors.white,
-                    ],
-                    borderRadius: BorderRadius.circular(32.0),
-                  ),
+                  ),*/
                 ),
               ],
             ),
