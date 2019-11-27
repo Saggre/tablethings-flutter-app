@@ -16,6 +16,7 @@ class EstablishmentImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height,
+      width: double.infinity,
       color: Colors.grey[500],
       child: CachedNetworkImage(
         imageUrl: imageUrl,

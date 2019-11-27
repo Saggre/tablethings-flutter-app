@@ -29,17 +29,31 @@ class EstablishmentInfoPopup extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(32.0),
           child: Container(
-            decoration: BoxDecoration(
-              color: offWhiteColor,
-            ),
+            color: offWhiteColor,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    EstablishmentImage(imageUrl: establishment.imageUrl, height: 180),
-                    EstablishmentInfo(
-                      establishment: establishment,
+                    Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        EstablishmentImage(imageUrl: establishment.imageUrl, height: 150),
+                        Container(
+                          height: 32,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: offWhiteColor,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25.0),
+                      child: EstablishmentInfo(
+                        establishment: establishment,
+                      ),
                     ),
                   ],
                 ),

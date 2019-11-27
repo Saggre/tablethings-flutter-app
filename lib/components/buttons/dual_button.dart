@@ -44,17 +44,54 @@ class DualButton extends StatelessWidget {
                   ],
           ),
           child: _getClipContainer(
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  flex: 1,
-                  child: _getLeftButton(),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: _getRightButton(),
-                ),
-              ],
+            child: Stack(
+              children: () {
+                // Check right and left button render order to fix shadows (yes it's stupid)
+                if (!eitherPropertyIsNull()) {
+                  return [
+                    Row(
+                      children: <Widget>[
+                        Flexible(
+                          flex: 1,
+                          child: _getLeftButton(),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: _getRightButton(),
+                        ),
+                      ],
+                    )
+                  ];
+                }
+
+                var right = Row(
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: Container(),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: _getRightButton(),
+                    ),
+                  ],
+                );
+
+                var left = Row(
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: _getLeftButton(),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(),
+                    ),
+                  ],
+                );
+
+                return leftButtonProperties == null ? [right, left] : [left, right];
+              }(),
             ),
           ),
         ),

@@ -19,21 +19,27 @@ class EstablishmentInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 20.0),
       decoration: decoration,
-      child: Column(children: <Widget>[
-        _getTitle(),
-        _getDescription(),
-        _getRating(),
-        Padding(
-          padding: EdgeInsets.only(bottom: 10),
-        ),
-        Divider(),
-        Padding(
-          padding: EdgeInsets.only(bottom: 10),
-        ),
-        child == null ? Container() : child,
-      ]),
+      child: Column(children: () {
+        List<Widget> builder = [
+          _getTitle(),
+          _getDescription(),
+          _getRating(),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+          ),
+          Divider(),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+          ),
+        ];
+
+        if (child != null) {
+          builder.add(child);
+        }
+
+        return builder;
+      }()),
     );
   }
 
