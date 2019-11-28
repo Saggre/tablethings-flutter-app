@@ -3,7 +3,10 @@ import 'package:bloc/bloc.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'establishment_bloc.dart';
+
+class EstablishmentBlocEvent {}
+
+class EstablishmentBlocState {}
 
 class SingleEstablishmentBlocEvent extends EstablishmentBlocEvent {
   FetchablePackage<String, Establishment> establishmentPackage;
@@ -17,7 +20,7 @@ class SingleEstablishmentBlocState extends EstablishmentBlocState {
   SingleEstablishmentBlocState(this.establishment);
 }
 
-class SingleEstablishmentBloc extends Bloc<SingleEstablishmentBlocEvent, SingleEstablishmentBlocState> {
+class EstablishmentBloc extends Bloc<EstablishmentBlocEvent, EstablishmentBlocState> {
   ApiClient apiClient = ApiClient();
 
   @override
@@ -25,16 +28,20 @@ class SingleEstablishmentBloc extends Bloc<SingleEstablishmentBlocEvent, SingleE
   SingleEstablishmentBlocState get initialState => SingleEstablishmentBlocState(null);
 
   @override
-  Stream<SingleEstablishmentBlocState> mapEventToState(SingleEstablishmentBlocEvent event) async* {
+  Stream<EstablishmentBlocState> mapEventToState(EstablishmentBlocEvent event) async* {
+    print("Establishment bloc");
     Establishment establishment;
 
-    // If already fetched from db
-    if (event.establishmentPackage.fetchState == FetchState.fetched) {
-      establishment = event.establishmentPackage.getData();
-    } else {
-      establishment = await apiClient.getEstablishment(event.establishmentPackage.getFetchId());
-      print(establishment.name);
+    if (event is SingleEstablishmentBlocEvent) {
+      // If already fetched from db
+      if (event.establishmentPackage.fetchState == FetchState.fetched) {
+        establishment = event.establishmentPackage.getData();
+      } else {
+        establishment = await apiClient.getEstablishment(event.establishmentPackage.getFetchId());
+        print(establishment.name);
+      }
     }
+
     yield SingleEstablishmentBlocState(establishment);
   }
 }

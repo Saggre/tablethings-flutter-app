@@ -1,8 +1,8 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'package:tablething/screens/main_screen.dart';
+import 'package:tablething/theme/colors.dart';
 import 'blocs/bloc.dart';
 import 'localization/translate.dart';
 
@@ -27,7 +27,7 @@ class MainAppState extends State<MainApp> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MapBloc>(builder: (BuildContext context) => MapBloc()),
-          BlocProvider<SingleEstablishmentBloc>(builder: (BuildContext context) => SingleEstablishmentBloc()),
+          BlocProvider<EstablishmentBloc>(builder: (BuildContext context) => EstablishmentBloc()),
         ],
         child: MaterialApp(
           title: t('Tablething'),
@@ -41,7 +41,7 @@ class MainAppState extends State<MainApp> {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            primarySwatch: Colors.teal,
+            primarySwatch: mainThemeMaterialColor,
           ),
           home: MainScreen(),
           routes: {

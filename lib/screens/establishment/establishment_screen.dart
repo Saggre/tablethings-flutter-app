@@ -4,12 +4,14 @@ import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
+import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
-import 'package:tablething/screens/establishment/components/establishment_app_bar.dart';
 import 'package:tablething/theme/colors.dart';
+import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
+import 'dart:math';
 
 /// Arguments sent to this screen
 class EstablishmentScreenArguments {
@@ -32,64 +34,117 @@ class EstablishmentScreen extends StatefulWidget {
 }
 
 class EstablishmentScreenState extends State<EstablishmentScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  double _parallax = 0;
+  ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+
+    // Delayed to after context is initialized
+    () async {
+      await Future.delayed(Duration.zero);
+      final EstablishmentScreenArguments args = ModalRoute.of(context).settings.arguments;
+
+      // Get establishment
+      print("Getting establishment: " + args.establishmentPackage.getFetchId());
+      SingleEstablishmentBlocEvent event = SingleEstablishmentBlocEvent(args.establishmentPackage);
+      BlocProvider.of<EstablishmentBloc>(context).add(event);
+    }();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredSafeArea(
+      color: mainThemeColor,
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            BlocBuilder<EstablishmentBloc, EstablishmentBlocState>(
+              builder: (context, state) {
+                if (state is SingleEstablishmentBlocState) {
+                  if (state.establishment != null) {
+                    print("Got establishment");
+
+                    return _getEstablishmentInfo(state.establishment);
+                  }
+                }
+                return CircularProgressIndicator(value: null);
+              },
+            ),
+            MainAppBar(),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Main meat of the screen
   Widget _getEstablishmentInfo(Establishment establishment) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        EstablishmentAppBar(
-          establishment: establishment,
-        ),
-        SliverToBoxAdapter(
-          child: EstablishmentInfo(
-            child: Column(
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(
+            top: 24,
+          ),
+          width: double.infinity,
+          color: darkThemeColor,
+          child: ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(32.0),
+              topLeft: Radius.circular(32.0),
+            ),
+            child: Stack(
               children: <Widget>[
-                _getSearchBar(),
+                EstablishmentImage(imageUrl: establishment.imageUrl, height: 160.0),
               ],
             ),
-            establishment: establishment,
           ),
         ),
-        MenuView(
-          menu: establishment.menu,
-        ),
-      ],
-    );
-
-    return Stack(
-      children: <Widget>[
-        EstablishmentImage(imageUrl: establishment.imageUrl, height: 180),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 120)),
-            Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Column(
-                children: <Widget>[
-                  EstablishmentInfo(
-                    child: Column(
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Container(
+                height: 152.0,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32.0),
+                    topLeft: Radius.circular(32.0),
+                  ),
+                  color: offWhiteColor,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Flex(
+                      direction: Axis.horizontal,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        _getSearchBar(),
+                        EstablishmentInfo(
+                          establishment: establishment,
+                        ),
                       ],
                     ),
-                    establishment: establishment,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
-                      BoxShadow(
-                        color: Color(0x66000000),
-                        offset: Offset(0.0, 1.0),
-                        blurRadius: 5,
-                      ),
-                    ]),
-                  ),
-                ],
+                    Flex(
+                      direction: Axis.horizontal,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        TextFactory.h2(t('Menu')),
+                      ],
+                    ),
+                  ],
+                ),
               ),
+            ),
+            MenuView(
+              menu: establishment.menu,
             ),
           ],
         ),
@@ -129,34 +184,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final EstablishmentScreenArguments args = ModalRoute.of(context).settings.arguments;
-
-    // Get establishment
-    print("Getting establishment: " + args.establishmentPackage.getFetchId());
-    SingleEstablishmentBlocEvent event = SingleEstablishmentBlocEvent(args.establishmentPackage);
-    BlocProvider.of<SingleEstablishmentBloc>(context).add(event);
-
-    return ColoredSafeArea(
-      color: appColors[0],
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: BlocBuilder<SingleEstablishmentBloc, SingleEstablishmentBlocState>(
-          builder: (context, state) {
-            if (state.establishment != null) {
-              print("Got establishment");
-
-              return _getEstablishmentInfo(state.establishment);
-            }
-
-            return CircularProgressIndicator(value: null);
-          },
-        ),
-      ),
-    );
-
-    /*
+/*
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -179,5 +207,4 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       ),
     );
      */
-  }
 }

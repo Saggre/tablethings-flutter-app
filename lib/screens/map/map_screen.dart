@@ -102,6 +102,14 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  /// Hides the dialog
+  void _hideEstablishmentPopup() {
+    setState(() {
+      _establishmentPopup.establishment = null;
+      _establishmentPopup.visible = false;
+    });
+  }
+
   /// Get's a popup widget containing info about an establishment
   Widget _getEstablishmentPopupWidget() {
     if (!_establishmentPopup.visible || _establishmentPopup.establishment == null) {
@@ -110,6 +118,9 @@ class MapScreenState extends State<MapScreen> {
 
     return EstablishmentInfoPopup(
       establishment: _establishmentPopup.establishment,
+      onCloseTapped: () {
+        _hideEstablishmentPopup();
+      },
     );
   }
 

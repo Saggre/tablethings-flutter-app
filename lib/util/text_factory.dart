@@ -3,39 +3,48 @@ import 'package:tablething/models/establishment/cuisine_types.dart';
 
 /// Allows to easily create texts with consistent style (like h1, h2, etc. in css)
 class TextFactory {
+  static String _fontFamily = 'Nunito';
+  static Color _textColor = Color(0xFF313638);
+
   static TextStyle h1Style = TextStyle(
-    color: Colors.black,
+    color: _textColor,
     fontSize: 28,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w400,
+    fontFamily: _fontFamily,
   );
 
   static TextStyle h2Style = TextStyle(
-    color: Colors.black,
-    fontSize: 24,
-    fontWeight: FontWeight.w700,
+    color: _textColor,
+    fontSize: 23,
+    fontWeight: FontWeight.w300,
+    fontFamily: _fontFamily,
   );
 
   static TextStyle h3Style = TextStyle(
-    color: Colors.black,
+    color: _textColor,
     fontSize: 22,
     fontWeight: FontWeight.w400,
+    fontFamily: _fontFamily,
   );
 
   static TextStyle h4Style = TextStyle(
-    color: Colors.black,
-    fontSize: 18,
+    color: _textColor,
+    fontSize: 17,
     fontWeight: FontWeight.w400,
+    fontFamily: _fontFamily,
   );
 
   static TextStyle pStyle = TextStyle(
-    color: Colors.grey[500],
-    fontSize: 15,
+    color: _textColor,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
+    fontFamily: _fontFamily,
   );
 
   static TextStyle buttonStyle = TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w300,
+    fontFamily: _fontFamily,
     fontSize: 20,
     shadows: [
       Shadow(
@@ -47,7 +56,7 @@ class TextFactory {
   );
 
   /// For buttons with light background
-  static TextStyle lightButtonStyle = buttonStyle.copyWith(color: Colors.black, shadows: [
+  static TextStyle lightButtonStyle = buttonStyle.copyWith(color: _textColor, shadows: [
     Shadow(
       blurRadius: 5.0,
       color: Color(0x11000000),

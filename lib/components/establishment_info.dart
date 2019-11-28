@@ -6,41 +6,38 @@ import 'package:tablething/util/text_factory.dart';
 
 class EstablishmentInfo extends StatelessWidget {
   final Establishment establishment;
-  final BoxDecoration decoration;
   final Widget child;
 
   const EstablishmentInfo({
     Key key,
     this.establishment,
-    this.decoration,
     this.child,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: decoration,
-      child: Column(children: () {
-        List<Widget> builder = [
-          _getTitle(),
-          _getDescription(),
-          _getRating(),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-          ),
-          Divider(),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-          ),
-        ];
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: () {
+          List<Widget> builder = [
+            _getTitle(),
+            _getDescription(),
+            _getRating(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            ),
+            Divider(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            ),
+          ];
 
-        if (child != null) {
-          builder.add(child);
-        }
+          if (child != null) {
+            builder.add(child);
+          }
 
-        return builder;
-      }()),
-    );
+          return builder;
+        }());
   }
 
   Widget _getDescription() {
@@ -122,19 +119,13 @@ class EstablishmentInfo extends StatelessWidget {
 
   Widget _getTitle() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
-      child: Row(
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: Flex(
+        direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          /*CircularImage(
-            imageUrl: establishment.thumbUrl,
-            size: 64,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 10),
-          ),*/
           TextFactory.h1(establishment.name),
         ],
       ),
