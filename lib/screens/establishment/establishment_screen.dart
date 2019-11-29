@@ -9,6 +9,7 @@ import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -36,8 +37,6 @@ class EstablishmentScreen extends StatefulWidget {
 }
 
 class EstablishmentScreenState extends State<EstablishmentScreen> {
-  ScrollController _scrollController;
-
   @override
   void initState() {
     super.initState();
@@ -85,15 +84,23 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                     InitOrderEvent(),
                   );
 
-                  return _getEstablishmentInfo(state.establishment);
+                  return _getFrame(
+                    _getEstablishmentView(state.establishment),
+                    state.establishment.imageUrl,
+                  );
                 }
 
                 if (state is EstablishmentWithOrderState) {
                   if (state is InitOrderState) {
-                    return _getEstablishmentInfo(state.establishment);
+                    return _getFrame(
+                      _getEstablishmentView(state.establishment),
+                      state.establishment.imageUrl,
+                    );
                   } else if (state is AddItemToOrderState) {
-                    // TODO
-                    print("Added");
+                    return _getFrame(
+                      _getOrderItemView(state.addedOrderItem),
+                      state.establishment.imageUrl,
+                    );
                   }
                 }
 
@@ -109,8 +116,8 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
-  /// Main meat of the screen
-  Widget _getEstablishmentInfo(Establishment establishment) {
+  /// A frame which can show variable scroll views inside itself
+  Widget _getFrame(CustomScrollView child, String imageUrl) {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
@@ -128,67 +135,103 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             ),
             child: Stack(
               children: <Widget>[
-                EstablishmentImage(imageUrl: establishment.imageUrl, height: 160.0),
+                EstablishmentImage(imageUrl: imageUrl, height: 160.0),
               ],
             ),
           ),
         ),
-        CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[
-            SliverToBoxAdapter(
-              child: Container(
-                height: 152.0,
+        AnimatedSwitcher(
+          child: child,
+          duration: Duration(milliseconds: 200),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return SlideTransition(
+                child: child,
+                position: Tween<Offset>(
+                  begin: const Offset(0.0, 1.0),
+                  end: Offset.zero,
+                ).animate(animation));
+          },
+        ),
+      ],
+    );
+  }
+
+  /// Added order item view
+  CustomScrollView _getOrderItemView(OrderItem orderItem) {
+    return CustomScrollView(
+      key: ValueKey('OrderItemView'),
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Container(
+            height: 152.0,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: 352.0,
+            color: Colors.pink,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Establishment menu view
+  CustomScrollView _getEstablishmentView(Establishment establishment) {
+    return CustomScrollView(
+      key: ValueKey('EstablishmentView'),
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Container(
+            height: 152.0,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(32.0),
+                topLeft: Radius.circular(32.0),
               ),
+              color: offWhiteColor,
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(32.0),
-                    topLeft: Radius.circular(32.0),
-                  ),
-                  color: offWhiteColor,
-                ),
-                child: Column(
+            child: Column(
+              children: <Widget>[
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Flex(
-                      direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        EstablishmentInfo(
-                          establishment: establishment,
-                        ),
-                      ],
-                    ),
-                    Flex(
-                      direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        TextFactory.h2(t('Menu')),
-                      ],
+                    EstablishmentInfo(
+                      establishment: establishment,
                     ),
                   ],
                 ),
-              ),
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    TextFactory.h2(t('Menu')),
+                  ],
+                ),
+              ],
             ),
-            MenuView(
-              menu: establishment.menu,
-              establishment: establishment,
-              onAddItem: (MenuItem menuItem) {
-                BlocProvider.of<OrderBloc>(context).add(
-                  AddItemToOrderEvent(menuItem),
-                );
-              },
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 64.0,
-                color: offWhiteColor,
-              ),
-            ),
-          ],
+          ),
+        ),
+        MenuView(
+          menu: establishment.menu,
+          establishment: establishment,
+          onAddItem: (MenuItem menuItem) {
+            BlocProvider.of<OrderBloc>(context).add(
+              AddItemToOrderEvent(menuItem),
+            );
+          },
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: 64.0,
+            color: offWhiteColor,
+          ),
         ),
       ],
     );
