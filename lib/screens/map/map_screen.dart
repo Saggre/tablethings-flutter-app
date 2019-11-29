@@ -55,6 +55,23 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return ColoredSafeArea(
+      color: mainThemeColor,
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            _getMap(),
+            _getButtons(),
+            MainAppBar(),
+            _getEstablishmentPopupWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Checks if the list of map markers contains a marker with markerIdValue
   bool _containsMarker(Establishment establishment) {
     return _mapMarkers.containsKey(establishment);
@@ -159,86 +176,73 @@ class MapScreenState extends State<MapScreen> {
     ));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ColoredSafeArea(
-      color: mainThemeColor,
-      child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            _getMap(),
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  LayeredButtonGroup(
-                    onTap: () {
-                      print('Opening QR-code scanner');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => QRScanScreen()),
-                      );
-                    },
-                    buttonText: t('Scan and eat'),
-                    subMenu: TabbedFoodMenu(
-                      firstTabOptions: TabbedMenuOptions(
-                        dragTab: true,
-                        truncated: Text(
-                          t('...'),
-                          style: TextFactory.buttonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
-                        expanded: Text(
-                          t('Categories'),
-                          style: TextFactory.buttonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      secondTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.getCuisineIcon(CuisineType.other, width: 24, height: 24),
-                        expanded: Text(
-                          t('Restaurants'),
-                          style: TextFactory.lightButtonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      thirdTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.getCuisineIcon(CuisineType.coffee, width: 24, height: 24),
-                        expanded: Text(
-                          t('Cafés'),
-                          style: TextFactory.lightButtonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      fourthTabOptions: TabbedMenuOptions(
-                        truncated: TextFactory.getCuisineIcon(CuisineType.beer, width: 24, height: 24),
-                        expanded: Text(
-                          t('Bars'),
-                          style: TextFactory.lightButtonStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+  /// The buttons at the bottom of the screen
+  Widget _getButtons() {
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        LayeredButtonGroup(
+          onTap: () {
+            print('Opening QR-code scanner');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => QRScanScreen()),
+            );
+          },
+          buttonText: t('Scan and eat'),
+          subMenu: TabbedFoodMenu(
+            firstTabOptions: TabbedMenuOptions(
+              dragTab: true,
+              truncated: Text(
+                t('...'),
+                style: TextFactory.buttonStyle,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+              ),
+              expanded: Text(
+                t('Categories'),
+                style: TextFactory.buttonStyle,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
               ),
             ),
-            MainAppBar(),
-            _getEstablishmentPopupWidget(),
-          ],
+            secondTabOptions: TabbedMenuOptions(
+              truncated: TextFactory.getCuisineIcon(CuisineType.other, width: 24, height: 24),
+              expanded: Text(
+                t('Restaurants'),
+                style: TextFactory.lightButtonStyle,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            thirdTabOptions: TabbedMenuOptions(
+              truncated: TextFactory.getCuisineIcon(CuisineType.coffee, width: 24, height: 24),
+              expanded: Text(
+                t('Cafés'),
+                style: TextFactory.lightButtonStyle,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            fourthTabOptions: TabbedMenuOptions(
+              truncated: TextFactory.getCuisineIcon(CuisineType.beer, width: 24, height: 24),
+              expanded: Text(
+                t('Bars'),
+                style: TextFactory.lightButtonStyle,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

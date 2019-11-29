@@ -19,29 +19,37 @@ class MenuViewItem extends StatelessWidget with MenuViewItemText {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: offWhiteColor,
-      padding: EdgeInsets.only(
-        bottom: 10.0,
-        left: 15,
-        right: 15,
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 6,
-            child: getText(menuItem, establishment),
+    return GestureDetector(
+      onTap: () {
+        // Item added callback
+        onAddItem(menuItem);
+      },
+      child: Container(
+        color: offWhiteColor,
+        padding: EdgeInsets.only(
+          bottom: 10.0,
+          left: 15,
+          right: 15,
+        ),
+        child: IgnorePointer(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                flex: 3,
+                child: getText(menuItem, establishment),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 15.0),
+              ),
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: _getImage(),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-          ),
-          Expanded(
-            flex: 4,
-            child: Center(
-              child: _getImage(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -79,10 +87,7 @@ class MenuViewItem extends StatelessWidget with MenuViewItemText {
                   Icons.add,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  // Item added callback
-                  onAddItem(menuItem);
-                },
+                onPressed: () {},
               ),
             ),
           ),

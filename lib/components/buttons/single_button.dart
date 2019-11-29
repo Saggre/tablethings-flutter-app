@@ -14,26 +14,31 @@ class SingleButton extends BaseButton {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: properties.height,
-      decoration: _getDecoration(),
-      child: Stack(
-        children: () {
-          List<Widget> builder = [
-            Material(
-              color: Colors.transparent,
-              child: InkWell(onTap: properties.onPressed, child: Center(child: getButtonContent())),
-            ),
-          ];
+    return GestureDetector(
+      onTap: () {
+        properties.onPressed();
+      },
+      child: Container(
+        height: properties.height,
+        decoration: _getDecoration(),
+        child: Stack(
+          children: () {
+            List<Widget> builder = [
+              Container(
+                color: Colors.transparent,
+                child: Center(child: getButtonContent()),
+              ),
+            ];
 
-          if (properties.enableDragTab) {
-            builder.add(DragTab(
-              width: 54, // TODO variable width
-            ));
-          }
+            if (properties.enableDragTab) {
+              builder.add(DragTab(
+                width: 54, // TODO variable width
+              ));
+            }
 
-          return builder;
-        }(),
+            return builder;
+          }(),
+        ),
       ),
     );
   }

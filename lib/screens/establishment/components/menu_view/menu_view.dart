@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tablething/components/colum_builder.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_category.dart';
@@ -19,19 +20,15 @@ class MenuView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          if (index < menu.categories.length) {
-            return MenuViewCategory(
-              menuCategory: menu.categories[index],
-              establishment: establishment,
-              onAddItem: onAddItem,
-            );
-          }
-          return null;
-        },
-      ),
+    return ColumnBuilder(
+      itemCount: menu.categories.length,
+      itemBuilder: (BuildContext context, int index) {
+        return MenuViewCategory(
+          menuCategory: menu.categories[index],
+          establishment: establishment,
+          onAddItem: onAddItem,
+        );
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order_bloc_delegate.dart';
+import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
@@ -62,6 +63,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     return ColoredSafeArea(
       color: mainThemeColor,
       child: Scaffold(
+        backgroundColor: offWhiteColor,
         body: Stack(
           children: <Widget>[
             BlocBuilder<OrderBloc, EstablishmentState>(
@@ -97,9 +99,15 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                       state.establishment.imageUrl,
                     );
                   } else if (state is AddItemToOrderState) {
-                    return _getFrame(
-                      _getOrderItemView(state.addedOrderItem),
-                      state.establishment.imageUrl,
+                    return WillPopScope(
+                      onWillPop: () async {
+                        _backAction(state);
+                        return false;
+                      },
+                      child: _getFrame(
+                        _getOrderItemView(state.addedOrderItem),
+                        state.establishment.imageUrl,
+                      ),
                     );
                   }
                 }
@@ -109,6 +117,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 );
               },
             ),
+            _getButtons(),
             MainAppBar(),
           ],
         ),
@@ -116,8 +125,43 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
+  void _backAction(EstablishmentState currentState) {
+    // TODO go back
+    print("BACK");
+  }
+
+  Widget _getButtons() {
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        BlocBuilder<OrderBloc, EstablishmentState>(builder: (context, state) {
+          return DualButton(
+            properties: DualButtonProperties(
+              separatorDirection: DualButtonSeparatorDirection.rightHand,
+            ),
+            leftButtonProperties: SingleButtonProperties(
+              text: t('Back'),
+              textStyle: TextFactory.buttonStyle,
+              colors: [
+                darkThemeColorGradient,
+                darkThemeColor,
+              ],
+              iconData: Icons.arrow_back,
+              borderRadius: BorderRadius.circular(32.0),
+              iconPosition: ButtonIconPosition.beforeText,
+              onPressed: () {
+                _backAction(state);
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
   /// A frame which can show variable scroll views inside itself
-  Widget _getFrame(CustomScrollView child, String imageUrl) {
+  Widget _getFrame(Widget child, String imageUrl) {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
@@ -140,83 +184,79 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             ),
           ),
         ),
-        AnimatedSwitcher(
-          child: child,
-          duration: Duration(milliseconds: 200),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return SlideTransition(
-                child: child,
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, 1.0),
-                  end: Offset.zero,
-                ).animate(animation));
-          },
-        ),
+        ListView(children: <Widget>[
+          Container(
+            height: 152,
+          ),
+          _getCard(
+            AnimatedSwitcher(
+              child: child,
+              duration: Duration(milliseconds: 400),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return SlideTransition(
+                    child: child,
+                    position: Tween<Offset>(
+                      begin: const Offset(0.0, 1.0),
+                      end: Offset.zero,
+                    ).animate(animation));
+              },
+            ),
+          ),
+        ])
       ],
     );
   }
 
-  /// Added order item view
-  CustomScrollView _getOrderItemView(OrderItem orderItem) {
-    return CustomScrollView(
-      key: ValueKey('OrderItemView'),
-      slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(
-            height: 152.0,
-          ),
+  Widget _getCard(Widget child) {
+    return Container(
+      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(32.0),
+          topLeft: Radius.circular(32.0),
         ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 352.0,
-            color: Colors.pink,
-          ),
+        color: offWhiteColor,
+      ),
+      child: child,
+    );
+  }
+
+  /// Added order item view
+  Widget _getOrderItemView(OrderItem orderItem) {
+    return Column(
+      key: ValueKey('OrderItemView'),
+      children: <Widget>[
+        Container(
+          height: 300,
         ),
       ],
     );
   }
 
   /// Establishment menu view
-  CustomScrollView _getEstablishmentView(Establishment establishment) {
-    return CustomScrollView(
+  Widget _getEstablishmentView(Establishment establishment) {
+    return Column(
       key: ValueKey('EstablishmentView'),
-      slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(
-            height: 152.0,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(32.0),
-                topLeft: Radius.circular(32.0),
-              ),
-              color: offWhiteColor,
-            ),
-            child: Column(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    EstablishmentInfo(
-                      establishment: establishment,
-                    ),
-                  ],
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    TextFactory.h2(t('Menu')),
-                  ],
+                EstablishmentInfo(
+                  establishment: establishment,
                 ),
               ],
             ),
-          ),
+            Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                TextFactory.h2(t('Menu')),
+              ],
+            ),
+          ],
         ),
         MenuView(
           menu: establishment.menu,
@@ -227,45 +267,11 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             );
           },
         ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 64.0,
-            color: offWhiteColor,
-          ),
+        Container(
+          height: 64.0,
+          color: offWhiteColor,
         ),
       ],
-    );
-  }
-
-  Widget _getSearchBar() {
-    // TODO onchanged and make its own widget
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.0), boxShadow: [
-        BoxShadow(
-          color: Color(0x33000000),
-          offset: Offset(0.0, 1.0),
-          blurRadius: 5,
-        ),
-      ]),
-      child: Row(
-        children: <Widget>[
-          Flexible(
-              child: TextField(
-                  decoration: InputDecoration(
-            hintText: t('Search menu'),
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.grey),
-          ))),
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.black,
-            ),
-            onPressed: () {},
-          ),
-        ],
-      ),
     );
   }
 }
