@@ -27,8 +27,8 @@ class MainAppState extends State<MainApp> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MapBloc>(builder: (BuildContext context) => MapBloc()),
-          BlocProvider<EstablishmentBloc>(builder: (BuildContext context) => EstablishmentBloc()),
-        ],
+          BlocProvider<OrderBloc>(builder: (BuildContext context) => OrderBloc()),
+    ],
         child: MaterialApp(
           title: t('Tablething'),
           theme: ThemeData(

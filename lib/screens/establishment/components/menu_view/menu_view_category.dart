@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/components/colum_builder.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_category.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item.dart';
 import 'package:tablething/theme/colors.dart';
@@ -8,10 +9,12 @@ import 'package:tablething/util/text_factory.dart';
 
 class MenuViewCategory extends StatelessWidget {
   final MenuCategory menuCategory;
+  final Establishment establishment;
 
   MenuViewCategory({
     Key key,
     @required this.menuCategory,
+    @required this.establishment,
   }) : super(key: key);
 
   @override
@@ -62,6 +65,7 @@ class MenuViewCategory extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               return MenuViewItem(
                 menuItem: menuCategory.items[index],
+                establishment: establishment,
               );
             },
           ),

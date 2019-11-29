@@ -22,14 +22,14 @@ class MainAppBarState extends State<MainAppBar> {
       children: <Widget>[
         IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.menu,
             color: Colors.white,
           ),
           onPressed: () {},
         ),
         IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.notifications,
             color: Colors.white,
           ),
           onPressed: () {},

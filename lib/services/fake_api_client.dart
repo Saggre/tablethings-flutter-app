@@ -16,14 +16,24 @@ class ApiClient {
   ApiClient() {}
 
   Future<Establishment> _getEstablishmentFromFile(String fileName) async {
-    var result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
+    var result;
 
-    Establishment establishment = Establishment.fromJson(result);
+    Establishment establishment;
 
-    result = await JsonLoader().parseJsonFromAssets('assets/debug/menu.json');
-    Menu menu = Menu.fromJson(result);
+    try {
+      result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
+      establishment = Establishment.fromJson(result);
+    } catch (err) {
+      print("Error parsing establishment json");
+    }
 
-    establishment.setMenu(menu);
+    try {
+      result = await JsonLoader().parseJsonFromAssets('assets/debug/menu.json');
+      Menu menu = Menu.fromJson(result);
+      establishment.setMenu(menu);
+    } catch (err) {
+      print("Error parsing establishment menu json");
+    }
 
     return establishment;
   }

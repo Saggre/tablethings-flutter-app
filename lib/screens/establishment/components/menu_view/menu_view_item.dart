@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/clip_shadow_path.dart';
-import 'package:tablething/components/clippers/inverted_rounded_rectangle.dart';
+import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
-import 'package:tablething/util/text_factory.dart';
 
-class MenuViewItem extends StatelessWidget {
+class MenuViewItem extends StatelessWidget with MenuViewItemText {
   final MenuItem menuItem;
+  final Establishment establishment;
 
   MenuViewItem({
     Key key,
     @required this.menuItem,
+    @required this.establishment,
   }) : super(key: key);
 
   @override
@@ -27,33 +28,15 @@ class MenuViewItem extends StatelessWidget {
         children: <Widget>[
           Expanded(
             flex: 6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    TextFactory.h3(menuItem.name),
-                    Padding(padding: EdgeInsets.only(right: 10.0)),
-                    Text(
-                      menuItem.price,
-                      style: TextFactory.h3Style.copyWith(color: darkThemeColor),
-                    ),
-                  ],
-                ),
-                TextFactory.p(menuItem.description),
-              ],
-            ),
+            child: getText(menuItem, establishment),
           ),
           Padding(
             padding: EdgeInsets.only(right: 20.0),
           ),
           Expanded(
             flex: 4,
-            child: Container(
-              child: Center(
-                child: _getImage(),
-              ),
+            child: Center(
+              child: _getImage(),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
 import 'package:tablething/models/establishment/opening_hour_period.dart';
 import 'cuisine_type_description.dart';
@@ -77,12 +78,14 @@ class Establishment {
       currencySymbol = '\$';
     }
 
-    // TODO add more currencies
+    return currencySymbol;
   }
 
-  /// Formats a price string. Adds currency symbol and decides decimal point etc.
-  String formatPrice(String priceString) {
-    return priceString + currencySymbol;
+  /// Get formatted string of a currency value
+  String formatCurrency(int value) {
+    // TODO variable locales
+    var format = NumberFormat.currency(decimalDigits: 2, locale: 'fi_FI', symbol: currencySymbol);
+    return format.format(value / 100.0);
   }
 
   /// Get this establishment's main cuisine type or 'other' type if no types are set

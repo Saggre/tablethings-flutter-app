@@ -34,7 +34,6 @@ class EstablishmentScreen extends StatefulWidget {
 }
 
 class EstablishmentScreenState extends State<EstablishmentScreen> {
-  double _parallax = 0;
   ScrollController _scrollController;
 
   @override
@@ -48,8 +47,9 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
 
       // Get establishment
       print("Getting establishment: " + args.establishmentPackage.getFetchId());
-      SingleEstablishmentBlocEvent event = SingleEstablishmentBlocEvent(args.establishmentPackage);
-      BlocProvider.of<EstablishmentBloc>(context).add(event);
+      BlocProvider.of<OrderBloc>(context).add(
+        GetEstablishmentEvent(args.establishmentPackage),
+      );
     }();
   }
 
@@ -60,16 +60,44 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            BlocBuilder<EstablishmentBloc, EstablishmentBlocState>(
+            BlocBuilder<OrderBloc, EstablishmentState>(
               builder: (context, state) {
-                if (state is SingleEstablishmentBlocState) {
-                  if (state.establishment != null) {
-                    print("Got establishment");
+                if (state.establishment == null) {
+                  // Something is wrong
+                  // TODO
+                  return CircularProgressIndicator(value: null);
+                }
 
+                if (state is EstablishmentState) {
+                  if (state.error) {
+                    // TODO handle error
+                  }
+
+                  if (state is GetEstablishmentState) {
+                    print("Successfully got establishment: " + state.establishment.name);
+
+                    // Init new order when got establishment
+                    BlocProvider.of<OrderBloc>(context).add(
+                      InitOrderEvent(),
+                    );
+                  }
+
+                  return _getEstablishmentInfo(state.establishment);
+                } else if (state is EstablishmentWithOrderState) {
+                  if (state.error) {
+                    // TODO handle error
+                  }
+
+                  if (state is InitOrderState) {
                     return _getEstablishmentInfo(state.establishment);
+                  } else if (state is AddItemToOrderState) {
+                    // TODO
                   }
                 }
-                return CircularProgressIndicator(value: null);
+
+                return Container(
+                  color: Colors.red,
+                );
               },
             ),
             MainAppBar(),
@@ -145,6 +173,13 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             ),
             MenuView(
               menu: establishment.menu,
+              establishment: establishment,
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 64.0,
+                color: offWhiteColor,
+              ),
             ),
           ],
         ),
@@ -183,28 +218,4 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       ),
     );
   }
-
-/*
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: Column(
-          children: <Widget>[
-            SecondaryAppBar(),
-            BlocBuilder<SingleEstablishmentBloc, SingleEstablishmentBlocState>(
-              builder: (context, state) {
-                if (state.establishment != null) {
-                  print("Got establishment");
-
-                  return _getEstablishmentInfo(state.establishment);
-                }
-
-                return CircularProgressIndicator(value: null);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-     */
 }
