@@ -8,11 +8,13 @@ import 'package:tablething/theme/colors.dart';
 class MenuViewItem extends StatelessWidget with MenuViewItemText {
   final MenuItem menuItem;
   final Establishment establishment;
+  final Function onAddItem;
 
   MenuViewItem({
     Key key,
     @required this.menuItem,
     @required this.establishment,
+    @required this.onAddItem,
   }) : super(key: key);
 
   @override
@@ -78,7 +80,8 @@ class MenuViewItem extends StatelessWidget with MenuViewItemText {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  // TODO add to ostoskori
+                  // Item added callback
+                  onAddItem(menuItem);
                 },
               ),
             ),

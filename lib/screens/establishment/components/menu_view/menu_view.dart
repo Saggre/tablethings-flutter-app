@@ -8,11 +8,13 @@ import 'package:tablething/screens/establishment/components/menu_view/menu_view_
 class MenuView extends StatelessWidget {
   final Menu menu;
   final Establishment establishment;
+  final Function onAddItem;
 
   MenuView({
     Key key,
     @required this.menu,
     @required this.establishment,
+    @required this.onAddItem,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ class MenuView extends StatelessWidget {
             return MenuViewCategory(
               menuCategory: menu.categories[index],
               establishment: establishment,
+              onAddItem: onAddItem,
             );
           }
           return null;

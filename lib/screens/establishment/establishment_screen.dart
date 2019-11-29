@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
+import 'package:tablething/blocs/order_bloc_delegate.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
-import 'dart:math';
+import 'package:bloc/bloc.dart';
 
 /// Arguments sent to this screen
 class EstablishmentScreenArguments {
@@ -39,6 +41,9 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Set bloc delegate
+    BlocSupervisor.delegate = SimpleBlocDelegate();
 
     // Delayed to after context is initialized
     () async {
@@ -68,30 +73,27 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   return CircularProgressIndicator(value: null);
                 }
 
-                if (state is EstablishmentState) {
-                  if (state.error) {
-                    // TODO handle error
-                  }
+                if (state.error) {
+                  // TODO handle error
+                }
 
-                  if (state is GetEstablishmentState) {
-                    print("Successfully got establishment: " + state.establishment.name);
+                if (state is GetEstablishmentState) {
+                  print("Successfully got establishment: " + state.establishment.name);
 
-                    // Init new order when got establishment
-                    BlocProvider.of<OrderBloc>(context).add(
-                      InitOrderEvent(),
-                    );
-                  }
+                  // Init new order when got establishment
+                  BlocProvider.of<OrderBloc>(context).add(
+                    InitOrderEvent(),
+                  );
 
                   return _getEstablishmentInfo(state.establishment);
-                } else if (state is EstablishmentWithOrderState) {
-                  if (state.error) {
-                    // TODO handle error
-                  }
+                }
 
+                if (state is EstablishmentWithOrderState) {
                   if (state is InitOrderState) {
                     return _getEstablishmentInfo(state.establishment);
                   } else if (state is AddItemToOrderState) {
                     // TODO
+                    print("Added");
                   }
                 }
 
@@ -174,6 +176,11 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             MenuView(
               menu: establishment.menu,
               establishment: establishment,
+              onAddItem: (MenuItem menuItem) {
+                BlocProvider.of<OrderBloc>(context).add(
+                  AddItemToOrderEvent(menuItem),
+                );
+              },
             ),
             SliverToBoxAdapter(
               child: Container(

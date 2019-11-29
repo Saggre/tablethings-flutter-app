@@ -10,11 +10,13 @@ import 'package:tablething/util/text_factory.dart';
 class MenuViewCategory extends StatelessWidget {
   final MenuCategory menuCategory;
   final Establishment establishment;
+  final Function onAddItem;
 
   MenuViewCategory({
     Key key,
     @required this.menuCategory,
     @required this.establishment,
+    @required this.onAddItem,
   }) : super(key: key);
 
   @override
@@ -66,6 +68,7 @@ class MenuViewCategory extends StatelessWidget {
               return MenuViewItem(
                 menuItem: menuCategory.items[index],
                 establishment: establishment,
+                onAddItem: onAddItem,
               );
             },
           ),
