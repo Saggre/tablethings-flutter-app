@@ -32,6 +32,7 @@ class ClipShadowPath extends StatelessWidget {
   Widget _getOverflow(Widget overflown) {
     if (overflow == Overflow.hidden) {
       return ClipRect(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         child: overflown,
       );
     }

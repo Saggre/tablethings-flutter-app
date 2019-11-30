@@ -36,7 +36,6 @@ class MenuViewCategory extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(

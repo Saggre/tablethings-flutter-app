@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
@@ -12,6 +13,7 @@ import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
+import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
@@ -105,7 +107,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                         return false;
                       },
                       child: _getFrame(
-                        _getOrderItemView(state.addedOrderItem),
+                        _getOrderItemView(state.addedOrderItem, state.establishment),
                         state.establishment.imageUrl,
                       ),
                     );
@@ -136,6 +138,41 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         BlocBuilder<OrderBloc, EstablishmentState>(builder: (context, state) {
+          if (state is AddItemToOrderState) {
+            return DualButton(
+              properties: DualButtonProperties(
+                separatorDirection: DualButtonSeparatorDirection.rightHand,
+              ),
+              rightButtonProperties: SingleButtonProperties(
+                text: t('Order'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  mainThemeColor,
+                ],
+                iconData: Icons.arrow_forward,
+                borderRadius: BorderRadius.circular(32.0),
+                iconPosition: ButtonIconPosition.afterText,
+                onPressed: () {
+                  // TODO add to order
+                },
+              ),
+              leftButtonProperties: SingleButtonProperties(
+                text: t('Back'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  darkThemeColorGradient,
+                  darkThemeColor,
+                ],
+                iconData: Icons.arrow_back,
+                borderRadius: BorderRadius.circular(32.0),
+                iconPosition: ButtonIconPosition.beforeText,
+                onPressed: () {
+                  _backAction(state);
+                },
+              ),
+            );
+          }
+
           return DualButton(
             properties: DualButtonProperties(
               separatorDirection: DualButtonSeparatorDirection.rightHand,
@@ -208,26 +245,60 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   }
 
   Widget _getCard(Widget child) {
-    return Container(
-      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(32.0),
-          topLeft: Radius.circular(32.0),
-        ),
-        color: offWhiteColor,
+    return ClipRRect(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(32.0),
+        topLeft: Radius.circular(32.0),
       ),
-      child: child,
+      child: Container(
+        color: offWhiteColor,
+        child: child,
+      ),
     );
   }
 
   /// Added order item view
-  Widget _getOrderItemView(OrderItem orderItem) {
+  Widget _getOrderItemView(OrderItem<MenuItem> orderItem, Establishment establishment) {
     return Column(
       key: ValueKey('OrderItemView'),
       children: <Widget>[
         Container(
-          height: 300,
+          child: Container(
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                    vertical: 25.0,
+                  ),
+                  child: MenuViewItemText(
+                    menuItem: orderItem.product,
+                    establishment: establishment,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: MediaQuery.of(context).size.width * 0.33,
+                  child: CachedNetworkImage(
+                    imageUrl: orderItem.product.imageUrl,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -238,25 +309,30 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     return Column(
       key: ValueKey('EstablishmentView'),
       children: <Widget>[
-        Column(
-          children: <Widget>[
-            Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                EstablishmentInfo(
-                  establishment: establishment,
-                ),
-              ],
-            ),
-            Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                TextFactory.h2(t('Menu')),
-              ],
-            ),
-          ],
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15.0,
+          ),
+          child: Column(
+            children: <Widget>[
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  EstablishmentInfo(
+                    establishment: establishment,
+                  ),
+                ],
+              ),
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  TextFactory.h2(t('Menu')),
+                ],
+              ),
+            ],
+          ),
         ),
         MenuView(
           menu: establishment.menu,

@@ -5,7 +5,7 @@ import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
 
-class MenuViewItem extends StatelessWidget with MenuViewItemText {
+class MenuViewItem extends StatelessWidget {
   final MenuItem menuItem;
   final Establishment establishment;
   final Function onAddItem;
@@ -36,7 +36,10 @@ class MenuViewItem extends StatelessWidget with MenuViewItemText {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: getText(menuItem, establishment),
+                child: MenuViewItemText(
+                  menuItem: menuItem,
+                  establishment: establishment,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(right: 15.0),

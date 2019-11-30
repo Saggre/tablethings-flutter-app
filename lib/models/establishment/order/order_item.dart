@@ -2,8 +2,8 @@ import 'product.dart';
 
 /// Represents an item in an order
 /// One item can have many properties like extras and spices
-class OrderItem {
-  final Product product;
+class OrderItem<T extends Product> {
+  final T product;
   int _quantity;
 
   OrderItem(this.product) {

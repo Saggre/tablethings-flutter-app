@@ -130,7 +130,7 @@ class OrderBloc extends Bloc<EstablishmentEvent, EstablishmentState> {
       return BlocState.withError(t('Order is not initiated')) as AddItemToOrderState;
     }
 
-    OrderItem orderItem = OrderItem(event.menuItem);
+    OrderItem<MenuItem> orderItem = OrderItem(event.menuItem);
 
     return AddItemToOrderState(
       addedOrderItem: orderItem,

@@ -4,8 +4,14 @@ import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:tablething/util/text_factory.dart';
 
-mixin MenuViewItemText on Widget {
-  Widget getText(MenuItem menuItem, Establishment establishment) {
+class MenuViewItemText extends StatelessWidget {
+  final MenuItem menuItem;
+  final Establishment establishment;
+
+  MenuViewItemText({this.menuItem, this.establishment});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
