@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
+import 'package:tablething/blocs/order/order_bloc_events.dart';
+import 'package:tablething/blocs/order/order_bloc_states.dart';
 import 'package:tablething/blocs/order_bloc_delegate.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
@@ -11,8 +13,10 @@ import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
+import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -40,6 +44,8 @@ class EstablishmentScreen extends StatefulWidget {
 }
 
 class EstablishmentScreenState extends State<EstablishmentScreen> {
+  var orderQuantityController = DropdownMenuController<String>();
+
   @override
   void initState() {
     super.initState();
@@ -68,51 +74,44 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
         backgroundColor: offWhiteColor,
         body: Stack(
           children: <Widget>[
-            BlocBuilder<OrderBloc, EstablishmentState>(
+            BlocBuilder<OrderBloc, OrderBlocState>(
               builder: (context, state) {
-                if (state.establishment == null) {
-                  // Something is wrong
-                  // TODO
-                  return CircularProgressIndicator(value: null);
-                }
-
                 if (state.error) {
                   // TODO handle error
                 }
 
-                if (state is GetEstablishmentState) {
+                if (state is EstablishmentState) {
                   print("Successfully got establishment: " + state.establishment.name);
-
-                  // Init new order when got establishment
-                  BlocProvider.of<OrderBloc>(context).add(
-                    InitOrderEvent(),
-                  );
 
                   return _getFrame(
                     _getEstablishmentView(state.establishment),
                     state.establishment.imageUrl,
                   );
+                } else if (state is OrderItemState) {
+                  return WillPopScope(
+                    onWillPop: () async {
+                      _backAction(state);
+                      return false;
+                    },
+                    child: _getFrame(
+                      _getOrderItemView(state.establishment, state.orderItem),
+                      state.establishment.imageUrl,
+                    ),
+                  );
+                } else if (state is ShoppingBasketState) {
+                  return WillPopScope(
+                    onWillPop: () async {
+                      _backAction(state);
+                      return false;
+                    },
+                    child: _getFrame(
+                      _getShoppingBasketView(state.establishment, state.order),
+                      state.establishment.imageUrl,
+                    ),
+                  );
                 }
 
-                if (state is EstablishmentWithOrderState) {
-                  if (state is InitOrderState) {
-                    return _getFrame(
-                      _getEstablishmentView(state.establishment),
-                      state.establishment.imageUrl,
-                    );
-                  } else if (state is AddItemToOrderState) {
-                    return WillPopScope(
-                      onWillPop: () async {
-                        _backAction(state);
-                        return false;
-                      },
-                      child: _getFrame(
-                        _getOrderItemView(state.addedOrderItem, state.establishment),
-                        state.establishment.imageUrl,
-                      ),
-                    );
-                  }
-                }
+                //return CircularProgressIndicator(value: null);
 
                 return Container(
                   color: Colors.red,
@@ -127,9 +126,12 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
-  void _backAction(EstablishmentState currentState) {
+  void _backAction(OrderBlocState currentState) {
     // TODO go back
     print("BACK");
+    if (currentState is OrderItemState) {
+// TODO back event
+    }
   }
 
   Widget _getButtons() {
@@ -137,27 +139,29 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        BlocBuilder<OrderBloc, EstablishmentState>(builder: (context, state) {
-          if (state is AddItemToOrderState) {
+        BlocBuilder<OrderBloc, OrderBlocState>(builder: (context, state) {
+          if (state is OrderItemState) {
             return DualButton(
               properties: DualButtonProperties(
                 separatorDirection: DualButtonSeparatorDirection.rightHand,
               ),
               rightButtonProperties: SingleButtonProperties(
-                text: t('Order'),
+                text: t('Choose'),
                 textStyle: TextFactory.buttonStyle,
                 colors: [
                   mainThemeColor,
                 ],
-                iconData: Icons.arrow_forward,
                 borderRadius: BorderRadius.circular(32.0),
-                iconPosition: ButtonIconPosition.afterText,
                 onPressed: () {
-                  // TODO add to order
+                  print(orderQuantityController.currentValue.toString());
+                  // Add to order
+                  BlocProvider.of<OrderBloc>(context).add(
+                    ModifyOrderItemOptionsEvent(OrderItemOptions(quantity: int.tryParse(orderQuantityController.currentValue)), state.orderItem),
+                  );
                 },
               ),
               leftButtonProperties: SingleButtonProperties(
-                text: t('Back'),
+                text: t('Cancel'),
                 textStyle: TextFactory.buttonStyle,
                 colors: [
                   darkThemeColorGradient,
@@ -227,6 +231,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           ),
           _getCard(
             AnimatedSwitcher(
+              key: ValueKey('AnimatedSwitcher'),
               child: child,
               duration: Duration(milliseconds: 400),
               transitionBuilder: (Widget child, Animation<double> animation) {
@@ -258,47 +263,93 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
+  /// Shopping basket view with all order items
+  Widget _getShoppingBasketView(Establishment establishment, Order<MenuItem> order) {
+    return Column(
+      key: ValueKey('ShoppingBasketView'),
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 25.0),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Column(
+            children: <Widget>[
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  EstablishmentInfo(
+                    establishment: establishment,
+                    showDescription: false,
+                    showRating: false,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 25.0),
+              ),
+              Row(
+                children: <Widget>[
+                  // TODO Subtotal
+                ],
+              ),
+            ],
+          ),
+        ),
+        Container(),
+      ],
+    );
+  }
+
   /// Added order item view
-  Widget _getOrderItemView(OrderItem<MenuItem> orderItem, Establishment establishment) {
+  Widget _getOrderItemView(Establishment establishment, OrderItem<MenuItem> orderItem) {
     return Column(
       key: ValueKey('OrderItemView'),
       children: <Widget>[
         Container(
-          child: Container(
-            child: Stack(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 15.0,
-                    vertical: 25.0,
-                  ),
-                  child: MenuViewItemText(
-                    menuItem: orderItem.product,
-                    establishment: establishment,
-                  ),
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                  vertical: 25.0,
                 ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: MediaQuery.of(context).size.width * 0.33,
-                  child: CachedNetworkImage(
-                    imageUrl: orderItem.product.imageUrl,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
+                child: MenuViewItemText(
+                  menuItem: orderItem.product,
+                  establishment: establishment,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: MediaQuery.of(context).size.width * 0.33,
+                child: CachedNetworkImage(
+                  imageUrl: orderItem.product.imageUrl,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
+        DropdownMenu(
+          controller: orderQuantityController,
+          title: t('Määrä'),
+          options: <String>['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        ),
+        DropdownMenu(
+          title: t('Lisuke'),
+          options: <String>['Kana'],
         ),
       ],
     );
@@ -309,7 +360,10 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     return Column(
       key: ValueKey('EstablishmentView'),
       children: <Widget>[
-        Container(
+        Padding(
+          padding: EdgeInsets.only(top: 25.0),
+        ),
+        Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 15.0,
           ),
@@ -339,7 +393,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           establishment: establishment,
           onAddItem: (MenuItem menuItem) {
             BlocProvider.of<OrderBloc>(context).add(
-              AddItemToOrderEvent(menuItem),
+              AddOrderItemEvent(menuItem),
             );
           },
         ),

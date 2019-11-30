@@ -1,26 +1,37 @@
+import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 import 'product.dart';
+
+class OrderItemOptions {
+  int _quantity;
+
+  // TODO add sides
+  // TODO add beverages
+  // TODO add spices
+
+  OrderItemOptions({quantity}) {
+    if (quantity == null || quantity < 1) {
+      _quantity = 1;
+      return;
+    }
+    _quantity = quantity;
+  }
+
+  int get quantity => _quantity;
+}
 
 /// Represents an item in an order
 /// One item can have many properties like extras and spices
 class OrderItem<T extends Product> {
+  final String id;
   final T product;
-  int _quantity;
+  OrderItemOptions options;
 
-  OrderItem(this.product) {
-    _quantity = 1;
-  }
+  OrderItem({@required this.product, @required this.options}) : this.id = Uuid().v4();
 
-  int get quantity => _quantity;
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is OrderItem && runtimeType == other.runtimeType && id == other.id;
 
-  set quantity(int value) {
-    if (value < 1) {
-      _quantity = 1;
-      return;
-    }
-    _quantity = value;
-  }
-
-// TODO add sides
-// TODO add beverages
-// TODO add spices
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -7,11 +7,17 @@ import 'package:tablething/util/text_factory.dart';
 class EstablishmentInfo extends StatelessWidget {
   final Establishment establishment;
   final Widget child;
+  final bool showTitle;
+  final bool showRating;
+  final bool showDescription;
 
   const EstablishmentInfo({
     Key key,
-    this.establishment,
+    @required this.establishment,
     this.child,
+    this.showDescription = true,
+    this.showRating = true,
+    this.showTitle = true,
   }) : super(key: key);
 
   @override
@@ -19,10 +25,21 @@ class EstablishmentInfo extends StatelessWidget {
     return Column(
         mainAxisSize: MainAxisSize.min,
         children: () {
-          List<Widget> builder = [
-            _getTitle(),
-            _getDescription(),
-            _getRating(),
+          List<Widget> builder = List();
+
+          if (showTitle) {
+            builder.add(_getTitle());
+          }
+
+          if (showDescription) {
+            builder.add(_getDescription());
+          }
+
+          if (showRating) {
+            builder.add(_getRating());
+          }
+
+          builder.addAll(<Widget>[
             Padding(
               padding: EdgeInsets.only(bottom: 10),
             ),
@@ -30,7 +47,7 @@ class EstablishmentInfo extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(bottom: 10),
             ),
-          ];
+          ]);
 
           if (child != null) {
             builder.add(child);
@@ -51,6 +68,7 @@ class EstablishmentInfo extends StatelessWidget {
   }
 
   Widget _getRating() {
+    // TODO get rating
     double rating = 4.4;
     int reviews = 256;
 
@@ -68,6 +86,7 @@ class EstablishmentInfo extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.only(left: 5.0)),
         RatingBar(
+          ignoreGestures: true,
           initialRating: rating,
           direction: Axis.horizontal,
           allowHalfRating: true,

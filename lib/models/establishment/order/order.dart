@@ -9,4 +9,10 @@ class Order<T extends Product> {
   Order() {
     this._items = List();
   }
+
+  void addItem(OrderItem<T> item) {
+    _items.add(item);
+  }
+
+  List<OrderItem<T>> get items => _items;
 }
