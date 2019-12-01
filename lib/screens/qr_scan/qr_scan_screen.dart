@@ -1,6 +1,10 @@
 import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:tablething/blocs/bloc.dart';
+import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/establishment_barcode.dart';
@@ -89,16 +93,16 @@ class QRScanScreenState extends State<QRScanScreen> {
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
     var package = FetchablePackage<String, Establishment>(establishmentId);
 
-    EstablishmentScreenArguments args = EstablishmentScreenArguments(
-      establishmentPackage: package,
-      tableId: tableId,
+    Provider.of<PersistentData>(context).setData(
+      package,
+      tableId,
+      true,
     );
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => EstablishmentScreen(),
-        settings: RouteSettings(arguments: args),
       ),
     );
   }

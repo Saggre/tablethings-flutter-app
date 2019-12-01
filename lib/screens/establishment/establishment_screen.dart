@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/blocs/order/order_bloc_states.dart';
 import 'package:tablething/blocs/order_bloc_delegate.dart';
+import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
@@ -15,21 +17,12 @@ import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
-import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
 import 'package:bloc/bloc.dart';
-
-/// Arguments sent to this screen
-class EstablishmentScreenArguments {
-  final FetchablePackage<String, Establishment> establishmentPackage;
-  final String tableId;
-
-  EstablishmentScreenArguments({this.establishmentPackage, this.tableId});
-}
 
 /// A route for a single establishment showing its info, menu, etc
 class EstablishmentScreen extends StatefulWidget {
@@ -56,12 +49,13 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     // Delayed to after context is initialized
     () async {
       await Future.delayed(Duration.zero);
-      final EstablishmentScreenArguments args = ModalRoute.of(context).settings.arguments;
+      //final EstablishmentScreenArguments args = ModalRoute.of(context).settings.arguments;
 
+      // TODO handle errors (if there is no establishment)
       // Get establishment
-      print("Getting establishment: " + args.establishmentPackage.getFetchId());
+      print("Getting establishment: " + Provider.of<PersistentData>(context).selectedEstablishment.getFetchId());
       BlocProvider.of<OrderBloc>(context).add(
-        GetEstablishmentEvent(args.establishmentPackage),
+        GetEstablishmentEvent(Provider.of<PersistentData>(context).selectedEstablishment),
       );
     }();
   }
@@ -80,7 +74,10 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   // TODO handle error
                 }
 
-                if (state is EstablishmentState) {
+                if (state is LoadingState) {
+                  // TODO loading
+                  return CircularProgressIndicator(value: null);
+                } else if (state is EstablishmentState) {
                   print("Successfully got establishment: " + state.establishment.name);
 
                   return _getFrame(
@@ -110,8 +107,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                     ),
                   );
                 }
-
-                //return CircularProgressIndicator(value: null);
 
                 return Container(
                   color: Colors.red,
@@ -287,11 +282,31 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 25.0),
+                padding: EdgeInsets.only(bottom: 15.0),
+              ),
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    t('Order'),
+                    style: TextFactory.h4Style,
+                  ),
+                ],
               ),
               Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   // TODO Subtotal
+                  Text(
+                    establishment.formatCurrency(order.subtotal),
+                    style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
+                  ),
+                  Text(
+                    'Table 10',
+                    style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
+                  ),
                 ],
               ),
             ],

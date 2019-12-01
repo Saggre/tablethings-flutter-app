@@ -12,6 +12,11 @@ class OrderBlocState extends BlocState {
   OrderBlocState(this.establishment);
 }
 
+/// Still loading the establishment's data
+class LoadingState extends OrderBlocState {
+  LoadingState(establishment) : super(establishment);
+}
+
 /// When the menu is shown
 class EstablishmentState extends OrderBlocState {
   EstablishmentState(establishment) : super(establishment);

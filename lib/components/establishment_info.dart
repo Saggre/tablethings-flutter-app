@@ -39,7 +39,7 @@ class EstablishmentInfo extends StatelessWidget {
             builder.add(_getRating());
           }
 
-          builder.addAll(<Widget>[
+          /*builder.addAll(<Widget>[
             Padding(
               padding: EdgeInsets.only(bottom: 10),
             ),
@@ -47,7 +47,7 @@ class EstablishmentInfo extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(bottom: 10),
             ),
-          ]);
+          ]);*/
 
           if (child != null) {
             builder.add(child);

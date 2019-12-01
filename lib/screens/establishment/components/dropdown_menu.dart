@@ -95,6 +95,9 @@ class DropdownMenu extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
+    // TODO check options length
+    controller?.currentValue = options[0];
+
     return DropdownMenuState(title, options, (newValue) {
       controller?.currentValue = newValue;
       if (controller?.onValueChanged != null) {

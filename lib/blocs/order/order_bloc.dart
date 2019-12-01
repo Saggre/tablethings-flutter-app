@@ -13,6 +13,7 @@ import 'order_bloc_events.dart';
 
 /// Order bloc
 class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
+
   // For getting data from db
   ApiClient _apiClient = ApiClient();
   Establishment _establishment;
@@ -20,7 +21,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
   @override
   // Init with null
-  EstablishmentState get initialState => EstablishmentState(null);
+  OrderBlocState get initialState => LoadingState(null);
 
   @override
   Stream<OrderBlocState> mapEventToState(OrderBlocEvent event) async* {

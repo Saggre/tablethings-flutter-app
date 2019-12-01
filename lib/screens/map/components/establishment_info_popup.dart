@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/corner_bar.dart';
 import 'package:tablething/components/establishment_image.dart';
@@ -94,7 +97,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 25.0),
+                          padding: EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
                           child: EstablishmentInfo(
                             establishment: establishment,
                           ),
@@ -119,9 +122,11 @@ class EstablishmentInfoPopup extends StatelessWidget {
 
                               var package = FetchablePackage<String, Establishment>(establishment.id);
                               package.setFetchedData(establishment);
-                              EstablishmentScreenArguments args = EstablishmentScreenArguments(
-                                establishmentPackage: package,
-                                tableId: "0",
+
+                              Provider.of<PersistentData>(context).setData(
+                                package,
+                                '0',
+                                true,
                               );
 
                               // Push establishment screen
@@ -129,7 +134,6 @@ class EstablishmentInfoPopup extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EstablishmentScreen(),
-                                  settings: RouteSettings(arguments: args),
                                 ),
                               );
                             },
