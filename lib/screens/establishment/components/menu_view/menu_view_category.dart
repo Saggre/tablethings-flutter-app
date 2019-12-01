@@ -43,7 +43,7 @@ class MenuViewCategory extends StatelessWidget {
                   color: Colors.black12,
                 ),
               ],
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(32.0),
                 topLeft: Radius.circular(32.0),
               ),
@@ -61,15 +61,24 @@ class MenuViewCategory extends StatelessWidget {
               ],
             ),
           ),
-          ColumnBuilder(
-            itemCount: menuCategory.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return MenuViewItem(
-                menuItem: menuCategory.items[index],
-                establishment: establishment,
-                onAddItem: onAddItem,
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: ColumnBuilder(
+              itemCount: menuCategory.items.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  color: offWhiteColor,
+                  child: MenuViewItem(
+                    menuItem: menuCategory.items[index],
+                    establishment: establishment,
+                    onPress: onAddItem,
+                    buttonStyle: MenuViewItemButtonStyle.add,
+                    imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

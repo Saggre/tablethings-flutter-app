@@ -24,6 +24,8 @@ import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
 import 'package:bloc/bloc.dart';
 
+import 'components/menu_view/menu_view_item.dart';
+
 /// A route for a single establishment showing its info, menu, etc
 class EstablishmentScreen extends StatefulWidget {
   static const routeName = '/establishmentScreen';
@@ -261,60 +263,103 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   /// Shopping basket view with all order items
   Widget _getShoppingBasketView(Establishment establishment, Order<MenuItem> order) {
     return Column(
-      key: ValueKey('ShoppingBasketView'),
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 25.0),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            children: <Widget>[
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
+        key: ValueKey('ShoppingBasketView'),
+        children: () {
+          List<Widget> builder = [
+            Padding(
+              padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0, bottom: 15.0),
+              child: Column(
                 children: <Widget>[
-                  EstablishmentInfo(
+                  Flex(
+                    direction: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      EstablishmentInfo(
+                        establishment: establishment,
+                        showDescription: false,
+                        showRating: false,
+                      ),
+                    ],
+                  ),
+                  Flex(
+                    direction: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        t('Your order'),
+                        style: TextFactory.h2Style,
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 15.0),
+                  ),
+                  Flex(
+                    direction: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        t('Order total'),
+                        style: TextFactory.h4Style,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      // TODO Subtotal
+                      Text(
+                        establishment.formatCurrency(order.subtotal),
+                        style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
+                      ),
+                      Text(
+                        'Table 10',
+                        style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ];
+
+          order.items.forEach((orderItem) {
+            builder.add(
+              Container(
+                decoration: BoxDecoration(
+                  color: offWhiteColor,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32.0),
+                    topLeft: Radius.circular(32.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5.0,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 15.0),
+                  child: MenuViewItem(
+                    menuItem: orderItem.product,
                     establishment: establishment,
-                    showDescription: false,
-                    showRating: false,
+                    onPress: (MenuItem menuItem) {
+                      print("Remove item: " + menuItem.name);
+                    },
+                    buttonStyle: MenuViewItemButtonStyle.remove,
+                    wholeAreaIsClickable: false,
+                    descriptionPadding: 15.0,
+                    imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
                   ),
-                ],
+                ),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 15.0),
-              ),
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    t('Order'),
-                    style: TextFactory.h4Style,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  // TODO Subtotal
-                  Text(
-                    establishment.formatCurrency(order.subtotal),
-                    style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
-                  ),
-                  Text(
-                    'Table 10',
-                    style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Container(),
-      ],
-    );
+            );
+          });
+
+          return builder;
+        }());
   }
 
   /// Added order item view
@@ -323,38 +368,13 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       key: ValueKey('OrderItemView'),
       children: <Widget>[
         Container(
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 25.0,
-                ),
-                child: MenuViewItemText(
-                  menuItem: orderItem.product,
-                  establishment: establishment,
-                ),
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 0,
-                width: MediaQuery.of(context).size.width * 0.33,
-                child: CachedNetworkImage(
-                  imageUrl: orderItem.product.imageUrl,
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              ),
-            ],
+          padding: EdgeInsets.only(left: 15.0),
+          child: MenuViewItem(
+            menuItem: orderItem.product,
+            establishment: establishment,
+            onPress: () {},
+            buttonStyle: MenuViewItemButtonStyle.none,
+            descriptionPadding: 25.0,
           ),
         ),
         DropdownMenu(
