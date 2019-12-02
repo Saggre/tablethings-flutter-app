@@ -13,7 +13,6 @@ import 'order_bloc_events.dart';
 
 /// Order bloc
 class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
-
   // For getting data from db
   ApiClient _apiClient = ApiClient();
   Establishment _establishment;
@@ -34,10 +33,22 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       );
     } else if (event is InitOrderEvent) {
       yield await _initOrder(event);
+    } else if (event is CreateOrderItemEvent) {
+      yield await _createOrderItem(event);
     } else if (event is AddOrderItemEvent) {
-      yield await _addItemToOrder(event);
+      yield await _addOrderItem(event);
     } else if (event is ModifyOrderItemOptionsEvent) {
       yield await _modifyOrderItemOptions(event);
+    } else if (event is ForgetOrderItemEvent) {
+      yield await _forgetOrderItem(event);
+    } else if (event is RequestMenuEvent) {
+      yield await _goToMenu(event);
+    } else if (event is RequestCheckoutEvent) {
+      yield await _goToCheckout(event);
+    } else if (event is RemoveOrderItemEvent) {
+      yield await _removeOrderItem(event);
+    } else if (event is RequestShoppingBasketEvent) {
+      yield await _goToShoppingBasket(event);
     }
   }
 
@@ -77,18 +88,51 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   }
 
   /// Transforms a menu item into an order item that is able to have properties
-  Future<OrderBlocState> _addItemToOrder(AddOrderItemEvent event) async {
+  Future<OrderBlocState> _createOrderItem(CreateOrderItemEvent event) async {
     // TODO test this
     if (_order == null || _establishment == null) {
       return BlocState.withError(t('Order is not initiated')) as OrderItemState;
     }
 
     OrderItem<MenuItem> orderItem = OrderItem(product: event.menuItem, options: OrderItemOptions(quantity: 1));
-    _order.addItem(orderItem);
 
     return OrderItemState(
       _establishment,
       orderItem,
+    );
+  }
+
+  /// Add order item to order
+  Future<OrderBlocState> _addOrderItem(AddOrderItemEvent event) async {
+    event.orderItem.options = event.orderItemOptions;
+    _order.addItem(event.orderItem);
+
+    return ShoppingBasketState(
+      _establishment,
+      _order,
+    );
+  }
+
+  /// Remove an order item from the order
+  Future<OrderBlocState> _removeOrderItem(RemoveOrderItemEvent event) async {
+    if (event.orderItem == null || _order == null) {
+      // TODO error
+    }
+
+    bool removed = _order.items.remove(event.orderItem);
+
+    if (!removed) {
+      print("Couldn't remove item from order");
+    }
+
+    // Go to menu in case of empty order after removal
+    if (_order.items.length == 0) {
+      return EstablishmentState(_establishment);
+    }
+
+    return ShoppingBasketState(
+      _establishment,
+      _order,
     );
   }
 
@@ -109,6 +153,39 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
     if (replacedOptionsCount != 1) {
       print("Error modifying order item options");
+    }
+
+    return ShoppingBasketState(_establishment, _order);
+  }
+
+  /// Forgets the order item and returns to the last screen
+  Future<OrderBlocState> _forgetOrderItem(ForgetOrderItemEvent event) async {
+    if (_order.containsItem(event.orderItem)) {
+      return ShoppingBasketState(_establishment, _order);
+    }
+
+    return EstablishmentState(_establishment);
+  }
+
+  Future<OrderBlocState> _goToMenu(RequestMenuEvent event) async {
+    if (_establishment == null) {
+      // TODO error
+    }
+
+    return EstablishmentState(_establishment);
+  }
+
+  Future<OrderBlocState> _goToCheckout(RequestCheckoutEvent event) async {
+    if (_order == null || _establishment == null) {
+      // TODO error
+    }
+
+    return CheckoutState(_establishment, event.order);
+  }
+
+  Future<OrderBlocState> _goToShoppingBasket(RequestShoppingBasketEvent event) async {
+    if (_order == null || _establishment == null) {
+      // TODO error
     }
 
     return ShoppingBasketState(_establishment, _order);

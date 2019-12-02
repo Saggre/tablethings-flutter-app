@@ -1,4 +1,6 @@
 assets/debug/
+/android/key.properties
+android/key.properties
 
 # Miscellaneous
 *.class

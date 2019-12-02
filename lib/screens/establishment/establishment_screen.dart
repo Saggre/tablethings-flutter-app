@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/blocs/order/order_bloc_states.dart';
 import 'package:tablething/blocs/order_bloc_delegate.dart';
+import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
@@ -18,7 +18,6 @@ import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
-import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
@@ -127,17 +126,68 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     // TODO go back
     print("BACK");
     if (currentState is OrderItemState) {
-// TODO back event
+      BlocProvider.of<OrderBloc>(context).add(
+        ForgetOrderItemEvent(currentState.orderItem),
+      );
+      return;
+    } else if (currentState is ShoppingBasketState) {
+      BlocProvider.of<OrderBloc>(context).add(
+        RequestMenuEvent(),
+      );
+      return;
     }
+
+    // TODO add check
+    Navigator.pop(context);
   }
 
   Widget _getButtons() {
+    /// On checkout button press
+    void checkoutPressed(ShoppingBasketState state) {
+      BlocProvider.of<OrderBloc>(context).add(
+        RequestCheckoutEvent(state.order),
+      );
+    }
+
     return Flex(
       direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         BlocBuilder<OrderBloc, OrderBlocState>(builder: (context, state) {
-          if (state is OrderItemState) {
+          if (state is EstablishmentState) {
+            return DualButton(
+              properties: DualButtonProperties(
+                separatorDirection: DualButtonSeparatorDirection.rightHand,
+              ),
+              leftButtonProperties: SingleButtonProperties(
+                text: t('Back'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  darkThemeColorGradient,
+                  darkThemeColor,
+                ],
+                iconData: Icons.arrow_back,
+                borderRadius: BorderRadius.circular(32.0),
+                iconPosition: ButtonIconPosition.beforeText,
+                onPressed: () {
+                  _backAction(state);
+                },
+              ),
+              rightButtonProperties: SingleButtonProperties(
+                text: t('My order'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  mainThemeColor,
+                ],
+                borderRadius: BorderRadius.circular(32.0),
+                onPressed: () {
+                  BlocProvider.of<OrderBloc>(context).add(
+                    RequestShoppingBasketEvent(),
+                  );
+                },
+              ),
+            );
+          } else if (state is OrderItemState) {
             return DualButton(
               properties: DualButtonProperties(
                 separatorDirection: DualButtonSeparatorDirection.rightHand,
@@ -150,10 +200,9 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 ],
                 borderRadius: BorderRadius.circular(32.0),
                 onPressed: () {
-                  print(orderQuantityController.currentValue.toString());
                   // Add to order
                   BlocProvider.of<OrderBloc>(context).add(
-                    ModifyOrderItemOptionsEvent(OrderItemOptions(quantity: int.tryParse(orderQuantityController.currentValue)), state.orderItem),
+                    AddOrderItemEvent(state.orderItem, OrderItemOptions(quantity: int.tryParse(orderQuantityController.currentValue))),
                   );
                 },
               ),
@@ -172,6 +221,52 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 },
               ),
             );
+          } else if (state is ShoppingBasketState) {
+            if (state.order.items.length > 0) {
+              return LayeredButtonGroup(
+                onTap: () {
+                  checkoutPressed(state);
+                },
+                buttonText: t('Checkout'),
+                subMenu: Stack(
+                  children: <Widget>[
+                    DualButton(
+                      properties: DualButtonProperties(
+                        separatorDirection: DualButtonSeparatorDirection.rightHand,
+                      ),
+                      leftButtonProperties: SingleButtonProperties(
+                        text: t('Back'),
+                        textStyle: TextFactory.buttonStyle,
+                        colors: [
+                          darkThemeColorGradient,
+                          darkThemeColor,
+                        ],
+                        iconData: Icons.arrow_back,
+                        borderRadius: BorderRadius.circular(32.0),
+                        iconPosition: ButtonIconPosition.beforeText,
+                        onPressed: () {
+                          _backAction(state);
+                        },
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: GestureDetector(
+                        child: Container(
+                          color: Colors.transparent,
+                        ),
+                        onTap: () {
+                          checkoutPressed(state);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
           }
 
           return DualButton(
@@ -314,7 +409,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                         style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
                       ),
                       Text(
-                        'Table 10',
+                        Provider.of<PersistentData>(context).selectedTableId, // TODO takeaway
                         style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
                       ),
                     ],
@@ -327,36 +422,86 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           order.items.forEach((orderItem) {
             builder.add(
               Container(
-                decoration: BoxDecoration(
-                  color: offWhiteColor,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(32.0),
-                    topLeft: Radius.circular(32.0),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5.0,
+                color: offWhiteColor,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: offWhiteColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(32.0),
+                      topLeft: Radius.circular(32.0),
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: MenuViewItem(
-                    menuItem: orderItem.product,
-                    establishment: establishment,
-                    onPress: (MenuItem menuItem) {
-                      print("Remove item: " + menuItem.name);
-                    },
-                    buttonStyle: MenuViewItemButtonStyle.remove,
-                    wholeAreaIsClickable: false,
-                    descriptionPadding: 15.0,
-                    imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: MenuViewItem(
+                      menuItem: orderItem.product,
+                      establishment: establishment,
+                      onPress: (MenuItem menuItem) {
+                        BlocProvider.of<OrderBloc>(context).add(
+                          RemoveOrderItemEvent(orderItem),
+                        );
+                      },
+                      buttonStyle: MenuViewItemButtonStyle.remove,
+                      wholeAreaIsClickable: false,
+                      descriptionPadding: 15.0,
+                      imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+                    ),
                   ),
                 ),
               ),
             );
+
+            builder.add(Container(
+              color: offWhiteColor,
+              padding: EdgeInsets.only(bottom: 15.0),
+            ));
           });
+
+          builder.add(
+            GestureDetector(
+              onTap: () {
+                BlocProvider.of<OrderBloc>(context).add(
+                  RequestMenuEvent(),
+                );
+              },
+              child: Container(
+                color: offWhiteColor,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: offWhiteColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(32.0),
+                      topLeft: Radius.circular(32.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 60.0),
+                  child: Center(
+                    child: Text(
+                      t('+ Add more items'),
+                      style: TextFactory.h2Style.copyWith(color: Colors.grey[500]),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          builder.add(Container(
+            height: 128.0,
+            color: offWhiteColor,
+          ));
 
           return builder;
         }());
@@ -428,7 +573,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           establishment: establishment,
           onAddItem: (MenuItem menuItem) {
             BlocProvider.of<OrderBloc>(context).add(
-              AddOrderItemEvent(menuItem),
+              CreateOrderItemEvent(menuItem),
             );
           },
         ),

@@ -125,7 +125,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
 
                               Provider.of<PersistentData>(context).setData(
                                 package,
-                                '0',
+                                'No table',
                                 true,
                               );
 

@@ -23,4 +23,8 @@ class Order<T extends Product> {
     });
     return t;
   }
+
+  bool containsItem(OrderItem<T> orderItem) {
+    return _items.contains(orderItem);
+  }
 }
