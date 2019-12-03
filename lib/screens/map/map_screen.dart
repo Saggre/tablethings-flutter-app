@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/components/layered_button_group/menus/tabbed_food_menu.dart';
+import 'package:tablething/components/popup_widget.dart';
+import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/cuisine_types.dart';
 import 'package:tablething/screens/map/components/establishment_info_popup.dart';
@@ -65,7 +67,6 @@ class MapScreenState extends State<MapScreen> {
             _getMap(),
             _getButtons(),
             MainAppBar(),
-            _getEstablishmentPopupWidget(),
           ],
         ),
       ),
@@ -107,38 +108,28 @@ class MapScreenState extends State<MapScreen> {
 
   /// When a marker is selected / tapped
   void _onMarkerTapped(Establishment establishment) {
-    print('Tapped marker');
     _showEstablishmentPopup(establishment);
   }
 
   /// Show a dialog containing information about the marker
   void _showEstablishmentPopup(Establishment establishment) {
-    setState(() {
-      _establishmentPopup.establishment = establishment;
-      _establishmentPopup.visible = true;
-    });
-  }
-
-  /// Hides the dialog
-  void _hideEstablishmentPopup() {
-    setState(() {
-      _establishmentPopup.establishment = null;
-      _establishmentPopup.visible = false;
-    });
-  }
-
-  /// Get's a popup widget containing info about an establishment
-  Widget _getEstablishmentPopupWidget() {
-    if (!_establishmentPopup.visible || _establishmentPopup.establishment == null) {
-      return Container();
+    void closePopup() {
+      Navigator.of(context).pop();
     }
 
-    return EstablishmentInfoPopup(
-      establishment: _establishmentPopup.establishment,
-      onCloseTapped: () {
-        _hideEstablishmentPopup();
-      },
-    );
+    Navigator.of(context).push(TransparentRoute(
+        builder: (BuildContext context) => PopupWidget(
+              child: EstablishmentInfoPopup(
+                establishment: establishment,
+                onCloseTapped: () {
+                  closePopup();
+                },
+              ),
+              onCloseTapped: () {
+                closePopup();
+              },
+            )));
+    return;
   }
 
   /// Moves the map to a certain coordinate
