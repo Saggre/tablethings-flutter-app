@@ -11,7 +11,7 @@ class GoogleLoginEvent extends AuthBlocEvent {}
 class AuthBlocState extends BlocState {}
 
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _google = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -20,12 +20,12 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   @override
   Stream<AuthBlocState> mapEventToState(AuthBlocEvent event) async* {
     if (event is GoogleLoginEvent) {
-      _handleGoogleSignIn().then((FirebaseUser user) => print(user)).catchError((e) => print(e));
+      _googleSignIn().then((FirebaseUser user) => print(user)).catchError((e) => print(e));
     }
   }
 
-  Future<FirebaseUser> _handleGoogleSignIn() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  Future<FirebaseUser> _googleSignIn() async {
+    final GoogleSignInAccount googleUser = await _google.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -36,5 +36,35 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
     return user;
+  }
+
+  Future _credentialsSignIn(String email, String password) {
+    return _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  Future _credentialsRegistration({String email, String password}) async {
+    return await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  Future _signOut() async {
+    return Future.wait([
+      _auth.signOut(),
+      _google.signOut(),
+    ]);
+  }
+
+  Future<bool> _isSignedIn() async {
+    final currentUser = await _auth.currentUser();
+    return currentUser != null;
+  }
+
+  Future<String> _getUser() async {
+    return (await _auth.currentUser()).email;
   }
 }

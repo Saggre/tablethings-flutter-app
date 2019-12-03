@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "1018368924109-grk5pge61mrp060td27igmegtlgv4g1u.apps.googleusercontent.com",
+          "client_id": "1018368924109-km4dh40hh4aol6s00bi1af8ifl5avm1t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "fi.designsivu.tablething",
-            "certificate_hash": "16dd2ee6ba5db38717d0137989fb8fb2948269cc"
+            "certificate_hash": "d87eb232ceb15e04094bf694de9b3bb7f672fc04"
+          }
+        },
+        {
+          "client_id": "1018368924109-908vibfrkb13ihp93a4k4h3vdq6omn04.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fi.designsivu.tablething",
+            "certificate_hash": "5cb2436b5550a0d30fb3badc9ea47a7de1f86fe3"
+          }
+        },
+        {
+          "client_id": "1018368924109-50rfohdgg2pkathpjpvlgbjldu4rbpub.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fi.designsivu.tablething",
+            "certificate_hash": "fc07ca55b6769050d2f33eda41bcecb6cf005b50"
           }
         },
         {
