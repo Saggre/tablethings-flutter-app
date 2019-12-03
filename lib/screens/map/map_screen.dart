@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/components/layered_button_group/menus/tabbed_food_menu.dart';
+import 'package:tablething/components/login_popup.dart';
 import 'package:tablething/components/popup_widget.dart';
 import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
@@ -29,6 +30,7 @@ class MapScreen extends StatefulWidget {
   MapScreenState createState() {
     return MapScreenState();
   }
+
 }
 
 /// Data for the establishment popup
@@ -41,9 +43,6 @@ class MapScreenState extends State<MapScreen> {
   Completer<GoogleMapController> _controller = Completer();
   Map<Establishment, Marker> _mapMarkers = Map();
 
-  // The establishment to show as a popup
-  MapScreenEstablishmentPopupOptions _establishmentPopup = MapScreenEstablishmentPopupOptions();
-
   /// JSON Google map style
   String _mapStyle;
 
@@ -55,6 +54,25 @@ class MapScreenState extends State<MapScreen> {
     rootBundle.loadString('assets/map_style.json').then((string) {
       _mapStyle = string;
     });
+
+    () async {
+      await Future.delayed(Duration.zero);
+
+      void closeLoginPopup() {
+        Navigator.of(context).pop();
+      }
+
+      Navigator.of(context).push(
+        TransparentRoute(
+          builder: (BuildContext context) => PopupWidget(
+            child: LoginPopup(
+              onCloseTapped: () => closeLoginPopup(),
+            ),
+            onCloseTapped: () => closeLoginPopup(),
+          ),
+        ),
+      );
+    }();
   }
 
   @override
@@ -117,19 +135,21 @@ class MapScreenState extends State<MapScreen> {
       Navigator.of(context).pop();
     }
 
-    Navigator.of(context).push(TransparentRoute(
+    Navigator.of(context).push(
+      TransparentRoute(
         builder: (BuildContext context) => PopupWidget(
-              child: EstablishmentInfoPopup(
-                establishment: establishment,
-                onCloseTapped: () {
-                  closePopup();
-                },
-              ),
-              onCloseTapped: () {
-                closePopup();
-              },
-            )));
-    return;
+          child: EstablishmentInfoPopup(
+            establishment: establishment,
+            onCloseTapped: () {
+              closePopup();
+            },
+          ),
+          onCloseTapped: () {
+            closePopup();
+          },
+        ),
+      ),
+    );
   }
 
   /// Moves the map to a certain coordinate

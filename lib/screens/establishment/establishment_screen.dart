@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/blocs/order/order_bloc_states.dart';
-import 'package:tablething/blocs/order_bloc_delegate.dart';
+import 'package:tablething/blocs/bloc_delegate.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
@@ -43,9 +43,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Set bloc delegate
-    BlocSupervisor.delegate = SimpleBlocDelegate();
 
     // Delayed to after context is initialized
     () async {

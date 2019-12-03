@@ -9,7 +9,7 @@ class TextFactory {
   static TextStyle h1Style = TextStyle(
     color: _textColor,
     fontSize: 28,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w300,
     fontFamily: _fontFamily,
   );
 

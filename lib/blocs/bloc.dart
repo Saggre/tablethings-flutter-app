@@ -1,6 +1,7 @@
 /// Exports all blocs used in the app
 export 'map_bloc.dart';
 export 'order/order_bloc.dart';
+export 'auth_bloc.dart';
 import 'package:tablething/localization/translate.dart';
 
 class BlocEvent {}

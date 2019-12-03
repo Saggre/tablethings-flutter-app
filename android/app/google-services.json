@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1018368924109-grk5pge61mrp060td27igmegtlgv4g1u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fi.designsivu.tablething",
+            "certificate_hash": "16dd2ee6ba5db38717d0137989fb8fb2948269cc"
+          }
+        },
+        {
           "client_id": "1018368924109-m807it2igpql0u4vu9tokdm3erntomnn.apps.googleusercontent.com",
           "client_type": 3
         }

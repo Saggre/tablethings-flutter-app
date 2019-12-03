@@ -5,8 +5,9 @@ import 'package:location/location.dart';
 import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:flutter/services.dart';
+import 'bloc.dart';
 
-class MapBlocEvent {}
+class MapBlocEvent extends BlocEvent {}
 
 /// Event for when user moves the map to a new area
 class GeoAreaMapBlocEvent extends MapBlocEvent {
@@ -25,7 +26,7 @@ class UserMovedMapBlocEvent extends MapBlocEvent {
 }
 
 /// State containing a list of establishments to return
-class MapBlocState {}
+class MapBlocState extends BlocState {}
 
 class UserMovedMapBlocState extends MapBlocState {
   LatLng userLocation;
