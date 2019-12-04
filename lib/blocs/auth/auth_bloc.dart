@@ -3,12 +3,16 @@ import 'package:bloc/bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_bloc_states.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class AuthBlocEvent extends BlocEvent {}
 
+class AppStartedEvent extends AuthBlocEvent {}
+
 class GoogleLoginEvent extends AuthBlocEvent {}
 
-class AuthBlocState extends BlocState {}
+class FacebookLoginEvent extends AuthBlocEvent{}
 
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   final GoogleSignIn _google = GoogleSignIn();
@@ -37,6 +41,11 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     print("signed in " + user.displayName);
     return user;
   }
+
+  Future<FirebaseUser> _facevookSignIn() async{
+    //final FacebookLoginResult
+  }
+
 
   Future _credentialsSignIn(String email, String password) {
     return _auth.signInWithEmailAndPassword(
