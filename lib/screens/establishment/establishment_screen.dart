@@ -5,23 +5,21 @@ import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/blocs/order/order_bloc_states.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
-import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
+import 'package:tablething/screens/establishment/components/shopping_basket_card.dart';
 import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
-import 'components/menu_view/menu_view.dart';
-
-import 'components/menu_view/menu_view_item.dart';
+import 'components/card_base.dart';
+import 'components/checkout_card.dart';
+import 'components/establishment_card.dart';
+import 'components/order_item_card.dart';
 
 /// A route for a single establishment showing its info, menu, etc
 class EstablishmentScreen extends StatefulWidget {
@@ -66,6 +64,10 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           children: <Widget>[
             BlocBuilder<OrderBloc, OrderBlocState>(
               builder: (context, state) {
+                Widget built = Container(
+                  color: Colors.red,
+                );
+
                 if (state.error) {
                   // TODO handle error
                 }
@@ -75,37 +77,37 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   return CircularProgressIndicator(value: null);
                 } else if (state is EstablishmentState) {
                   print("Successfully got establishment: " + state.establishment.name);
-
-                  return _getFrame(
-                    _getEstablishmentView(state),
-                    state.establishment.imageUrl,
+                  built = EstablishmentCard(
+                    establishment: state.establishment,
+                    menu: state.menu,
                   );
                 } else if (state is OrderItemState) {
-                  return WillPopScope(
-                    onWillPop: () async {
-                      _backAction(state);
-                      return false;
-                    },
-                    child: _getFrame(
-                      _getOrderItemView(state.establishment, state.orderItem),
-                      state.establishment.imageUrl,
-                    ),
+                  built = OrderItemCard(
+                    establishment: state.establishment,
+                    orderItem: state.orderItem,
+                    controller: orderQuantityController,
                   );
                 } else if (state is ShoppingBasketState) {
-                  return WillPopScope(
-                    onWillPop: () async {
-                      _backAction(state);
-                      return false;
-                    },
-                    child: _getFrame(
-                      _getShoppingBasketView(state.establishment, state.order),
-                      state.establishment.imageUrl,
-                    ),
+                  built = ShoppingBasketCard(
+                    establishment: state.establishment,
+                    order: state.order,
+                  );
+                } else if (state is CheckoutState) {
+                  built = CheckoutCard(
+                    establishment: state.establishment,
+                    order: state.order,
                   );
                 }
 
-                return Container(
-                  color: Colors.red,
+                return WillPopScope(
+                  onWillPop: () async {
+                    _backAction(state);
+                    return false;
+                  },
+                  child: _getFrame(
+                    built,
+                    state.establishment.imageUrl,
+                  ),
                 );
               },
             ),
@@ -128,6 +130,11 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     } else if (currentState is ShoppingBasketState) {
       BlocProvider.of<OrderBloc>(context).add(
         RequestMenuEvent(),
+      );
+      return;
+    } else if (currentState is CheckoutState) {
+      BlocProvider.of<OrderBloc>(context).add(
+        RequestShoppingBasketEvent(),
       );
       return;
     }
@@ -316,269 +323,17 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           Container(
             height: 152,
           ),
-          _getCard(
-            AnimatedSwitcher(
+          CardBase(
+            child: AnimatedSwitcher(
               key: ValueKey('AnimatedSwitcher'),
               child: child,
               duration: Duration(milliseconds: 400),
               transitionBuilder: (Widget child, Animation<double> animation) {
-                return SlideTransition(
-                    child: child,
-                    position: Tween<Offset>(
-                      begin: const Offset(0.0, 1.0),
-                      end: Offset.zero,
-                    ).animate(animation));
+                return ScaleTransition(child: child, scale: animation);
               },
             ),
           ),
         ])
-      ],
-    );
-  }
-
-  Widget _getCard(Widget child) {
-    return ClipRRect(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      borderRadius: BorderRadius.only(
-        topRight: Radius.circular(32.0),
-        topLeft: Radius.circular(32.0),
-      ),
-      child: Container(
-        color: offWhiteColor,
-        child: child,
-      ),
-    );
-  }
-
-  /// Shopping basket view with all order items
-  Widget _getShoppingBasketView(Establishment establishment, Order<MenuItem> order) {
-    return Column(
-        key: ValueKey('ShoppingBasketView'),
-        children: () {
-          List<Widget> builder = [
-            Padding(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0, bottom: 15.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      EstablishmentInfo(
-                        establishment: establishment,
-                        showDescription: false,
-                        showRating: false,
-                      ),
-                    ],
-                  ),
-                  Flex(
-                    direction: Axis.horizontal,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        t('Your order'),
-                        style: TextFactory.h2Style,
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 15.0),
-                  ),
-                  Flex(
-                    direction: Axis.horizontal,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        t('Order total'),
-                        style: TextFactory.h4Style,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      // TODO Subtotal
-                      Text(
-                        establishment.formatCurrency(order.subtotal),
-                        style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
-                      ),
-                      Text(
-                        Provider.of<PersistentData>(context).selectedTableId, // TODO takeaway
-                        style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ];
-
-          order.items.forEach((orderItem) {
-            builder.add(
-              Container(
-                color: offWhiteColor,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: offWhiteColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(32.0),
-                      topLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5.0,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.0),
-                    child: MenuViewItem(
-                      menuItem: orderItem.product,
-                      establishment: establishment,
-                      onPress: (MenuItem menuItem) {
-                        BlocProvider.of<OrderBloc>(context).add(
-                          RemoveOrderItemEvent(orderItem),
-                        );
-                      },
-                      buttonStyle: MenuViewItemButtonStyle.remove,
-                      wholeAreaIsClickable: false,
-                      descriptionPadding: 15.0,
-                      imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
-                    ),
-                  ),
-                ),
-              ),
-            );
-
-            builder.add(Container(
-              color: offWhiteColor,
-              padding: EdgeInsets.only(bottom: 15.0),
-            ));
-          });
-
-          builder.add(
-            GestureDetector(
-              onTap: () {
-                BlocProvider.of<OrderBloc>(context).add(
-                  RequestMenuEvent(),
-                );
-              },
-              child: Container(
-                color: offWhiteColor,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: offWhiteColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(32.0),
-                      topLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5.0,
-                      ),
-                    ],
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 60.0),
-                  child: Center(
-                    child: Text(
-                      t('+ Add more items'),
-                      style: TextFactory.h2Style.copyWith(color: Colors.grey[500]),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-
-          builder.add(Container(
-            height: 128.0,
-            color: offWhiteColor,
-          ));
-
-          return builder;
-        }());
-  }
-
-  /// Added order item view
-  Widget _getOrderItemView(Establishment establishment, OrderItem<MenuItem> orderItem) {
-    return Column(
-      key: ValueKey('OrderItemView'),
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(left: 15.0),
-          child: MenuViewItem(
-            menuItem: orderItem.product,
-            establishment: establishment,
-            onPress: () {},
-            buttonStyle: MenuViewItemButtonStyle.none,
-            descriptionPadding: 25.0,
-          ),
-        ),
-        DropdownMenu(
-          controller: orderQuantityController,
-          title: t('Määrä'),
-          options: <String>['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        ),
-        DropdownMenu(
-          title: t('Lisuke'),
-          options: <String>['Kana'],
-        ),
-      ],
-    );
-  }
-
-  /// Establishment menu view
-  Widget _getEstablishmentView(EstablishmentState state) {
-    return Column(
-      key: ValueKey('EstablishmentView'),
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 25.0),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 15.0,
-          ),
-          child: Column(
-            children: <Widget>[
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  EstablishmentInfo(
-                    establishment: state.establishment,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 15.0),
-              ),
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  TextFactory.h2(t('Menu')),
-                ],
-              ),
-            ],
-          ),
-        ),
-        MenuView(
-          menu: state.menu,
-          establishment: state.establishment,
-          onAddItem: (MenuItem menuItem) {
-            BlocProvider.of<OrderBloc>(context).add(
-              CreateOrderItemEvent(menuItem),
-            );
-          },
-        ),
-        Container(
-          height: 64.0,
-          color: offWhiteColor,
-        ),
       ],
     );
   }
