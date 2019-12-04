@@ -39,7 +39,7 @@ class LoginPopup extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
                   onPressed: () {
-                    print("FB");
+                    BlocProvider.of<AuthBloc>(context).add(FacebookLoginEvent());
                   },
                 ),
               ),
@@ -54,7 +54,6 @@ class LoginPopup extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
                   onPressed: () {
-                    print("Google");
                     BlocProvider.of<AuthBloc>(context).add(GoogleLoginEvent());
                   },
                 ),

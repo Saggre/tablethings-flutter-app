@@ -12,11 +12,14 @@ class AppStartedEvent extends AuthBlocEvent {}
 
 class GoogleLoginEvent extends AuthBlocEvent {}
 
-class FacebookLoginEvent extends AuthBlocEvent{}
+class FacebookLoginEvent extends AuthBlocEvent {}
 
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   final GoogleSignIn _google = GoogleSignIn();
+  final FacebookLogin _facebook = FacebookLogin();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser _currentUser;
 
   @override
   AuthBlocState get initialState => AuthBlocState();
@@ -24,7 +27,19 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   @override
   Stream<AuthBlocState> mapEventToState(AuthBlocEvent event) async* {
     if (event is GoogleLoginEvent) {
-      _googleSignIn().then((FirebaseUser user) => print(user)).catchError((e) => print(e));
+      _currentUser = await _googleSignIn().catchError((e) {
+        // TODO error
+        print("Error signing in with Google");
+      });
+
+      print("Signed in with Google");
+    } else if (event is FacebookLoginEvent) {
+      _currentUser = await _facebookSignIn().catchError((e) {
+        // TODO error
+        print("Error signing in with Facebook");
+      });
+
+      print("Signed in with Facebook");
     }
   }
 
@@ -42,10 +57,29 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     return user;
   }
 
-  Future<FirebaseUser> _facevookSignIn() async{
-    //final FacebookLoginResult
-  }
+  Future<FirebaseUser> _facebookSignIn() async {
+    final FacebookLoginResult result = await _facebook.logIn(['email']);
 
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
+
+        final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+
+        print("signed in " + user.displayName);
+        return user;
+
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("cancelled by user");
+        throw Error();
+        break;
+      case FacebookLoginStatus.error:
+        print("login error");
+        throw Error();
+        break;
+    }
+  }
 
   Future _credentialsSignIn(String email, String password) {
     return _auth.signInWithEmailAndPassword(
@@ -65,6 +99,7 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     return Future.wait([
       _auth.signOut(),
       _google.signOut(),
+      _facebook.logOut(),
     ]);
   }
 
