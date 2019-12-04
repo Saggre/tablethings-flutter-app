@@ -22,45 +22,41 @@ class EstablishmentInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: () {
-          List<Widget> builder = List();
+    return Flexible(
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: () {
+            List<Widget> builder = List();
 
-          if (showTitle) {
-            builder.add(_getTitle());
-          }
+            if (showTitle) {
+              builder.add(_getTitle());
+            }
 
-          if (showDescription) {
-            builder.add(_getDescription(context));
-          }
+            if (showDescription) {
+              builder.add(_getDescription(context));
+            }
 
-          if (showRating) {
-            builder.add(_getRating());
-          }
+            if (showRating) {
+              builder.add(_getRating());
+            }
 
-          if (child != null) {
-            builder.add(child);
-          }
+            if (child != null) {
+              builder.add(child);
+            }
 
-          return builder;
-        }());
+            return builder;
+          }()),
+    );
   }
 
   Widget _getDescription(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width - 20,
-        child: Column(
-          children: <Widget>[
-            RichText(
-              text: TextSpan(
-                style: TextFactory.pStyle,
-                text: establishment.description,
-              ),
-            ),
-          ],
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: RichText(
+        text: TextSpan(
+          style: TextFactory.pStyle,
+          text: establishment.description,
         ),
       ),
     );
@@ -138,10 +134,9 @@ class EstablishmentInfo extends StatelessWidget {
   Widget _getTitle() {
     return Padding(
       padding: EdgeInsets.only(bottom: 10.0),
-      child: Flex(
-        direction: Axis.horizontal,
+      child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFactory.h1(establishment.name),

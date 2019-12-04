@@ -74,8 +74,13 @@ class EstablishmentInfoPopup extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
-              child: EstablishmentInfo(
-                establishment: establishment,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  EstablishmentInfo(
+                    establishment: establishment,
+                  ),
+                ],
               ),
             ),
             DualButton(

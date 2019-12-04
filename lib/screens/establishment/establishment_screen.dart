@@ -360,8 +360,8 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
               padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0, bottom: 15.0),
               child: Column(
                 children: <Widget>[
-                  Flex(
-                    direction: Axis.horizontal,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       EstablishmentInfo(
@@ -552,6 +552,9 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                     establishment: state.establishment,
                   ),
                 ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 15.0),
               ),
               Flex(
                 direction: Axis.horizontal,
