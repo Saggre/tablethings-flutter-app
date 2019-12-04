@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/blocs/order/order_bloc_states.dart';
-import 'package:tablething/blocs/bloc_delegate.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
+import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
@@ -14,14 +14,12 @@ import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/main_app_bar.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu_item.dart';
 import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'components/menu_view/menu_view.dart';
-import 'package:bloc/bloc.dart';
 
 import 'components/menu_view/menu_view_item.dart';
 
@@ -79,7 +77,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   print("Successfully got establishment: " + state.establishment.name);
 
                   return _getFrame(
-                    _getEstablishmentView(state.establishment),
+                    _getEstablishmentView(state),
                     state.establishment.imageUrl,
                   );
                 } else if (state is OrderItemState) {
@@ -533,7 +531,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
   }
 
   /// Establishment menu view
-  Widget _getEstablishmentView(Establishment establishment) {
+  Widget _getEstablishmentView(EstablishmentState state) {
     return Column(
       key: ValueKey('EstablishmentView'),
       children: <Widget>[
@@ -551,7 +549,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   EstablishmentInfo(
-                    establishment: establishment,
+                    establishment: state.establishment,
                   ),
                 ],
               ),
@@ -566,8 +564,8 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
           ),
         ),
         MenuView(
-          menu: establishment.menu,
-          establishment: establishment,
+          menu: state.menu,
+          establishment: state.establishment,
           onAddItem: (MenuItem menuItem) {
             BlocProvider.of<OrderBloc>(context).add(
               CreateOrderItemEvent(menuItem),

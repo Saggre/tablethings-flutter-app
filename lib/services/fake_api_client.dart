@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/establishment/menu/menu.dart';
 
@@ -9,33 +8,33 @@ import 'json_loader.dart';
 class ApiClient {
   Duration _requestDelay = Duration(seconds: 1);
   List<String> _fakeJsons = [
-    'establishment_lilja.json',
     'establishment_willihanhi.json',
   ];
 
-  ApiClient() {}
-
   Future<Establishment> _getEstablishmentFromFile(String fileName) async {
-    var result;
-
     Establishment establishment;
 
     try {
-      result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
+      var result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
       establishment = Establishment.fromJson(result);
     } catch (err) {
       print("Error parsing establishment json");
     }
 
+    return establishment;
+  }
+
+  Future<Menu> _getMenuFromFile(String fileName) async {
+    Menu menu;
+
     try {
-      result = await JsonLoader().parseJsonFromAssets('assets/debug/menu.json');
-      Menu menu = Menu.fromJson(result);
-      establishment.setMenu(menu);
+      var result = await JsonLoader().parseJsonFromAssets('assets/debug/' + fileName);
+      menu = Menu.fromJson(result);
     } catch (err) {
       print("Error parsing establishment menu json");
     }
 
-    return establishment;
+    return menu;
   }
 
   /// Get a list of establishments
@@ -48,6 +47,11 @@ class ApiClient {
     }
 
     return Future.value(establishments).timeout(_requestDelay);
+  }
+
+  Future<Menu> getMenu() async {
+    Menu menu = await _getMenuFromFile('menu.json');
+    return Future.value(menu).timeout(_requestDelay);
   }
 
   /// Get a single establishment with id

@@ -32,22 +32,12 @@ class EstablishmentInfo extends StatelessWidget {
           }
 
           if (showDescription) {
-            builder.add(_getDescription());
+            builder.add(_getDescription(context));
           }
 
           if (showRating) {
             builder.add(_getRating());
           }
-
-          /*builder.addAll(<Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
-            Divider(),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
-          ]);*/
 
           if (child != null) {
             builder.add(child);
@@ -57,12 +47,21 @@ class EstablishmentInfo extends StatelessWidget {
         }());
   }
 
-  Widget _getDescription() {
+  Widget _getDescription(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: TextFactory.p(establishment.description),
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 20,
+        child: Column(
+          children: <Widget>[
+            RichText(
+              text: TextSpan(
+                style: TextFactory.pStyle,
+                text: establishment.description,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

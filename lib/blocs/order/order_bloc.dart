@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/models/establishment/order/order.dart';
@@ -17,6 +17,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   ApiClient _apiClient = ApiClient();
   Establishment _establishment;
   Order<MenuItem> _order;
+  Menu _menu;
 
   @override
   // Init with null
@@ -52,7 +53,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
     }
   }
 
-  /// Gets an establishment
+  /// Gets an establishment and menu
   Future<OrderBlocState> _getEstablishment(GetEstablishmentEvent event) async {
     try {
       // If already fetched from db
@@ -62,14 +63,13 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
         _establishment = await _apiClient.getEstablishment(event.establishmentPackage.getFetchId());
       }
 
-      return EstablishmentState(_establishment);
+      // TODO specify which menu
+      _menu = await _apiClient.getMenu();
+
+      return EstablishmentState(_establishment, _menu);
     } catch (err) {
       print("Error: " + err.toString());
-      return () {
-        var state = EstablishmentState(null);
-        state.error = true;
-        return state;
-      }();
+      return BlocState.withError(t('An error occurred')) as EstablishmentState;
     }
   }
 
@@ -77,13 +77,9 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   Future<OrderBlocState> _initOrder(InitOrderEvent event) async {
     _order = Order<MenuItem>();
     if (_establishment != null) {
-      return EstablishmentState(_establishment);
+      return EstablishmentState(_establishment, _menu);
     } else {
-      return () {
-        var state = EstablishmentState(null);
-        state.error = true;
-        return state;
-      }();
+      return BlocState.withError(t('An error occurred')) as EstablishmentState;
     }
   }
 
@@ -127,7 +123,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
     // Go to menu in case of empty order after removal
     if (_order.items.length == 0) {
-      return EstablishmentState(_establishment);
+      return EstablishmentState(_establishment, _menu);
     }
 
     return ShoppingBasketState(
@@ -164,7 +160,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       return ShoppingBasketState(_establishment, _order);
     }
 
-    return EstablishmentState(_establishment);
+    return EstablishmentState(_establishment, _menu);
   }
 
   Future<OrderBlocState> _goToMenu(RequestMenuEvent event) async {
@@ -172,7 +168,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    return EstablishmentState(_establishment);
+    return EstablishmentState(_establishment, _menu);
   }
 
   Future<OrderBlocState> _goToCheckout(RequestCheckoutEvent event) async {

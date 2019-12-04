@@ -11,7 +11,8 @@ void main() {
     result = await JsonLoader().parseJsonFromFile('assets/menu.json', test: true);
     Menu menu = Menu.fromJson(result);
 
-    establishment.setMenu(menu);
+    // TODO test menu
+    //establishment.setMenu(menu);
 
     expect(establishment.name, "Lilja Grillikioski");
     expect(menu.categories[0].formattedName, "Seafood");

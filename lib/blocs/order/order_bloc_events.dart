@@ -1,6 +1,6 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';

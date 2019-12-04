@@ -30,7 +30,6 @@ class MapScreen extends StatefulWidget {
   MapScreenState createState() {
     return MapScreenState();
   }
-
 }
 
 /// Data for the establishment popup
@@ -106,8 +105,7 @@ class MapScreenState extends State<MapScreen> {
 
     // Get icon
     // TODO what if error
-    BitmapDescriptor icon =
-        await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), establishment.getDefaultCuisineTypeDescription().iconPath);
+    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), establishment.defaultCuisineTypeDescription.iconPath);
 
     MarkerId markerId = MarkerId(establishment.id);
 
@@ -115,7 +113,7 @@ class MapScreenState extends State<MapScreen> {
     final Marker marker = Marker(
       icon: icon,
       markerId: markerId,
-      position: LatLng(establishment.location.latitude, establishment.location.longitude),
+      position: LatLng(establishment.latitude, establishment.longitude),
       onTap: () {
         _onMarkerTapped(establishment);
       },

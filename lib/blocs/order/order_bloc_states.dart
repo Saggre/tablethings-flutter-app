@@ -1,6 +1,6 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu_item.dart';
+import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/establishment/order/order_item.dart';
 
@@ -19,7 +19,9 @@ class LoadingState extends OrderBlocState {
 
 /// When the menu is shown
 class EstablishmentState extends OrderBlocState {
-  EstablishmentState(establishment) : super(establishment);
+  final Menu menu;
+
+  EstablishmentState(establishment, this.menu) : super(establishment);
 }
 
 /// When an order item is shown
