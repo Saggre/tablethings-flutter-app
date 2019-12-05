@@ -8,14 +8,33 @@ class DropdownMenuController<T> {
   Function onValueChanged;
 }
 
-class DropdownMenuState extends State<DropdownMenu> {
+class DropdownMenu extends StatefulWidget {
   final String title;
   final List<String> options;
+  final DropdownMenuController controller;
+
+  DropdownMenu({@required this.title, @required this.options, this.controller});
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO check options length
+    controller?.currentValue = options[0];
+
+    return DropdownMenuState((newValue) {
+      controller?.currentValue = newValue;
+      if (controller?.onValueChanged != null) {
+        controller?.onValueChanged(newValue);
+      }
+    });
+  }
+}
+
+class DropdownMenuState extends State<DropdownMenu> {
   final Function onChangeValue;
   String _value;
 
-  DropdownMenuState(this.title, this.options, this.onChangeValue) {
-    _value = options[0];
+  DropdownMenuState(this.onChangeValue) {
+    _value = widget.options[0];
   }
 
   String get value => _value;
@@ -45,7 +64,7 @@ class DropdownMenuState extends State<DropdownMenu> {
             children: <Widget>[
               Expanded(
                 flex: 4,
-                child: TextFactory.h4(title),
+                child: TextFactory.h4(widget.title),
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -68,7 +87,8 @@ class DropdownMenuState extends State<DropdownMenu> {
                     });
                   },
                   style: TextFactory.h4Style,
-                  items: options.map<DropdownMenuItem<String>>((String value) {
+                  items: widget.options
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Container(
@@ -83,26 +103,5 @@ class DropdownMenuState extends State<DropdownMenu> {
         ),
       ),
     );
-  }
-}
-
-class DropdownMenu extends StatefulWidget {
-  final String title;
-  final List<String> options;
-  final DropdownMenuController controller;
-
-  DropdownMenu({@required this.title, @required this.options, this.controller});
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO check options length
-    controller?.currentValue = options[0];
-
-    return DropdownMenuState(title, options, (newValue) {
-      controller?.currentValue = newValue;
-      if (controller?.onValueChanged != null) {
-        controller?.onValueChanged(newValue);
-      }
-    });
   }
 }

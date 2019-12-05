@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/services/places_graph_api/graph_place.dart';
 import 'package:tablething/util/text_factory.dart';
 
 class EstablishmentInfo extends StatelessWidget {
@@ -63,51 +64,73 @@ class EstablishmentInfo extends StatelessWidget {
   }
 
   Widget _getRating() {
-    // TODO get rating
-    double rating = 4.4;
-    int reviews = 256;
+    return FutureBuilder(
+        future: establishment.placeInformation,
+        builder: (BuildContext context, AsyncSnapshot<GraphPlace> snapshot) {
+          bool show = false;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          rating.toString(),
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Padding(padding: EdgeInsets.only(left: 5.0)),
-        RatingBar(
-          ignoreGestures: true,
-          initialRating: rating,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          itemCount: 5,
-          itemSize: 25,
-          itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-          itemBuilder: (context, _) => Icon(
-            Icons.star,
-            color: Colors.amberAccent,
-          ),
-          unratedColor: Colors.grey[600],
-          onRatingUpdate: (rating) {
-            print(rating);
-          },
-        ),
-        Padding(padding: EdgeInsets.only(left: 10.0)),
-        Text(
-          reviews.toString(),
-          style: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-          ),
-        )
-      ],
-    );
+          if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError) {
+            show = true;
+          }
+
+          return AnimatedOpacity(
+            duration: Duration(milliseconds: 300),
+            opacity: show ? 1 : 0,
+            child: () {
+              if (!show) {
+                return Container(
+                  height: 24,
+                );
+              }
+
+              return Container(
+                key: ValueKey('Rating'),
+                height: 24,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      snapshot.data.rating.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 5.0)),
+                    RatingBar(
+                      ignoreGestures: true,
+                      initialRating: snapshot.data.rating,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 25,
+                      itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amberAccent,
+                      ),
+                      unratedColor: Colors.grey[600],
+                      onRatingUpdate: (rating) {
+                        print(rating);
+                      },
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 10.0)),
+                    Text(
+                      snapshot.data.ratingCount.toString(),
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }(),
+          );
+        });
   }
 
   /// Business hours

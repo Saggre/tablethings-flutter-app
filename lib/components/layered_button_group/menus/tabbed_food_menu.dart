@@ -28,27 +28,10 @@ class TabbedFoodMenu extends StatefulWidget implements LayeredButtonGroupMenu {
   }) : super(key: key);
 
   @override
-  _TabbedFoodMenuState createState() => _TabbedFoodMenuState(
-        firstTabOptions: firstTabOptions,
-        secondTabOptions: secondTabOptions,
-        thirdTabOptions: thirdTabOptions,
-        fourthTabOptions: fourthTabOptions,
-      );
+  _TabbedFoodMenuState createState() => _TabbedFoodMenuState();
 }
 
 class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
-  final TabbedMenuOptions firstTabOptions;
-  final TabbedMenuOptions secondTabOptions;
-  final TabbedMenuOptions thirdTabOptions;
-  final TabbedMenuOptions fourthTabOptions;
-
-  _TabbedFoodMenuState({
-    this.firstTabOptions,
-    this.secondTabOptions,
-    this.thirdTabOptions,
-    this.fourthTabOptions,
-  });
-
   int selectedTabIndex = 0;
   Duration animationDuration = Duration(milliseconds: 110);
   Curve animationCurve = Curves.easeInOut;
@@ -65,7 +48,9 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
           width: width,
           height: 64,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0)),
             boxShadow: [
               BoxShadow(
                 color: Color(0x66000000),
@@ -76,7 +61,9 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
             color: Colors.grey[300],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0)),
             child: Stack(
               children: <Widget>[
                 Positioned(
@@ -91,7 +78,8 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                   child: AnimatedContainer(
                     duration: animationDuration,
                     curve: animationCurve,
-                    width: selectedTabIndex == 3 ? tabWidth * 1.5 : tabWidth * 3.5,
+                    width:
+                        selectedTabIndex == 3 ? tabWidth * 1.5 : tabWidth * 3.5,
                     alignment: Alignment.centerRight,
                     decoration: _getDecoration(Colors.grey[200]),
                     child: _getTouch(2, tabWidth),
@@ -105,7 +93,8 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                   child: AnimatedContainer(
                     duration: animationDuration,
                     curve: animationCurve,
-                    width: selectedTabIndex == 0 ? tabWidth * 3.5 : tabWidth * 1.5,
+                    width:
+                        selectedTabIndex == 0 ? tabWidth * 3.5 : tabWidth * 1.5,
                     alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -138,7 +127,9 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
                       return tabWidth * 1;
                     }(),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0)),
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32.0),
+                          bottomLeft: Radius.circular(32.0)),
                       boxShadow: [
                         BoxShadow(
                           color: Color(0x66000000),
@@ -187,16 +178,16 @@ class _TabbedFoodMenuState extends State<TabbedFoodMenu> {
 
     switch (tabIndex) {
       case 0:
-        options = firstTabOptions;
+        options = widget.firstTabOptions;
         break;
       case 1:
-        options = secondTabOptions;
+        options = widget.secondTabOptions;
         break;
       case 2:
-        options = thirdTabOptions;
+        options = widget.thirdTabOptions;
         break;
       case 3:
-        options = fourthTabOptions;
+        options = widget.fourthTabOptions;
         break;
     }
 

@@ -22,9 +22,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:tablething/util/text_factory.dart';
 
 class MapScreen extends StatefulWidget {
-  final bool isFullScreenDialog;
 
-  MapScreen({Key key, this.isFullScreenDialog = false}) : super(key: key);
+  MapScreen({Key key}) : super(key: key);
 
   @override
   MapScreenState createState() {

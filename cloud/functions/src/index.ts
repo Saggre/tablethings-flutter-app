@@ -11,7 +11,7 @@ export const helloWorld = functions.https.onRequest((request, response) => {
 });
 
 export const createUserData = functions.auth.user().onCreate((user) => {
-    let userObject = {
+    const userObject = {
         displayName: user.displayName,
         email: user.email,
     };
