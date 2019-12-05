@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/services/places_graph_api/graph_place.dart';
+import 'package:tablething/services/graph/place.dart';
 import 'package:tablething/util/text_factory.dart';
 
 class EstablishmentInfo extends StatelessWidget {
@@ -66,7 +66,7 @@ class EstablishmentInfo extends StatelessWidget {
   Widget _getRating() {
     return FutureBuilder(
         future: establishment.placeInformation,
-        builder: (BuildContext context, AsyncSnapshot<GraphPlace> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
           bool show = false;
 
           if (snapshot.connectionState == ConnectionState.done && !snapshot.hasError) {

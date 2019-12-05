@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
 import 'package:tablething/models/establishment/opening_hour_period.dart';
-import 'package:tablething/services/places_graph_api/graph_api.dart';
-import 'package:tablething/services/places_graph_api/graph_place.dart';
+import 'package:tablething/services/graph/place.dart';
+import 'package:tablething/services/graph/graph.dart';
 import 'cuisine_type_description.dart';
 import 'cuisine_types.dart';
 
@@ -52,13 +52,13 @@ class Establishment {
 
   /// Variables
   @JsonKey(ignore: true)
-  GraphPlace _placeInformation;
+  Place _placeInformation;
 
   /// Get graph place if it exists
-  Future<GraphPlace> get placeInformation async {
+  Future<Place> get placeInformation async {
     if (_placeInformation == null && graphId != null && graphId.length > 0) {
       // TODO decentralise access token
-      _placeInformation = await GraphApi(accessToken: '2663499567071177|ciGy4HA1F7EU9gQFgYGnzvbMrAw').getPlaceWithId(graphId);
+      _placeInformation = await Graph(accessToken: '2663499567071177|ciGy4HA1F7EU9gQFgYGnzvbMrAw').getPlaceWithId(graphId);
     }
 
     return _placeInformation;
