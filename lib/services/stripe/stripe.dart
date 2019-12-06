@@ -1,0 +1,4 @@
+/// Stripe API
+class Stripe {
+  
+}
