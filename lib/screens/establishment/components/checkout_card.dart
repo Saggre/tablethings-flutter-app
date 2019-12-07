@@ -5,6 +5,7 @@ import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/persistent_data.dart';
+import 'package:tablething/screens/payment_method/payment_method_screen.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -77,43 +78,51 @@ class CheckoutCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              height: MediaQuery.of(context).size.width * 0.63, // Credit card dimensions
-              color: offWhiteColor,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFEFEFE),
-                    borderRadius: BorderRadius.circular(32.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5.0,
-                      ),
-                    ],
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentMethodScreen(),
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                t('Debit / Credit card'),
-                                style: TextFactory.h4Style,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      GestureDetector(
-                        child: Container(
+                );
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.width * 0.63, // Credit card dimensions
+                color: offWhiteColor,
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFEFEFE),
+                      borderRadius: BorderRadius.circular(32.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 5.0,
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Text(
+                                  t('Debit / Credit card'),
+                                  style: TextFactory.h4Style,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Container(
                           child: Text(t('+ Add new'), style: TextFactory.h2Style.copyWith(color: Colors.grey[500])),
                         ),
-                      ),
-                    ],
-                  )),
+                      ],
+                    )),
+              ),
             ),
           ];
 

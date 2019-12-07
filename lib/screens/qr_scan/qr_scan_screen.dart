@@ -93,7 +93,7 @@ class QRScanScreenState extends State<QRScanScreen> {
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
     var package = FetchablePackage<String, Establishment>(establishmentId);
 
-    Provider.of<PersistentData>(context).setData(
+    Provider.of<PersistentData>(context).setScannedData(
       package,
       tableId,
       true,

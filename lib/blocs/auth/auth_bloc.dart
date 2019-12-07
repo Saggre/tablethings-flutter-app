@@ -3,8 +3,10 @@ import 'package:bloc/bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tablething/services/tablething/user.dart';
 import 'auth_bloc_states.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:tablething/services/tablething/tablething.dart' as Api;
 
 class AuthBlocEvent extends BlocEvent {}
 
@@ -17,9 +19,11 @@ class FacebookLoginEvent extends AuthBlocEvent {}
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   final GoogleSignIn _google = GoogleSignIn();
   final FacebookLogin _facebook = FacebookLogin();
+  final Api.Tablething _api = Api.Tablething();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _currentUser;
+  FirebaseUser _currentFirebaseUser;
+  User _currentUser;
 
   @override
   AuthBlocState get initialState => AuthBlocState();
@@ -27,20 +31,29 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   @override
   Stream<AuthBlocState> mapEventToState(AuthBlocEvent event) async* {
     if (event is GoogleLoginEvent) {
-      _currentUser = await _googleSignIn().catchError((e) {
+      _currentFirebaseUser = await _googleSignIn().catchError((e) {
         // TODO error
         print("Error signing in with Google");
       });
 
+      _signedIn(_currentFirebaseUser);
+
       print("Signed in with Google");
     } else if (event is FacebookLoginEvent) {
-      _currentUser = await _facebookSignIn().catchError((e) {
+      _currentFirebaseUser = await _facebookSignIn().catchError((e) {
         // TODO error
         print("Error signing in with Facebook");
       });
 
+      _signedIn(_currentFirebaseUser);
+
       print("Signed in with Facebook");
     }
+  }
+
+  void _signedIn(FirebaseUser firebaseUser) async {
+    _currentUser = await _api.getUser(firebaseUser.uid);
+    print(_currentUser.toJson().toString());
   }
 
   Future<FirebaseUser> _googleSignIn() async {

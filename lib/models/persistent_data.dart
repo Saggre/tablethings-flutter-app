@@ -1,5 +1,6 @@
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
+import 'package:tablething/services/stripe/payment_method.dart';
 
 /// Used to store data across pages/routes
 class PersistentData {
@@ -7,17 +8,25 @@ class PersistentData {
   String _selectedTableId;
   bool _didScanCode;
 
+  PaymentMethod _selectedPaymentMethod;
+
   FetchablePackage<String, Establishment> get selectedEstablishment => _selectedEstablishment;
 
   String get selectedTableId => _selectedTableId;
 
   bool get didScanCode => _didScanCode;
 
+  PaymentMethod get selectedPaymentMethod => _selectedPaymentMethod;
+
   PersistentData();
 
-  void setData(selectedEstablishment, selectedTableId, didScanCode) {
-    this._selectedEstablishment = selectedEstablishment;
-    this._selectedTableId = selectedTableId;
-    this._didScanCode = didScanCode;
+  void setPaymentMethod(PaymentMethod paymentMethod) {
+    _selectedPaymentMethod = paymentMethod;
+  }
+
+  void setScannedData(selectedEstablishment, selectedTableId, didScanCode) {
+    _selectedEstablishment = selectedEstablishment;
+    _selectedTableId = selectedTableId;
+    _didScanCode = didScanCode;
   }
 }

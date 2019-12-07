@@ -2,6 +2,7 @@
 export 'map_bloc.dart';
 export 'order/order_bloc.dart';
 export 'auth/auth_bloc.dart';
+export 'payment_method/payment_method_bloc.dart';
 import 'package:tablething/localization/translate.dart';
 
 class BlocEvent {}

@@ -12,32 +12,35 @@ class DropdownMenu extends StatefulWidget {
   final String title;
   final List<String> options;
   final DropdownMenuController controller;
+  Function onChangeValue;
 
-  DropdownMenu({@required this.title, @required this.options, this.controller});
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO check options length
-    controller?.currentValue = options[0];
-
-    return DropdownMenuState((newValue) {
+  DropdownMenu({@required this.title, @required this.options, this.controller}) {
+    onChangeValue = (newValue) {
       controller?.currentValue = newValue;
       if (controller?.onValueChanged != null) {
         controller?.onValueChanged(newValue);
       }
-    });
+    };
+
+    controller?.currentValue = options[0];
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO check options length
+
+    return DropdownMenuState();
   }
 }
 
 class DropdownMenuState extends State<DropdownMenu> {
-  final Function onChangeValue;
   String _value;
 
-  DropdownMenuState(this.onChangeValue) {
+  @override
+  void initState() {
+    super.initState();
     _value = widget.options[0];
   }
-
-  String get value => _value;
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +84,13 @@ class DropdownMenuState extends State<DropdownMenu> {
                   elevation: 0,
                   underline: Container(),
                   onChanged: (String newValue) {
-                    onChangeValue(newValue);
+                    widget.onChangeValue(newValue);
                     setState(() {
                       _value = newValue;
                     });
                   },
                   style: TextFactory.h4Style,
-                  items: widget.options
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: widget.options.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Container(

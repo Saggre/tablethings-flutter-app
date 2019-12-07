@@ -10,6 +10,8 @@ import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
 import 'order_bloc_states.dart';
 import 'order_bloc_events.dart';
+export 'order_bloc_states.dart';
+export 'order_bloc_events.dart';
 
 /// Order bloc
 class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {

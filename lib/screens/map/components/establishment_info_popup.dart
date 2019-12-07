@@ -104,7 +104,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   var package = FetchablePackage<String, Establishment>(establishment.id);
                   package.setFetchedData(establishment);
 
-                  Provider.of<PersistentData>(context).setData(
+                  Provider.of<PersistentData>(context).setScannedData(
                     package,
                     'No table',
                     true,
