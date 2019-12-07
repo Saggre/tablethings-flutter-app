@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/models/persistent_data.dart';
+import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 

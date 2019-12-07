@@ -6,7 +6,7 @@ part of 'opening_hour_period.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpeningHourPeriod _$OpeningHourPeriodFromJson(Map<String, dynamic> json) {
+OpeningHourPeriod _$OpeningHourPeriodFromJson(Map json) {
   return OpeningHourPeriod(
     day: json['day'] as int,
     time: json['time'] as int,

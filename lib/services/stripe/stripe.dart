@@ -7,6 +7,7 @@ class Stripe {
   final String apiUrl = 'https://us-central1-ruokamenu.cloudfunctions.net/api/v1/payment/';
 
   /// Adds a payment method for a Stripe customer id
+  /// Returns true on success
   Future<bool> addPaymentMethod(String customer, PaymentMethod paymentMethod) async {
     try {
       http.Response response = await http.post(apiUrl + 'add_payment_method', headers: {
@@ -23,6 +24,7 @@ class Stripe {
   }
 
   /// Gets payment methods attached to a stripe customer id
+  /// Returns a list of payment method objects
   Future<List<PaymentMethod>> getPaymentMethods(String customer, String type) async {
     List<PaymentMethod> paymentMethods;
 

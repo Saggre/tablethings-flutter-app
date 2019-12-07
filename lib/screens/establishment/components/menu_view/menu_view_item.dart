@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/colors.dart';
 
 enum MenuViewItemButtonStyle { none, add, remove }

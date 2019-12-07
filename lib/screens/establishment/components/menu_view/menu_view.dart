@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/components/colum_builder.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_category.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 
 /// Visual representation of the Menu class
 class MenuView extends StatelessWidget {

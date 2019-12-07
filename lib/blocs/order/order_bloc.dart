@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
-import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
-import 'package:tablething/models/establishment/order/order.dart';
 import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
+import 'package:tablething/services/tablething/order/order.dart';
+import 'package:tablething/services/tablething/order/order_item.dart';
 import 'order_bloc_states.dart';
 import 'order_bloc_events.dart';
 

@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/order/order_item.dart';
-
+import 'package:tablething/services/tablething/order/order_item.dart';
 import 'dropdown_menu.dart';
 import 'menu_view/menu_view_item.dart';
 

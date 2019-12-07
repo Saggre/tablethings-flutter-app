@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
 import 'package:tablething/services/json_loader.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 
 void main() {
   test('Establishment JSON should be parsed correctly', () async {

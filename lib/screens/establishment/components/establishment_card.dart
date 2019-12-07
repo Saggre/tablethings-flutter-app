@@ -5,7 +5,7 @@ import 'package:tablething/blocs/order/order_bloc_events.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'menu_view/menu_view.dart';

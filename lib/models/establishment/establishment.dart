@@ -42,7 +42,6 @@ class Establishment {
   final int priceRangeValue;
   @JsonKey(name: 'cuisineTypes')
   final List<int> cuisineTypeValues;
-  final List<OpeningHourPeriod> openingHours;
 
   /// Pics
   @JsonKey(nullable: true)
@@ -96,7 +95,6 @@ class Establishment {
     this.currencyValue,
     this.priceRangeValue,
     this.cuisineTypeValues,
-    this.openingHours,
     this.thumbUrl,
     this.imageUrl,
   });

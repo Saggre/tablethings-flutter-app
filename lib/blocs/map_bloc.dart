@@ -2,76 +2,104 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
-import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:flutter/services.dart';
+import 'package:tablething/services/tablething/tablething.dart' as Api;
 import 'bloc.dart';
 
 class MapBlocEvent extends BlocEvent {}
 
-/// Event for when user moves the map to a new area
-class GeoAreaMapBlocEvent extends MapBlocEvent {
-  // The bounds which limit the number of establishments to fetch
-  LatLng northEastBound;
-  LatLng southWestBound;
-
-  GeoAreaMapBlocEvent(this.northEastBound, this.southWestBound);
-}
+class GetEstablishmentsEvent extends MapBlocEvent {}
 
 /// Event for when the user moves in physical space
-class UserMovedMapBlocEvent extends MapBlocEvent {
+class UserMovedEvent extends MapBlocEvent {
   LatLng userLocation;
 
-  UserMovedMapBlocEvent(this.userLocation);
+  UserMovedEvent(this.userLocation);
 }
 
-/// State containing a list of establishments to return
 class MapBlocState extends BlocState {}
 
-class UserMovedMapBlocState extends MapBlocState {
-  LatLng userLocation;
+class MapLoadingState extends MapBlocState {}
 
-  UserMovedMapBlocState(this.userLocation);
+class MapLoadedState extends MapBlocState {
+  final List<Establishment> establishments;
+  final LatLng _userLocation;
+
+  double get userLatitude => _userLocation.latitude;
+
+  double get userLongitude => _userLocation.longitude;
+
+  MapLoadedState(this.establishments, this._userLocation);
 }
 
-class GeoAreaMapBlocState extends MapBlocState {
-  List<Establishment> establishments;
-
-  GeoAreaMapBlocState(this.establishments);
-}
+class MapErrorState extends MapBlocState {}
 
 /// Bloc for the map screen
 class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
-  ApiClient apiClient = ApiClient();
-
-  Location _locationService = Location();
+  final Api.Tablething _api = Api.Tablething();
+  List<Establishment> _currentEstablishmentsList;
+  LatLng _currentUserLocation;
+  String _currentError = '';
+  final Location _locationService = Location();
   bool _permission = false;
-  String error;
-  StreamSubscription<LocationData> _locationSubscription;
+  double _minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
 
   MapBloc() {
-    print("STARTING");
+    // TODO move when establishments are get in a different way in the future
+    add(GetEstablishmentsEvent());
+
     _initLocationService((LocationData result) {
-      print("GPS moved");
       add(
-        UserMovedMapBlocEvent(LatLng(result.latitude, result.longitude)),
+        UserMovedEvent(LatLng(result.latitude, result.longitude)),
       );
     });
   }
 
   @override
   // Init with empty list
-  MapBlocState get initialState => MapBlocState();
+  MapBlocState get initialState {
+    return MapLoadingState();
+  }
 
   @override
   Stream<MapBlocState> mapEventToState(MapBlocEvent event) async* {
-    if (event is UserMovedMapBlocEvent) {
-      yield UserMovedMapBlocState(event.userLocation);
-    } else if (event is GeoAreaMapBlocEvent) {
-      var establishments = await apiClient.getEstablishments();
-      yield GeoAreaMapBlocState(establishments);
+    bool sendState = false;
+
+    if (event is GetEstablishmentsEvent) {
+      print("Getting establishments");
+      try {
+        _currentEstablishmentsList = await _api.getEstablishmentsInArea();
+        sendState = true;
+      } catch (err) {
+        print(err.toString());
+      }
+    } else if (event is UserMovedEvent) {
+      print("User moved");
+
+      if (_currentUserLocation != null) {
+        double movedDistance = Distance().distance(_currentUserLocation, event.userLocation).toDouble();
+        if (movedDistance > _minUpdateDist) {
+          sendState = true;
+        }
+      } else {
+        sendState = true;
+      }
+
+      _currentUserLocation = event.userLocation;
+    }
+
+    if (_currentError.length > 0) {
+      yield BlocState.withError(_currentError) as MapErrorState;
+      return;
+    }
+
+    if (_currentEstablishmentsList != null && _currentUserLocation != null) {
+      if (sendState) {
+        yield MapLoadedState(_currentEstablishmentsList, _currentUserLocation);
+      }
     } else {
-      yield MapBlocState();
+      yield MapLoadingState();
     }
   }
 
@@ -90,7 +118,7 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
         if (_permission) {
           location = await _locationService.getLocation();
           onLocationChanged(location);
-          _locationSubscription = _locationService.onLocationChanged().listen((LocationData result) {
+          _locationService.onLocationChanged().listen((LocationData result) {
             onLocationChanged(result);
           });
         }
@@ -105,9 +133,9 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
     } on PlatformException catch (e) {
       print(e);
       if (e.code == 'PERMISSION_DENIED') {
-        error = e.message;
+        _currentError = e.message;
       } else if (e.code == 'SERVICE_STATUS_ERROR') {
-        error = e.message;
+        _currentError = e.message;
       }
       location = null;
     }

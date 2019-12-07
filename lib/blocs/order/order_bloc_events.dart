@@ -1,9 +1,9 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
-import 'package:tablething/models/establishment/order/order.dart';
-import 'package:tablething/models/establishment/order/order_item.dart';
 import 'package:tablething/models/fetchable_package.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
+import 'package:tablething/services/tablething/order/order.dart';
+import 'package:tablething/services/tablething/order/order_item.dart';
 
 class OrderBlocEvent extends BlocEvent {}
 

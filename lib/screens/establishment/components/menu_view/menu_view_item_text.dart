@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:tablething/util/text_factory.dart';
 

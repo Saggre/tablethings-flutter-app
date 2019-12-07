@@ -7,7 +7,7 @@ enum Day { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 enum EventType { open, close }
 
 /// Represent an opening or a closing of a business. A list of these is used to represent the business hours of an establishment
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: false, anyMap: true)
 class OpeningHourPeriod {
   final int day;
   final int time; // 0-1440

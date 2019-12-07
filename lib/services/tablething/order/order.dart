@@ -1,4 +1,5 @@
-import 'package:tablething/models/establishment/order/product.dart';
+import 'package:tablething/services/tablething/order/product.dart';
+
 import 'order_item.dart';
 
 /// Represents an order with products from an establishment

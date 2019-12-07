@@ -17,12 +17,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/main_app_bar.dart';
-import 'package:latlong/latlong.dart' as Latlong;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:tablething/util/text_factory.dart';
 
 class MapScreen extends StatefulWidget {
-
   MapScreen({Key key}) : super(key: key);
 
   @override
@@ -39,7 +37,6 @@ class MapScreenEstablishmentPopupOptions {
 
 class MapScreenState extends State<MapScreen> {
   Completer<GoogleMapController> _controller = Completer();
-  Map<Establishment, Marker> _mapMarkers = Map();
 
   /// JSON Google map style
   String _mapStyle;
@@ -89,38 +86,6 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  /// Checks if the list of map markers contains a marker with markerIdValue
-  bool _containsMarker(Establishment establishment) {
-    return _mapMarkers.containsKey(establishment);
-  }
-
-  /// Adds a marker to the map
-  void _addMarker(Establishment establishment) async {
-    if (_containsMarker(establishment)) {
-      return;
-    }
-
-    print("Adding new marker for an establishment: " + establishment.name);
-
-    // Get icon
-    // TODO what if error
-    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), establishment.defaultCuisineTypeDescription.iconPath);
-
-    MarkerId markerId = MarkerId(establishment.id);
-
-    // creating a new MARKER
-    final Marker marker = Marker(
-      icon: icon,
-      markerId: markerId,
-      position: LatLng(establishment.latitude, establishment.longitude),
-      onTap: () {
-        _onMarkerTapped(establishment);
-      },
-    );
-
-    _mapMarkers[establishment] = marker;
-  }
-
   /// When a marker is selected / tapped
   void _onMarkerTapped(Establishment establishment) {
     _showEstablishmentPopup(establishment);
@@ -150,13 +115,10 @@ class MapScreenState extends State<MapScreen> {
   }
 
   /// Moves the map to a certain coordinate
-  void _moveMapToLatLng(Latlong.LatLng position, {bool instantMove = false}) async {
-    // Translate to map coordinates
-    LatLng mapPosition = LatLng(position.latitude, position.longitude);
-
+  void _moveMapToLatLng(LatLng position, {bool instantMove = false}) async {
     // Create gmap camera position
     CameraPosition cameraPosition = CameraPosition(
-      target: mapPosition,
+      target: position,
       zoom: 14.4746,
     );
 
@@ -168,20 +130,6 @@ class MapScreenState extends State<MapScreen> {
     } else {
       controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     }
-  }
-
-  /// Sends an event to get establishments in the currently visible map area
-  void _refreshMarkersInArea() async {
-    print("Refreshing markers in currently visible area");
-
-    final GoogleMapController controller = await _controller.future;
-    LatLngBounds mapBounds = await controller.getVisibleRegion();
-
-    // Get establishments inside the bounds from database
-    BlocProvider.of<MapBloc>(context).add(GeoAreaMapBlocEvent(
-      Latlong.LatLng(mapBounds.northeast.latitude, mapBounds.northeast.longitude),
-      Latlong.LatLng(mapBounds.southwest.latitude, mapBounds.southwest.longitude),
-    ));
   }
 
   /// The buttons at the bottom of the screen
@@ -254,64 +202,61 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  double _minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
-  Latlong.LatLng _userLastPosition = Latlong.LatLng(0, 0);
-  int _timesUpdatedUserLocation = 0; // First update teleports and later ones are smooth. Can also be used to identify when a map loader has to be shown
+  Future<Set<Marker>> _getMarkers(List<Establishment> establishments) async {
+    Set<Marker> markers = Set();
+
+    establishments.forEach((establishment) async {
+      BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), establishment.defaultCuisineTypeDescription.iconPath);
+      markers.add(
+        Marker(
+          icon: icon,
+          markerId: MarkerId(establishment.id),
+          position: LatLng(establishment.latitude, establishment.longitude),
+          onTap: () {
+            _onMarkerTapped(establishment);
+          },
+        ),
+      );
+    });
+
+    return markers;
+  }
 
   Widget _getMap() {
     return BlocBuilder<MapBloc, MapBlocState>(
       builder: (context, state) {
-        if (state is UserMovedMapBlocState) {
-          // Move map to user location after map create
-          double distance = Latlong.Distance().distance(_userLastPosition, state.userLocation).toDouble();
-          print("Dist: " + distance.toString());
-          if (distance >= _minUpdateDist || _timesUpdatedUserLocation == 0) {
-            _userLastPosition = state.userLocation;
-            _refreshMarkersInArea(); // Refresh markers when moved to a new area
-            _timesUpdatedUserLocation++;
+        if (state is MapLoadedState) {
+          print("Updating map");
 
-            // When map is initially set, it uses map widget's initialCameraPosition proeprty
-            if (_timesUpdatedUserLocation > 0) {
-              _moveMapToLatLng(_userLastPosition);
-            }
-          }
+          _moveMapToLatLng(LatLng(state.userLatitude, state.userLongitude));
+
+          return FutureBuilder<Set<Marker>>(
+              future: _getMarkers(state.establishments),
+              builder: (BuildContext context, AsyncSnapshot<Set<Marker>> snapshot) {
+                return GoogleMap(
+                  myLocationEnabled: true,
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(state.userLatitude, state.userLongitude),
+                    zoom: 12,
+                  ),
+                  mapToolbarEnabled: false,
+                  padding: EdgeInsets.only(bottom: 130, left: 5),
+                  onMapCreated: (GoogleMapController controller) async {
+                    _controller.complete(controller);
+                    controller.setMapStyle(_mapStyle);
+                  },
+                  onCameraIdle: () async {
+                    // TODO Refresh markers when map stops moving
+                  },
+                  markers: snapshot.data,
+                );
+              });
+        } else if (state is MapErrorState) {
+          return Container(color: Colors.red);
         }
 
-        if (state is GeoAreaMapBlocState) {
-          List<Establishment> establishments = state.establishments;
-
-          debugPrint(state.establishments.length.toString() + " establishments in area");
-
-          establishments.forEach((establishment) {
-            // Create marker with establishment id
-            _addMarker(establishment);
-          });
-        }
-
-        // TODO map loader
-        if (_timesUpdatedUserLocation == 0) {
-          return Container(color: Colors.pink);
-        }
-
-        return GoogleMap(
-          myLocationEnabled: true,
-          mapType: MapType.normal,
-          initialCameraPosition: CameraPosition(
-            target: LatLng(_userLastPosition.latitude, _userLastPosition.longitude),
-            zoom: 12,
-          ),
-          mapToolbarEnabled: false,
-          padding: EdgeInsets.only(bottom: 130, left: 5),
-          onMapCreated: (GoogleMapController controller) async {
-            _controller.complete(controller);
-            controller.setMapStyle(_mapStyle);
-          },
-          onCameraIdle: () async {
-            // Set markers when map stops moving
-            _refreshMarkersInArea();
-          },
-          markers: Set<Marker>.of(_mapMarkers.values),
-        );
+        return Container(color: Colors.pink);
       },
     );
   }

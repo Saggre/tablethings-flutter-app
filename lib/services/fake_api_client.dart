@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/establishment/menu/menu.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 
 import 'json_loader.dart';
 
