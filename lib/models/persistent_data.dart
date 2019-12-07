@@ -1,6 +1,7 @@
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/services/stripe/payment_method.dart';
+import 'package:tablething/services/tablething/user.dart';
 
 /// Used to store data across pages/routes
 class PersistentData {

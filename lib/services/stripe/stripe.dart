@@ -11,13 +11,13 @@ class Stripe {
   Future<bool> addPaymentMethod(String customer, PaymentMethod paymentMethod) async {
     try {
       http.Response response = await http.post(apiUrl + 'add_payment_method', headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
-        "customer": customer,
-        "payment_method": paymentMethod.toJson(),
+        'customer': customer,
+        'payment_method': paymentMethod.toJson(),
       });
     } catch (err) {
-      throw Exception('Failed to add payment method');
+      throw Exception('Failed to add payment method. ' + err.toString());
     }
 
     return true;
@@ -28,12 +28,13 @@ class Stripe {
   Future<List<PaymentMethod>> getPaymentMethods(String customer, String type) async {
     List<PaymentMethod> paymentMethods;
 
+    print("CUSTOMER: " + customer);
     try {
       http.Response response = await http.post(apiUrl + 'get_payment_methods', headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
-        "customer": customer,
-        "type": type,
+        'customer': customer,
+        'type': type,
       });
 
       if (response.statusCode == 200) {
@@ -44,7 +45,7 @@ class Stripe {
         throw Exception('Failed to get payment methods');
       }
     } catch (err) {
-      throw Exception('Failed to get payment methods');
+      throw Exception('Failed to get payment methods. ' + err.toString());
     }
 
     return paymentMethods;

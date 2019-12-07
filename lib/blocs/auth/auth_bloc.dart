@@ -3,20 +3,19 @@ import 'package:bloc/bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tablething/localization/translate.dart';
 import 'package:tablething/services/tablething/user.dart';
 import 'auth_bloc_states.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:tablething/services/tablething/tablething.dart' as Api;
 
-class AuthBlocEvent extends BlocEvent {}
+class AppStartedEvent extends BlocEvent {}
 
-class AppStartedEvent extends AuthBlocEvent {}
+class GoogleLoginEvent extends BlocEvent {}
 
-class GoogleLoginEvent extends AuthBlocEvent {}
+class FacebookLoginEvent extends BlocEvent {}
 
-class FacebookLoginEvent extends AuthBlocEvent {}
-
-class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
+class AuthBloc extends Bloc<BlocEvent, BlocState> {
   final GoogleSignIn _google = GoogleSignIn();
   final FacebookLogin _facebook = FacebookLogin();
   final Api.Tablething _api = Api.Tablething();
@@ -25,35 +24,41 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   FirebaseUser _currentFirebaseUser;
   User _currentUser;
 
-  @override
-  AuthBlocState get initialState => AuthBlocState();
+  User get currentUser => _currentUser;
 
   @override
-  Stream<AuthBlocState> mapEventToState(AuthBlocEvent event) async* {
-    if (event is GoogleLoginEvent) {
-      _currentFirebaseUser = await _googleSignIn().catchError((e) {
-        // TODO error
-        print("Error signing in with Google");
-      });
+  BlocState get initialState => BlocState();
 
-      _signedIn(_currentFirebaseUser);
+  @override
+  Stream<BlocState> mapEventToState(BlocEvent event) async* {
+    try {
+      if (event is GoogleLoginEvent) {
+        _currentFirebaseUser = await _googleSignIn().catchError((e) {
+          // TODO error
+          print("Error signing in with Google");
+        });
 
-      print("Signed in with Google");
-    } else if (event is FacebookLoginEvent) {
-      _currentFirebaseUser = await _facebookSignIn().catchError((e) {
-        // TODO error
-        print("Error signing in with Facebook");
-      });
+        _currentUser = await _api.getUser(_currentFirebaseUser.uid);
 
-      _signedIn(_currentFirebaseUser);
+        print("Signed in " + _currentUser.displayName + " with Google");
 
-      print("Signed in with Facebook");
+        yield Authenticated(_currentUser);
+      } else if (event is FacebookLoginEvent) {
+        _currentFirebaseUser = await _facebookSignIn().catchError((e) {
+          // TODO error
+          print("Error signing in with Facebook");
+        });
+
+        _currentUser = await _api.getUser(_currentFirebaseUser.uid);
+
+        print("Signed in " + _currentUser.displayName + " with Facebook");
+
+        yield Authenticated(_currentUser);
+      }
+    } catch (err) {
+      print(err.toString());
+      yield BlocState.withError(t('Could not sign in. An unknown error occurred'));
     }
-  }
-
-  void _signedIn(FirebaseUser firebaseUser) async {
-    _currentUser = await _api.getUser(firebaseUser.uid);
-    print(_currentUser.toJson().toString());
   }
 
   Future<FirebaseUser> _googleSignIn() async {
@@ -66,7 +71,6 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     );
 
     final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
     return user;
   }
 
@@ -79,7 +83,6 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
 
         final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
 
-        print("signed in " + user.displayName);
         return user;
 
         break;

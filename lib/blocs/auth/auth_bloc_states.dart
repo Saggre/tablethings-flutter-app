@@ -1,22 +1,21 @@
 import 'package:tablething/blocs/bloc.dart';
+import 'package:tablething/services/tablething/user.dart';
 
-class AuthBlocState extends BlocState {}
-
-class Uninitialized extends AuthBlocState {
+class Uninitialized extends BlocState {
   @override
   String toString() => 'Uninitialized';
 }
 
-class Authenticated extends AuthBlocState {
-  final String displayName;
+class Authenticated extends BlocState {
+  final User user;
 
-  Authenticated(this.displayName) : super();
+  Authenticated(this.user) : super();
 
   @override
-  String toString() => 'Authenticated { displayName: $displayName }';
+  String toString() => 'Authenticated ' + user.displayName;
 }
 
-class Unauthenticated extends AuthBlocState {
+class Unauthenticated extends BlocState {
   @override
   String toString() => 'Unauthenticated';
 }
