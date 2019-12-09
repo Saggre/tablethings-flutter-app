@@ -145,7 +145,7 @@ app.post(apiVersion + '/payment/get_payment_method', validate({
             req.body.payment_method_id
         );
 
-        res.status(200).json(paymentMethods);
+        res.status(200).json(paymentMethod);
 
     } catch (err) {
         res.status(500).json(getErrorJson(err.message));

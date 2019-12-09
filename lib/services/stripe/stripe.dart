@@ -4,13 +4,13 @@ import 'package:tablething/services/stripe/payment_method.dart';
 
 /// Custom Stripe API
 class Stripe {
-  final String apiUrl = 'https://us-central1-ruokamenu.cloudfunctions.net/api/v1/payment/';
+  final String apiUrl = 'https://us-central1-ruokamenu.cloudfunctions.net/api/v1/';
 
   /// Adds a payment method for a Stripe customer id
   /// Returns true on success
   Future<bool> addPaymentMethod(String customer, PaymentMethod paymentMethod) async {
     try {
-      http.Response response = await http.post(apiUrl + 'add_payment_method', headers: {
+      http.Response response = await http.post(apiUrl + 'payment/add_payment_method', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'customer': customer,
@@ -29,7 +29,7 @@ class Stripe {
     List<PaymentMethod> paymentMethods;
 
     try {
-      http.Response response = await http.post(apiUrl + 'get_payment_methods', headers: {
+      http.Response response = await http.post(apiUrl + 'payment/get_payment_methods', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'customer': customer,
@@ -55,7 +55,7 @@ class Stripe {
     PaymentMethod paymentMethod;
 
     try {
-      http.Response response = await http.post(apiUrl + 'get_payment_method', headers: {
+      http.Response response = await http.post(apiUrl + 'payment/get_payment_method', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'payment_method_id': paymentMethodId,

@@ -30,6 +30,8 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
   @override
   Stream<OrderBlocState> mapEventToState(OrderBlocEvent event) async* {
+    // TODO deferred stream
+    // TODO loading state
     if (event is GetEstablishmentEvent) {
       yield await _getEstablishment(event);
 
@@ -181,11 +183,13 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    String defaultPaymentMethodId = event.user.stripeCustomer.invoiceSettings.defaultPaymentMethodId;
+    String defaultPaymentMethodId = event.user?.stripeCustomer?.invoiceSettings?.defaultPaymentMethodId;
     PaymentMethod defaultPaymentMethod;
 
-    if (defaultPaymentMethodId != null) {
+    if (defaultPaymentMethodId != null && defaultPaymentMethodId.length > 0) {
       defaultPaymentMethod = await _stripeApi.getPaymentMethod(defaultPaymentMethodId);
+      print("cc");
+
     }
 
     return CheckoutState(_establishment, event.order, defaultPaymentMethod);

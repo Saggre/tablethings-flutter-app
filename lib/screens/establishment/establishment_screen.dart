@@ -95,6 +95,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 } else if (state is CheckoutState) {
                   built = CheckoutCard(
                     key: ValueKey('CheckoutCard'),
+                    paymentMethod: state.paymentMethod,
                     establishment: state.establishment,
                     order: state.order,
                   );
