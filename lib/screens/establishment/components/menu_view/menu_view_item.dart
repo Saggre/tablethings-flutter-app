@@ -4,6 +4,7 @@ import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/colors.dart';
+import 'package:tablething/util/text_factory.dart';
 
 enum MenuViewItemButtonStyle { none, add, remove }
 
@@ -15,6 +16,7 @@ class MenuViewItem extends StatelessWidget {
   final double descriptionPadding;
   final BorderRadius imageRadius;
   final bool wholeAreaIsClickable;
+  final String titlePrefix;
 
   MenuViewItem({
     Key key,
@@ -25,6 +27,7 @@ class MenuViewItem extends StatelessWidget {
     this.descriptionPadding = 10.0,
     this.imageRadius = BorderRadius.zero,
     this.wholeAreaIsClickable = true,
+    this.titlePrefix,
   }) : super(key: key);
 
   @override
@@ -58,6 +61,7 @@ class MenuViewItem extends StatelessWidget {
           child: MenuViewItemText(
             menuItem: menuItem,
             establishment: establishment,
+            titlePrefix: titlePrefix,
           ),
         ),
         Padding(
@@ -69,7 +73,7 @@ class MenuViewItem extends StatelessWidget {
           bottom: 0,
           width: MediaQuery.of(context).size.width * 0.4,
           child: ConstrainedBox(
-            constraints: new BoxConstraints(
+            constraints: BoxConstraints(
               minHeight: 80.0,
             ),
             child: _getImageWithButton(),

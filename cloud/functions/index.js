@@ -14,18 +14,51 @@ const apiVersion = '/v1';
 /**
  * Gets user object with user id
  */
-app.get(apiVersion + '/user', validate({
+app.post(apiVersion + '/user/get_user', validate({
     body: {
         type: 'object',
         properties: {
-            id: {
+            user_id: {
                 type: 'string',
                 required: true
             },
         }
     },
 }), async (req, res) => {
-    res.send("Hello from Firebase!");
+    try {
+        let userId = req.body.user_id;
+        let userRef = db.collection('users').doc(userId);
+        let doc = await userRef.get();
+        let user = doc.data();
+
+        if (!doc.exists) {
+            throw Error('User doesn\'t exist');
+        } else {
+            console.log('Got user for id:', userId);
+
+            let stripeCustomerId = user.stripeCustomerId;
+
+            if (!stripeCustomerId) {
+                // TODO create a stripe customer id?
+                throw Error('User doesn\'t have a stripe client id');
+            }
+
+            try {
+                user.stripeCustomer = await stripe.customers.retrieve(
+                    stripeCustomerId
+                );
+
+                delete user.stripeCustomerId;
+            } catch (err) {
+                throw Error(err.message);
+            }
+        }
+
+        res.status(200).json(user);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
 });
 
 /**
@@ -84,6 +117,32 @@ app.post(apiVersion + '/payment/get_payment_methods', validate({
     try {
         let paymentMethods = await stripe.paymentMethods.list(
             req.body
+        );
+
+        res.status(200).json(paymentMethods);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+/**
+ * Gets a single payment method by id
+ */
+app.post(apiVersion + '/payment/get_payment_method', validate({
+    body: {
+        type: 'object',
+        properties: {
+            payment_method_id: {
+                type: 'string',
+                required: true
+            }
+        }
+    },
+}), async (req, res) => {
+    try {
+        let paymentMethod = await stripe.paymentMethods.retrieve(
+            req.body.payment_method_id
         );
 
         res.status(200).json(paymentMethods);

@@ -36,8 +36,7 @@ class LoginPopup extends StatelessWidget {
                   colors: [Color(0xFF3B5998)],
                   text: 'Facebook',
                   textStyle: TextFactory.buttonStyle,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
                   onPressed: () {
                     BlocProvider.of<AuthBloc>(context).add(FacebookLoginEvent());
                   },
@@ -51,11 +50,26 @@ class LoginPopup extends StatelessWidget {
                   colors: [Colors.white],
                   text: 'Google',
                   textStyle: TextFactory.buttonStyle.copyWith(color: Colors.black),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.zero, topRight: Radius.circular(32.0), bottomLeft: Radius.circular(32.0), bottomRight: Radius.circular(32.0)),
                   onPressed: () {
                     BlocProvider.of<AuthBloc>(context).add(GoogleLoginEvent());
                   },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+              ),
+              GestureDetector(
+                onTap: () {
+                  onCloseTapped();
+                },
+                child: Container(
+                  height: 64.0,
+                  alignment: Alignment.center,
+                  child: Text(
+                    t('I will sign in later'),
+                    style: TextFactory.lightButtonStyle,
+                  ),
                 ),
               ),
             ],

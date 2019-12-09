@@ -7,8 +7,13 @@ import 'package:tablething/util/text_factory.dart';
 class MenuViewItemText extends StatelessWidget {
   final MenuItem menuItem;
   final Establishment establishment;
+  final String titlePrefix;
 
-  MenuViewItemText({this.menuItem, this.establishment});
+  MenuViewItemText({
+    this.menuItem,
+    this.establishment,
+    this.titlePrefix,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class MenuViewItemText extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            TextFactory.h3(menuItem.name),
+            TextFactory.h3((titlePrefix ?? '') + menuItem.name),
             Padding(padding: EdgeInsets.only(right: 10.0)),
           ],
         ),

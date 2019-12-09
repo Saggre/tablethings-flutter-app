@@ -4,6 +4,7 @@ import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
+import 'package:tablething/services/tablething/user.dart';
 
 class OrderBlocEvent extends BlocEvent {}
 
@@ -66,6 +67,7 @@ class RequestShoppingBasketEvent extends OrderBlocEvent {
 /// To return to menu view
 class RequestCheckoutEvent extends OrderBlocEvent {
   final Order order;
+  final User user;
 
-  RequestCheckoutEvent(this.order) : super();
+  RequestCheckoutEvent(this.order, this.user) : super();
 }

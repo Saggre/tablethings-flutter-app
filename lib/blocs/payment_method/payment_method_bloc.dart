@@ -11,7 +11,7 @@ export 'payment_method_bloc_events.dart';
 export 'payment_method_bloc_states.dart';
 
 class PaymentMethodBloc extends Bloc<BlocEvent, BlocState> {
-  Stripe stripeApi = Stripe();
+  Stripe _stripeApi = Stripe();
 
   @override
   // Init with empty list
@@ -42,10 +42,10 @@ class PaymentMethodBloc extends Bloc<BlocEvent, BlocState> {
 
   /// Gets a list of payment methods through stripe api
   Future<List<PaymentMethod>> _getPaymentMethodsForUser(User user) async {
-    if (user.stripeCustomerId == null || user.stripeCustomerId.length == 0) {
-      throw Exception('No payment processor id');
+    if (user.stripeCustomer == null) {
+      throw Exception('No payment processor in user object');
     }
 
-    return stripeApi.getPaymentMethods(user.stripeCustomerId, 'card');
+    return _stripeApi.getPaymentMethods(user.stripeCustomer.id, 'card');
   }
 }

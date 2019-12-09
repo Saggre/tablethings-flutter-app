@@ -2,9 +2,20 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'card.g.dart';
 
+enum Brand {
+  amex,
+  diners,
+  visa,
+  discover,
+  jcb,
+  mastercard,
+  unionpay,
+  unknown,
+}
+
 @JsonSerializable(nullable: false)
 class Card {
-  final String brand;
+  final Brand brand;
   final String country;
   @JsonKey(name: 'exp_month')
   final int expMonth;

@@ -11,6 +11,7 @@ class EstablishmentInfo extends StatelessWidget {
   final bool showTitle;
   final bool showRating;
   final bool showDescription;
+  final String titlePrefix;
 
   const EstablishmentInfo({
     Key key,
@@ -19,6 +20,7 @@ class EstablishmentInfo extends StatelessWidget {
     this.showDescription = true,
     this.showRating = true,
     this.showTitle = true,
+    this.titlePrefix,
   }) : super(key: key);
 
   @override
@@ -162,7 +164,7 @@ class EstablishmentInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          TextFactory.h1(establishment.name),
+          TextFactory.h1((titlePrefix ?? '') + establishment.name),
         ],
       ),
     );

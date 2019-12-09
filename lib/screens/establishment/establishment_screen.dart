@@ -14,7 +14,6 @@ import 'package:tablething/screens/establishment/components/dropdown_menu.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
-import 'components/card_base.dart';
 import 'components/checkout_card.dart';
 import 'components/establishment_card.dart';
 import 'components/order_item_card.dart';
@@ -32,7 +31,7 @@ class EstablishmentScreen extends StatefulWidget {
 }
 
 class EstablishmentScreenState extends State<EstablishmentScreen> {
-  var orderQuantityController = DropdownMenuController<String>();
+  var orderQuantityController = DropdownMenuController<int>();
 
   @override
   void initState() {
@@ -76,22 +75,26 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 } else if (state is EstablishmentState) {
                   print("Successfully got establishment: " + state.establishment.name);
                   built = EstablishmentCard(
+                    key: ValueKey('EstablishmentCard'),
                     establishment: state.establishment,
                     menu: state.menu,
                   );
                 } else if (state is OrderItemState) {
                   built = OrderItemCard(
+                    key: ValueKey('OrderItemCard'),
                     establishment: state.establishment,
                     orderItem: state.orderItem,
                     controller: orderQuantityController,
                   );
                 } else if (state is ShoppingBasketState) {
                   built = ShoppingBasketCard(
+                    key: ValueKey('ShoppingBasketCard'),
                     establishment: state.establishment,
                     order: state.order,
                   );
                 } else if (state is CheckoutState) {
                   built = CheckoutCard(
+                    key: ValueKey('CheckoutCard'),
                     establishment: state.establishment,
                     order: state.order,
                   );
@@ -102,9 +105,40 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                     _backAction(state);
                     return false;
                   },
-                  child: _getFrame(
-                    built,
-                    state.establishment.imageUrl,
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(
+                          top: 24,
+                        ),
+                        width: double.infinity,
+                        color: darkThemeColor,
+                        child: ClipRRect(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(32.0),
+                            topLeft: Radius.circular(32.0),
+                          ),
+                          child: Stack(
+                            children: <Widget>[
+                              EstablishmentImage(imageUrl: state.establishment.imageUrl, height: 160.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                      AnimatedSwitcher(
+                        key: ValueKey('AnimatedSwitcher'),
+                        child: built,
+                        duration: Duration(milliseconds: 4000),
+                        transitionBuilder: (Widget child, Animation<double> animation) {
+                          return SlideTransition(
+                            position: Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset(0.0, 0.0)).animate(animation),
+                            child: child,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 );
               },
@@ -145,7 +179,8 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     /// On checkout button press
     void checkoutPressed(ShoppingBasketState state) {
       BlocProvider.of<OrderBloc>(context).add(
-        RequestCheckoutEvent(state.order),
+        // TODO check user is logged in
+        RequestCheckoutEvent(state.order, BlocProvider.of<AuthBloc>(context).currentUser),
       );
     }
 
@@ -202,7 +237,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 onPressed: () {
                   // Add to order
                   BlocProvider.of<OrderBloc>(context).add(
-                    AddOrderItemEvent(state.orderItem, OrderItemOptions(quantity: int.tryParse(orderQuantityController.currentValue))),
+                    AddOrderItemEvent(state.orderItem, OrderItemOptions(quantity: orderQuantityController.currentValue)),
                   );
                 },
               ),
@@ -289,49 +324,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
             ),
           );
         }),
-      ],
-    );
-  }
-
-  /// A frame which can show variable scroll views inside itself
-  Widget _getFrame(Widget child, String imageUrl) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(
-            top: 24,
-          ),
-          width: double.infinity,
-          color: darkThemeColor,
-          child: ClipRRect(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(32.0),
-              topLeft: Radius.circular(32.0),
-            ),
-            child: Stack(
-              children: <Widget>[
-                EstablishmentImage(imageUrl: imageUrl, height: 160.0),
-              ],
-            ),
-          ),
-        ),
-        ListView(children: <Widget>[
-          Container(
-            height: 152,
-          ),
-          CardBase(
-            child: AnimatedSwitcher(
-              key: ValueKey('AnimatedSwitcher'),
-              child: child,
-              duration: Duration(milliseconds: 400),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return ScaleTransition(child: child, scale: animation);
-              },
-            ),
-          ),
-        ])
       ],
     );
   }

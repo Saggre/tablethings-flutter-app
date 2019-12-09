@@ -28,7 +28,6 @@ class Stripe {
   Future<List<PaymentMethod>> getPaymentMethods(String customer, String type) async {
     List<PaymentMethod> paymentMethods;
 
-    print("CUSTOMER: " + customer);
     try {
       http.Response response = await http.post(apiUrl + 'get_payment_methods', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -49,5 +48,28 @@ class Stripe {
     }
 
     return paymentMethods;
+  }
+
+  /// Gets a single payment method by id
+  Future<PaymentMethod> getPaymentMethod(String paymentMethodId) async {
+    PaymentMethod paymentMethod;
+
+    try {
+      http.Response response = await http.post(apiUrl + 'get_payment_method', headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }, body: {
+        'payment_method_id': paymentMethodId,
+      });
+
+      if (response.statusCode == 200) {
+        paymentMethod = PaymentMethod.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to get payment method');
+      }
+    } catch (err) {
+      throw Exception('Failed to get payment method. ' + err.toString());
+    }
+
+    return paymentMethod;
   }
 }

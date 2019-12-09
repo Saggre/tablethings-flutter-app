@@ -20,7 +20,7 @@ class Order<T extends Product> {
   int get subtotal {
     int t = 0;
     _items.forEach((OrderItem orderItem) {
-      t += orderItem.product.price;
+      t += orderItem.product.price * orderItem.options.quantity;
     });
     return t;
   }

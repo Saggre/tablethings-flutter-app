@@ -8,13 +8,9 @@ class User {
   final String id;
   final String displayName;
   final String email;
-  @JsonKey(nullable: true)
-  final String stripeCustomerId;
+  final Customer stripeCustomer;
 
-  @JsonKey(ignore: true)
-  Customer _stripeCustomer;
-
-  User({this.id, this.displayName, this.email, this.stripeCustomerId});
+  User({this.id, this.displayName, this.email, this.stripeCustomer});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

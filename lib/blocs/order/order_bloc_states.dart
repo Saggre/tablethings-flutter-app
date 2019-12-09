@@ -1,5 +1,6 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
@@ -41,8 +42,9 @@ class ShoppingBasketState extends OrderBlocState {
 /// Checkout stage where the user can choose payment method etc.
 class CheckoutState extends OrderBlocState {
   final Order<MenuItem> order;
+  final PaymentMethod paymentMethod;
 
-  CheckoutState(establishment, this.order) : super(establishment);
+  CheckoutState(establishment, this.order, this.paymentMethod) : super(establishment);
 }
 
 /// Receipt of the payment (or an error in case of unsuccessful payment)

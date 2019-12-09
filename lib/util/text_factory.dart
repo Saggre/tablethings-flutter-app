@@ -6,6 +6,8 @@ class TextFactory {
   static String _fontFamily = 'Nunito';
   static Color _textColor = Color(0xFF313638);
 
+  static String get fontFamily => _fontFamily;
+
   static TextStyle h1Style = TextStyle(
     color: _textColor,
     fontSize: 28,

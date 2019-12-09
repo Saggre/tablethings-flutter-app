@@ -5,6 +5,8 @@ import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
+import 'package:tablething/services/stripe/payment_method.dart';
+import 'package:tablething/services/stripe/stripe.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
@@ -17,6 +19,7 @@ export 'order_bloc_events.dart';
 class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   // For getting data from db
   ApiClient _apiClient = ApiClient();
+  Stripe _stripeApi = Stripe();
   Establishment _establishment;
   Order<MenuItem> _order;
   Menu _menu;
@@ -178,7 +181,14 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    return CheckoutState(_establishment, event.order);
+    String defaultPaymentMethodId = event.user.stripeCustomer.invoiceSettings.defaultPaymentMethodId;
+    PaymentMethod defaultPaymentMethod;
+
+    if (defaultPaymentMethodId != null) {
+      defaultPaymentMethod = await _stripeApi.getPaymentMethod(defaultPaymentMethodId);
+    }
+
+    return CheckoutState(_establishment, event.order, defaultPaymentMethod);
   }
 
   Future<OrderBlocState> _goToShoppingBasket(RequestShoppingBasketEvent event) async {

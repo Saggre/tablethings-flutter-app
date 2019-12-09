@@ -61,8 +61,8 @@ class CornerBar extends StatelessWidget {
               ),
               child: Container(
                 color: color,
-                width: size * 0.5,
-                height: size * 0.5,
+                width: size / 2,
+                height: size / 2,
               ),
               shadow: Shadow(
                 blurRadius: shadowRadius,

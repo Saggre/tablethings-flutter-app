@@ -8,38 +8,38 @@ class DropdownMenuController<T> {
   Function onValueChanged;
 }
 
-class DropdownMenu extends StatefulWidget {
+class DropdownMenu<T> extends StatefulWidget {
   final String title;
-  final List<String> options;
-  final DropdownMenuController controller;
-  Function onChangeValue;
+  final List<T> options;
+  final DropdownMenuController<T> controller;
+  final Function stringGetter;
+  Function _onValueChanged;
+  T _currentValue;
 
-  DropdownMenu({@required this.title, @required this.options, this.controller}) {
-    onChangeValue = (newValue) {
+  DropdownMenu({@required this.title, @required this.options, @required this.stringGetter, this.controller}) {
+    _onValueChanged = (newValue) {
       controller?.currentValue = newValue;
       if (controller?.onValueChanged != null) {
         controller?.onValueChanged(newValue);
       }
     };
 
-    controller?.currentValue = options[0];
+    _currentValue = options.first;
+    _onValueChanged(_currentValue);
   }
 
   @override
   State<StatefulWidget> createState() {
     // TODO check options length
 
-    return DropdownMenuState();
+    return DropdownMenuState<T>();
   }
 }
 
-class DropdownMenuState extends State<DropdownMenu> {
-  String _value;
-
+class DropdownMenuState<T> extends State<DropdownMenu> {
   @override
   void initState() {
     super.initState();
-    _value = widget.options[0];
   }
 
   @override
@@ -76,25 +76,25 @@ class DropdownMenuState extends State<DropdownMenu> {
               ),
               Expanded(
                 flex: 10,
-                child: DropdownButton<String>(
+                child: DropdownButton<T>(
                   isExpanded: true,
-                  value: _value,
+                  value: widget._currentValue,
                   icon: Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 0,
                   underline: Container(),
-                  onChanged: (String newValue) {
-                    widget.onChangeValue(newValue);
+                  onChanged: (newValue) {
                     setState(() {
-                      _value = newValue;
+                      widget._currentValue = newValue;
+                      widget._onValueChanged(newValue);
                     });
                   },
                   style: TextFactory.h4Style,
-                  items: widget.options.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: widget.options.map((value) {
+                    return DropdownMenuItem<T>(
                       value: value,
                       child: Container(
-                        child: Text(value),
+                        child: Text(widget.stringGetter(value)),
                       ),
                     );
                   }).toList(),

@@ -8,6 +8,7 @@ import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'menu_view/menu_view.dart';
+import 'card_base.dart';
 
 class EstablishmentCard extends StatelessWidget {
   final Establishment establishment;
@@ -17,54 +18,55 @@ class EstablishmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      key: ValueKey('EstablishmentView'),
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 25.0),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 15.0,
+    return CardBase(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 25.0),
           ),
-          child: Column(
-            children: <Widget>[
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  EstablishmentInfo(
-                    establishment: establishment,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 15.0),
-              ),
-              Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  TextFactory.h2(t('Menu')),
-                ],
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 15.0,
+            ),
+            child: Column(
+              children: <Widget>[
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    EstablishmentInfo(
+                      establishment: establishment,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15.0),
+                ),
+                Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    TextFactory.h2(t('Menu')),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        MenuView(
-          menu: menu,
-          establishment: establishment,
-          onAddItem: (MenuItem menuItem) {
-            BlocProvider.of<OrderBloc>(context).add(
-              CreateOrderItemEvent(menuItem),
-            );
-          },
-        ),
-        Container(
-          height: 64.0,
-          color: offWhiteColor,
-        ),
-      ],
+          MenuView(
+            menu: menu,
+            establishment: establishment,
+            onAddItem: (MenuItem menuItem) {
+              BlocProvider.of<OrderBloc>(context).add(
+                CreateOrderItemEvent(menuItem),
+              );
+            },
+          ),
+          Container(
+            height: 64.0,
+            color: offWhiteColor,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
 import 'dropdown_menu.dart';
 import 'menu_view/menu_view_item.dart';
+import 'card_base.dart';
 
 class OrderItemCard extends StatelessWidget {
   final Establishment establishment;
@@ -14,29 +15,35 @@ class OrderItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      key: ValueKey('OrderItemView'),
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(left: 15.0),
-          child: MenuViewItem(
-            menuItem: orderItem.product,
-            establishment: establishment,
-            onPress: () {},
-            buttonStyle: MenuViewItemButtonStyle.none,
-            descriptionPadding: 25.0,
+    return CardBase(
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 15.0),
+            child: MenuViewItem(
+              menuItem: orderItem.product,
+              establishment: establishment,
+              onPress: () {},
+              buttonStyle: MenuViewItemButtonStyle.none,
+              descriptionPadding: 25.0,
+            ),
           ),
-        ),
-        DropdownMenu(
-          controller: controller,
-          title: t('Määrä'),
-          options: <String>['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        ),
-        DropdownMenu(
-          title: t('Lisuke'),
-          options: <String>['Kana'],
-        ),
-      ],
+          DropdownMenu<int>(
+            controller: controller,
+            title: t('Quantity'),
+            options: <int>[1, 2, 3, 4, 5, 6, 7, 8, 9],
+            stringGetter: (value) {
+              return value.toString();
+            },
+          ),
+          /*DropdownMenu<int>(
+            title: t('Sides'),
+            options: <int, String>{
+              0: 'Nothing',
+            },
+          ),*/
+        ],
+      ),
     );
   }
 }
