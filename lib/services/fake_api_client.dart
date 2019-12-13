@@ -49,6 +49,7 @@ class ApiClient {
     return Future.value(establishments).timeout(_requestDelay);
   }
 
+  // TODO menu from db!!!!!!!!!!!!!!
   Future<Menu> getMenu() async {
     Menu menu = await _getMenuFromFile('menu.json');
     return Future.value(menu).timeout(_requestDelay);

@@ -1,14 +1,12 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const stripe = require('stripe')(functions.config().stripe.sk);
+const firebaseFunctions = require('firebase-functions');
+const stripe = require('stripe')(firebaseFunctions.config().stripe.sk);
 const express = require('express');
 const validate = require('express-jsonschema').validate;
 const app = express();
+const functions = require('./functions.js');
+
 app.use(express.json());
 
-admin.initializeApp(functions.config().firestore);
-
-const db = admin.firestore();
 const apiVersion = '/v1';
 
 /**
@@ -27,9 +25,7 @@ app.post(apiVersion + '/user/get_user', validate({
 }), async (req, res) => {
     try {
         let userId = req.body.user_id;
-        let userRef = db.collection('users').doc(userId);
-        let doc = await userRef.get();
-        let user = doc.data();
+        let user = await functions.getUser(userId);
 
         if (!doc.exists) {
             throw Error('User doesn\'t exist');
@@ -80,7 +76,7 @@ app.post(apiVersion + '/payment/add_payment_method', validate({
     },
 }), async (req, res) => {
     try {
-        let paymentMethod = await stripe.paymentMethods.create(
+        const paymentMethod = await stripe.paymentMethods.create(
             req.body.payment_method
         );
 
@@ -90,6 +86,32 @@ app.post(apiVersion + '/payment/add_payment_method', validate({
         );
 
         res.sendStatus(200);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+/**
+ * Gets a single payment method by id
+ */
+app.post(apiVersion + '/payment/get_payment_method', validate({
+    body: {
+        type: 'object',
+        properties: {
+            payment_method_id: {
+                type: 'string',
+                required: true
+            }
+        }
+    },
+}), async (req, res) => {
+    try {
+        const paymentMethod = await stripe.paymentMethods.retrieve(
+            req.body.payment_method_id
+        );
+
+        res.status(200).json(paymentMethod);
 
     } catch (err) {
         res.status(500).json(getErrorJson(err.message));
@@ -115,7 +137,7 @@ app.post(apiVersion + '/payment/get_payment_methods', validate({
     },
 }), async (req, res) => {
     try {
-        let paymentMethods = await stripe.paymentMethods.list(
+        const paymentMethods = await stripe.paymentMethods.list(
             req.body
         );
 
@@ -126,14 +148,42 @@ app.post(apiVersion + '/payment/get_payment_methods', validate({
     }
 });
 
-/**
- * Gets a single payment method by id
- */
-app.post(apiVersion + '/payment/get_payment_method', validate({
+app.post(apiVersion + '/payment/get_order_value', validate({
     body: {
         type: 'object',
         properties: {
-            payment_method_id: {
+            establishment_id: {
+                type: 'string',
+                required: true
+            },
+            product_ids: {
+                type: 'array',
+                required: true
+            }
+        }
+    },
+}), async (req, res) => {
+    try {
+        const orderValue = await functions.calculateOrderValue(req.body.establishment_id, req.body.product_ids);
+        res.status(200).json(orderValue);
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+app.post(apiVersion + '/payment/create_session', validate({
+    body: {
+        type: 'object',
+        properties: {
+            establishment_id: {
+                type: 'string',
+                required: true
+            },
+            product_ids: {
+                type: 'array',
+                required: true
+            },
+            customer_id: {
                 type: 'string',
                 required: true
             }
@@ -141,23 +191,30 @@ app.post(apiVersion + '/payment/get_payment_method', validate({
     },
 }), async (req, res) => {
     try {
-        let paymentMethod = await stripe.paymentMethods.retrieve(
-            req.body.payment_method_id
-        );
 
-        res.status(200).json(paymentMethod);
+        const checkoutPrice = functions.calculateOrderValue(req.body.establishment_id, req.body.product_ids);
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: checkoutPrice,
+            currency: 'eur',
+            payment_method_types: ['card'],
+            metadata: {order_id: 6735},
+        });
+
+        res.status(200).json(paymentIntent);
 
     } catch (err) {
         res.status(500).json(getErrorJson(err.message));
     }
 });
 
+
 /**
  * Called on firebase user create
  * Creates a Stripe customer and adds user data to firestore
  * @type {CloudFunction<UserRecord>}
  */
-exports.createUserData = functions.auth.user().onCreate(async (user) => {
+exports.createUserData = firebaseFunctions.auth.user().onCreate(async (user) => {
     let userObject = {
         displayName: user.displayName || "",
         email: user.email || "",
@@ -165,36 +222,18 @@ exports.createUserData = functions.auth.user().onCreate(async (user) => {
     };
 
     try {
-        let customer = await stripe.customers.create({
+        const customer = await stripe.customers.create({
             email: user.email,
         });
 
         userObject.stripeCustomerId = customer.id;
+
+        await functions.addUser(userObject);
+
     } catch (err) {
-        console.log('Error adding Stripe customer: ' + err);
+        console.log('Error adding user: ' + err);
     }
-
-    await db.collection('users').doc(user.uid).set(userObject).catch(err => {
-        console.log('Error writing document: ' + err);
-        return false;
-    });
 });
-
-/*
-exports.user = functions.https.onRequest(async (request, response) => {
-    const request_response = await request({
-        uri: WEBHOOK_URL,
-        method: 'POST',
-        json: true,
-        body: snap.val(),
-        resolveWithFullResponse: true,
-    });
-    if (response.statusCode >= 400) {
-        throw new Error(`HTTP Error: ${response.statusCode}`);
-    }
-    console.log('SUCCESS! Posted', snap.ref);
-});
-*/
 
 /**
  * Catch-all error
@@ -207,4 +246,4 @@ function getErrorJson(errorMsg = "An unknown error occurred") {
     return {error: true, error_msg: errorMsg};
 }
 
-exports.api = functions.https.onRequest(app);
+exports.api = firebaseFunctions.https.onRequest(app);

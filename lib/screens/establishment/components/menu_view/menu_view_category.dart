@@ -21,10 +21,6 @@ class MenuViewCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*return Container(
-      color: Colors.green,
-      height: 1000,
-    );*/
 
     return Container(
       color: offWhiteColor,

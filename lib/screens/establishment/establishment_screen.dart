@@ -128,14 +128,26 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 152.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: offWhiteColor,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32.0),
+                              topLeft: Radius.circular(32.0),
+                            ),
+                          ),
+                        ),
+                      ),
                       AnimatedSwitcher(
                         key: ValueKey('AnimatedSwitcher'),
                         child: built,
-                        duration: Duration(milliseconds: 4000),
+                        duration: Duration(milliseconds: 300),
                         transitionBuilder: (Widget child, Animation<double> animation) {
-                          return SlideTransition(
-                            position: Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset(0.0, 0.0)).animate(animation),
+                          return FadeTransition(
                             child: child,
+                            opacity: animation,
                           );
                         },
                       ),
