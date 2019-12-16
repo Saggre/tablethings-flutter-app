@@ -26,6 +26,28 @@ module.exports.calculateOrderValue = async function (establishmentId, productIds
     return orderValue;
 };
 
+module.exports.getEstablishment = async function (establishmentId) {
+    let ref = db.collection('establishments').doc(establishmentId);
+    let doc = await ref.get();
+
+    return doc.data();
+};
+
+module.exports.getProducts = async function (establishmentId) {
+    let products = Array();
+
+    let ref = db.collection('establishments').doc(establishmentId).collection('products');
+    let docs = await ref.get();
+
+    docs.forEach(doc => {
+        products.push(
+            doc.data()
+        );
+    });
+
+    return products;
+};
+
 /**
  * Gets user by id
  * @param userId

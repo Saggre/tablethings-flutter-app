@@ -24,33 +24,84 @@ app.post(apiVersion + '/user/get_user', validate({
     },
 }), async (req, res) => {
     try {
-        let userId = req.body.user_id;
-        let user = await functions.getUser(userId);
+        const userId = req.body.user_id;
+        const user = await functions.getUser(userId);
 
-        if (!doc.exists) {
-            throw Error('User doesn\'t exist');
-        } else {
-            console.log('Got user for id:', userId);
+        console.log('Got user for id:', userId);
 
-            let stripeCustomerId = user.stripeCustomerId;
+        let stripeCustomerId = user.stripeCustomerId;
 
-            if (!stripeCustomerId) {
-                // TODO create a stripe customer id?
-                throw Error('User doesn\'t have a stripe client id');
-            }
-
-            try {
-                user.stripeCustomer = await stripe.customers.retrieve(
-                    stripeCustomerId
-                );
-
-                delete user.stripeCustomerId;
-            } catch (err) {
-                throw Error(err.message);
-            }
+        if (!stripeCustomerId) {
+            // TODO create a stripe customer id?
+            throw Error('User doesn\'t have a stripe client id');
         }
 
+        try {
+            user.stripeCustomer = await stripe.customers.retrieve(
+                stripeCustomerId
+            );
+
+            delete user.stripeCustomerId;
+        } catch (err) {
+            throw Error(err.message);
+        }
+
+
         res.status(200).json(user);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+/**
+ * Gets an establishment with its id
+ */
+app.post(apiVersion + '/establishment/get_establishment', validate({
+    body: {
+        type: 'object',
+        properties: {
+            establishment_id: {
+                type: 'string',
+                required: true
+            },
+        }
+    },
+}), async (req, res) => {
+    try {
+        const establishmentId = req.body.establishment_id;
+        const establishment = await functions.getEstablishment(establishmentId);
+
+        console.log('Got establishment for id:', establishmentId);
+
+        res.status(200).json(establishment);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+/**
+ * Gets an establishments products by its id
+ */
+app.post(apiVersion + '/establishment/get_products', validate({
+    body: {
+        type: 'object',
+        properties: {
+            establishment_id: {
+                type: 'string',
+                required: true
+            },
+        }
+    },
+}), async (req, res) => {
+    try {
+        const establishmentId = req.body.establishment_id;
+        const products = await functions.getProducts(establishmentId);
+
+        console.log('Got products for id:', establishmentId);
+
+        res.status(200).json(products);
 
     } catch (err) {
         res.status(500).json(getErrorJson(err.message));
