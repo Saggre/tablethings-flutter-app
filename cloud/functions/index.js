@@ -46,10 +46,10 @@ app.post(apiVersion + '/user/get_user', validate({
             throw Error(err.message);
         }
 
-
         res.status(200).json(user);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -82,6 +82,23 @@ app.post(apiVersion + '/establishment/get_establishment', validate({
 });
 
 /**
+ * Gets all establishments in the database
+ */
+app.post(apiVersion + '/establishment/get_establishments', async (req, res) => {
+    try {
+        const establishments = await functions.getEstablishments();
+
+        console.log('Got establishments');
+
+        res.status(200).json(establishments);
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+/**
  * Gets an establishments products by its id
  */
 app.post(apiVersion + '/establishment/get_products', validate({
@@ -104,6 +121,7 @@ app.post(apiVersion + '/establishment/get_products', validate({
         res.status(200).json(products);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -139,6 +157,7 @@ app.post(apiVersion + '/payment/add_payment_method', validate({
         res.sendStatus(200);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -165,6 +184,7 @@ app.post(apiVersion + '/payment/get_payment_method', validate({
         res.status(200).json(paymentMethod);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -176,7 +196,7 @@ app.post(apiVersion + '/payment/get_payment_methods', validate({
     body: {
         type: 'object',
         properties: {
-            customer: {
+            customer_id: {
                 type: 'string',
                 required: true
             },
@@ -189,12 +209,16 @@ app.post(apiVersion + '/payment/get_payment_methods', validate({
 }), async (req, res) => {
     try {
         const paymentMethods = await stripe.paymentMethods.list(
-            req.body
+            {
+                customer: req.body.customer_id,
+                type: req.body.type
+            }
         );
 
         res.status(200).json(paymentMethods);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -255,6 +279,7 @@ app.post(apiVersion + '/payment/create_session', validate({
         res.status(200).json(paymentIntent);
 
     } catch (err) {
+        console.log(err.message);
         res.status(500).json(getErrorJson(err.message));
     }
 });
@@ -297,4 +322,6 @@ function getErrorJson(errorMsg = "An unknown error occurred") {
     return {error: true, error_msg: errorMsg};
 }
 
-exports.api = firebaseFunctions.https.onRequest(app);
+exports.api = firebaseFunctions
+    .region('europe-west2')
+    .https.onRequest(app);
