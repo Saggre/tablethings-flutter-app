@@ -53,7 +53,7 @@ class MapScreenState extends State<MapScreen> {
     () async {
       await Future.delayed(Duration.zero);
 
-      void closeLoginPopup() {
+      /*void closeLoginPopup() {
         Navigator.of(context).pop();
       }
 
@@ -66,7 +66,7 @@ class MapScreenState extends State<MapScreen> {
             onCloseTapped: () => closeLoginPopup(),
           ),
         ),
-      );
+      );*/
     }();
   }
 

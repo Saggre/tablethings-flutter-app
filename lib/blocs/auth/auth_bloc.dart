@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tablething/localization/translate.dart';
+import 'package:tablething/services/stripe/stripe.dart';
 import 'package:tablething/services/tablething/user.dart';
 import 'auth_bloc_states.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -19,6 +20,7 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
   final GoogleSignIn _google = GoogleSignIn();
   final FacebookLogin _facebook = FacebookLogin();
   final Api.Tablething _api = Api.Tablething();
+  final Stripe _stripe = Stripe();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser _currentFirebaseUser;
@@ -27,12 +29,14 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
   User get currentUser => _currentUser;
 
   @override
-  BlocState get initialState => BlocState();
+  BlocState get initialState => Unauthenticated();
 
   @override
   Stream<BlocState> mapEventToState(BlocEvent event) async* {
     try {
       if (event is GoogleLoginEvent) {
+        yield Authenticating();
+
         _currentFirebaseUser = await _googleSignIn().catchError((e) {
           // TODO error
           print("Error signing in with Google");
@@ -40,10 +44,15 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
 
         _currentUser = await _api.getUser(_currentFirebaseUser.uid);
 
+        // Get user payment methods
+        _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
+
         print("Signed in " + _currentUser.displayName + " with Google");
 
         yield Authenticated(_currentUser);
       } else if (event is FacebookLoginEvent) {
+        yield Authenticating();
+
         _currentFirebaseUser = await _facebookSignIn().catchError((e) {
           // TODO error
           print("Error signing in with Facebook");
@@ -51,13 +60,21 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
 
         _currentUser = await _api.getUser(_currentFirebaseUser.uid);
 
+        // Get user payment methods
+        _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
+
         print("Signed in " + _currentUser.displayName + " with Facebook");
 
         yield Authenticated(_currentUser);
       }
     } catch (err) {
       print(err.toString());
-      yield BlocState.withError(t('Could not sign in. An unknown error occurred'));
+      yield () {
+        var state = Unauthenticated();
+        state.error = true;
+        state.errorMessage = t('Could not sign in. An unknown error occurred');
+        return state;
+      }();
     }
   }
 

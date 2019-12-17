@@ -184,16 +184,16 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    String defaultPaymentMethodId = event.user?.stripeCustomer?.invoiceSettings?.defaultPaymentMethodId;
+    /*String defaultPaymentMethodId = event.user?.stripeCustomer?.invoiceSettings?.defaultPaymentMethodId;
     PaymentMethod defaultPaymentMethod;
 
     if (defaultPaymentMethodId != null && defaultPaymentMethodId.length > 0) {
       defaultPaymentMethod = await _stripeApi.getPaymentMethod(defaultPaymentMethodId);
       print("cc");
 
-    }
+    }*/
 
-    return CheckoutState(_establishment, event.order, defaultPaymentMethod);
+    return CheckoutState(_establishment, event.order);
   }
 
   Future<OrderBlocState> _goToShoppingBasket(RequestShoppingBasketEvent event) async {

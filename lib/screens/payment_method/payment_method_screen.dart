@@ -1,12 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/persistent_data.dart';
-import 'package:tablething/screens/payment_method/components/card_widget.dart';
+import 'package:tablething/components/card_widget.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tablething/util/text_factory.dart';

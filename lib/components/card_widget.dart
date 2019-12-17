@@ -23,7 +23,7 @@ class CardWidget extends StatelessWidget {
           child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
               decoration: BoxDecoration(
-                color: offWhiteColor,
+                color: darkThemeColor,
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
@@ -40,7 +40,7 @@ class CardWidget extends StatelessWidget {
                     flex: 2,
                     child: Text(
                       t('Debit / Credit card'),
-                      style: TextFactory.h4Style,
+                      style: TextFactory.h4Style.copyWith(color: Colors.grey[400]),
                     ),
                   ),
                   Padding(

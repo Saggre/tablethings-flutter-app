@@ -69,7 +69,7 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
     if (event is GetEstablishmentsEvent) {
       print("Getting establishments");
       try {
-        _currentEstablishmentsList = await _api.getEstablishmentsInArea();
+        _currentEstablishmentsList = await _api.getEstablishments();
         sendState = true;
       } catch (err) {
         print(err.toString());

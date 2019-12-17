@@ -31,7 +31,7 @@ class CornerBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: size,
+              height: size + 1,
               padding: padding,
               decoration: BoxDecoration(
                 color: color,
@@ -61,8 +61,8 @@ class CornerBar extends StatelessWidget {
               ),
               child: Container(
                 color: color,
-                width: size / 2,
-                height: size / 2,
+                width: size * 0.5,
+                height: size * 0.5,
               ),
               shadow: Shadow(
                 blurRadius: shadowRadius,

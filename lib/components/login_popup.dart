@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablething/blocs/auth/auth_bloc.dart';
+import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -10,10 +11,16 @@ import 'buttons/single_button.dart';
 
 class LoginPopup extends StatelessWidget {
   final Function onCloseTapped;
+  final String description;
+  final bool isCancelable;
+  final BlocState authState;
 
   const LoginPopup({
     Key key,
     @required this.onCloseTapped,
+    this.description,
+    this.isCancelable = false,
+    @required this.authState,
   }) : super(key: key);
 
   @override
@@ -28,6 +35,7 @@ class LoginPopup extends StatelessWidget {
           child: Column(
             children: <Widget>[
               TextFactory.h1(t('Login')),
+              if (description != null) TextFactory.p(description),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
               ),
@@ -59,19 +67,20 @@ class LoginPopup extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
               ),
-              GestureDetector(
-                onTap: () {
-                  onCloseTapped();
-                },
-                child: Container(
-                  height: 64.0,
-                  alignment: Alignment.center,
-                  child: Text(
-                    t('I will sign in later'),
-                    style: TextFactory.lightButtonStyle,
+              if (isCancelable)
+                GestureDetector(
+                  onTap: () {
+                    onCloseTapped();
+                  },
+                  child: Container(
+                    height: 64.0,
+                    alignment: Alignment.center,
+                    child: Text(
+                      t('I will sign in later'),
+                      style: TextFactory.lightButtonStyle,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

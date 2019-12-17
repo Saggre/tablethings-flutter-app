@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:tablething/blocs/auth/auth_bloc_states.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
+import 'package:tablething/components/login_popup.dart';
+import 'package:tablething/components/popup_widget.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
@@ -93,12 +96,34 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                     order: state.order,
                   );
                 } else if (state is CheckoutState) {
-                  built = CheckoutCard(
-                    key: ValueKey('CheckoutCard'),
-                    paymentMethod: state.paymentMethod,
-                    establishment: state.establishment,
-                    order: state.order,
-                  );
+                  built = BlocBuilder<AuthBloc, BlocState>(builder: (context, authState) {
+                    if (authState is Authenticated) {
+                      return CheckoutCard(
+                        key: ValueKey('CheckoutCard'),
+                        establishment: state.establishment,
+                        order: state.order,
+                        user: authState.user,
+                      );
+                    }
+
+                    return Stack(
+                      children: <Widget>[
+                        ShoppingBasketCard(
+                          key: ValueKey('ShoppingBasketCard'),
+                          establishment: state.establishment,
+                          order: state.order,
+                        ),
+                        PopupWidget(
+                          child: LoginPopup(
+                            authState: authState,
+                            description: t('You need to login to proceed \nwith your order.'),
+                            onCloseTapped: () => {},
+                          ),
+                          onCloseTapped: () => {},
+                        ),
+                      ],
+                    );
+                  });
                 }
 
                 return WillPopScope(
@@ -192,7 +217,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     /// On checkout button press
     void checkoutPressed(ShoppingBasketState state) {
       BlocProvider.of<OrderBloc>(context).add(
-        // TODO check user is logged in
         RequestCheckoutEvent(state.order, BlocProvider.of<AuthBloc>(context).currentUser),
       );
     }

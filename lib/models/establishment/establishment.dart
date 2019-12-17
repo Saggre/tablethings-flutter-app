@@ -36,11 +36,11 @@ class Establishment {
   final String description;
   @JsonKey(nullable: true)
   final String graphId; // Facebook graph place id
-  @JsonKey(name: 'currency')
+  @JsonKey(name: 'currency', nullable: true)
   final int currencyValue;
-  @JsonKey(name: 'priceRange')
+  @JsonKey(name: 'priceRange', nullable: true)
   final int priceRangeValue;
-  @JsonKey(name: 'cuisineTypes')
+  @JsonKey(name: 'cuisineTypes', nullable: true)
   final List<int> cuisineTypeValues;
 
   /// Pics

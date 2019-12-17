@@ -4,7 +4,7 @@ import 'package:tablething/services/stripe/payment_method.dart';
 
 /// Custom Stripe API
 class Stripe {
-  final String apiUrl = 'https://us-central1-ruokamenu.cloudfunctions.net/api/v1/';
+  final String apiUrl = 'https://europe-west2-ruokamenu.cloudfunctions.net/api/v1/';
 
   /// Adds a payment method for a Stripe customer id
   /// Returns true on success
@@ -25,14 +25,14 @@ class Stripe {
 
   /// Gets payment methods attached to a stripe customer id
   /// Returns a list of payment method objects
-  Future<List<PaymentMethod>> getPaymentMethods(String customer, String type) async {
+  Future<List<PaymentMethod>> getPaymentMethods(String customerId, String type) async {
     List<PaymentMethod> paymentMethods;
 
     try {
       http.Response response = await http.post(apiUrl + 'payment/get_payment_methods', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
-        'customer': customer,
+        'customer_id': customerId,
         'type': type,
       });
 
@@ -44,7 +44,8 @@ class Stripe {
         throw Exception('Failed to get payment methods');
       }
     } catch (err) {
-      throw Exception('Failed to get payment methods. ' + err.toString());
+      print(err.toString());
+      throw Exception(err.toString());
     }
 
     return paymentMethods;

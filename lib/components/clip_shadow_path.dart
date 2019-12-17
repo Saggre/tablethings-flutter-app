@@ -24,7 +24,11 @@ class ClipShadowPath extends StatelessWidget {
           clipper: this.clipper,
           shadow: this.shadow,
         ),
-        child: ClipPath(child: child, clipper: this.clipper),
+        child: ClipPath(
+          child: child,
+          clipper: this.clipper,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+        ),
       ),
     );
   }

@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:provider/provider.dart';
+import 'package:tablething/components/card_widget.dart';
+import 'package:tablething/components/edit_card_popup.dart';
 import 'package:tablething/components/establishment_info.dart';
+import 'package:tablething/components/popup_widget.dart';
+import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/screens/payment_method/payment_method_screen.dart';
 import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/order/order.dart';
+import 'package:tablething/services/tablething/user.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
 import 'card_base.dart';
@@ -15,9 +21,9 @@ import 'card_base.dart';
 class CheckoutCard extends StatelessWidget {
   final Establishment establishment;
   final Order order;
-  final PaymentMethod paymentMethod;
+  final User user;
 
-  const CheckoutCard({Key key, this.establishment, this.order, this.paymentMethod}) : super(key: key);
+  const CheckoutCard({Key key, this.establishment, this.order, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,58 +86,112 @@ class CheckoutCard extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PaymentMethodScreen(),
-                ),
-              );
-            },
+          Container(
+            // Credit card dimensions
+            color: offWhiteColor,
             child: Container(
-              height: MediaQuery.of(context).size.width * 0.63, // Credit card dimensions
-              color: offWhiteColor,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFEFEFE),
-                    borderRadius: BorderRadius.circular(32.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5.0,
-                      ),
-                    ],
+              padding: EdgeInsets.only(top: 25.0),
+              decoration: BoxDecoration(
+                color: Color(0xFFFEFEFE),
+                borderRadius: BorderRadius.circular(32.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 5.0,
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                t('Debit / Credit card'),
-                                style: TextFactory.h4Style,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      () {
-                        if (paymentMethod == null) {
-                          return Container(
-                            child: Text(t('+ Add new'), style: TextFactory.h2Style.copyWith(color: Colors.grey[500])),
-                          );
-                        }
+                ],
+              ),
+              child: FutureBuilder(
+                future: user.paymentMethods,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return Text('Loading....');
+                    default:
+                      if (snapshot.hasError)
+                        return Text('Error: ${snapshot.error}');
+                      else {
+                        List<dynamic> paymentMethods = List();
+                        paymentMethods.addAll(snapshot.data);
+                        paymentMethods.add(true);
 
-                        return Container(
-                          child: Text(paymentMethod.card.last4, style: TextFactory.h2Style.copyWith(color: Colors.grey[500])),
+                        return Column(
+                          children: <Widget>[
+                            Text(
+                              t('Select a payment method'),
+                              style: TextFactory.h3Style,
+                            ),
+                            Container(
+                              height: (MediaQuery.of(context).size.width - 20.0) * 0.63 + 20.0,
+                              child: Swiper(
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (paymentMethods[index] is PaymentMethod) {
+                                    return CardWidget(
+                                      card: paymentMethods[index].card,
+                                      padding: const EdgeInsets.only(bottom: 10.0, top: 10.0, left: 10.0, right: 10.0),
+                                    );
+                                  } else {
+                                    // Add new card
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          TransparentRoute(
+                                            builder: (BuildContext context) => PopupWidget(
+                                              child: EditCardPopup(
+                                                onCloseTapped: () => Navigator.of(context).pop(),
+                                              ),
+                                              onCloseTapped: () => Navigator.of(context).pop(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: (Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(12.0),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 5.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.add,
+                                                color: Colors.grey[600],
+                                                size: 48.0,
+                                              ),
+                                              Text(
+                                                t('Tap to add a new \npayment method'),
+                                                style: TextFactory.h4Style.copyWith(color: Colors.grey[600]),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                      ),
+                                    );
+                                  }
+                                },
+                                itemCount: paymentMethods.length,
+                                control: SwiperControl(
+                                  color: mainThemeColor,
+                                  padding: EdgeInsets.all(15.0),
+                                  size: 20.0,
+                                ),
+                              ),
+                            ),
+                          ],
                         );
-                      }()
-                    ],
-                  )),
+                      }
+                  }
+                },
+              ),
             ),
           ),
         ];

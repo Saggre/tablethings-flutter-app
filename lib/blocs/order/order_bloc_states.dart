@@ -42,9 +42,9 @@ class ShoppingBasketState extends OrderBlocState {
 /// Checkout stage where the user can choose payment method etc.
 class CheckoutState extends OrderBlocState {
   final Order<MenuItem> order;
-  final PaymentMethod paymentMethod;
+  //final PaymentMethod paymentMethod;
 
-  CheckoutState(establishment, this.order, this.paymentMethod) : super(establishment);
+  CheckoutState(establishment, this.order) : super(establishment);
 }
 
 /// Receipt of the payment (or an error in case of unsuccessful payment)
@@ -53,3 +53,7 @@ class ReceiptState extends OrderBlocState {
 
   ReceiptState(establishment, this.order) : super(establishment);
 }
+
+/*class NeedsLoginState extends ShoppingBasketState {
+  NeedsLoginState(establishment, Order<MenuItem> order) : super(establishment, order);
+}*/
