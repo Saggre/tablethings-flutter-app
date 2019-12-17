@@ -18,13 +18,18 @@ void main() async {
 }
 
 class MainApp extends StatelessWidget {
+  final _authBloc;
+
+  MainApp() : _authBloc = AuthBloc();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<AuthBloc>(builder: (BuildContext context) => AuthBloc()),
+          BlocProvider<AuthBloc>(builder: (BuildContext context) => _authBloc),
           BlocProvider<MapBloc>(builder: (BuildContext context) => MapBloc()),
           BlocProvider<OrderBloc>(builder: (BuildContext context) => OrderBloc()),
+          BlocProvider<PaymentMethodBloc>(builder: (BuildContext context) => PaymentMethodBloc(_authBloc)),
         ],
         child: Provider<PersistentData>(
           create: (context) => PersistentData(),

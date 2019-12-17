@@ -102,100 +102,100 @@ class CheckoutCard extends StatelessWidget {
                   ),
                 ],
               ),
-              child: FutureBuilder(
-                future: user.paymentMethods,
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Text('Loading....');
-                    default:
-                      if (snapshot.hasError)
-                        return Text('Error: ${snapshot.error}');
-                      else {
-                        List<dynamic> paymentMethods = List();
-                        paymentMethods.addAll(snapshot.data);
-                        paymentMethods.add(true);
+              child: BlocBuilder<PaymentMethodBloc, ProgressBlocState>(builder: (context, state) {
+                // TODO this should refresh cards when added
+                return FutureBuilder(
+                  future: user.paymentMethods,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Text('Loading....');
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else {
+                          List<dynamic> paymentMethods = List();
+                          paymentMethods.addAll(snapshot.data);
+                          paymentMethods.add(true);
 
-                        return Column(
-                          children: <Widget>[
-                            Text(
-                              t('Select a payment method'),
-                              style: TextFactory.h3Style,
-                            ),
-                            Container(
-                              height: (MediaQuery.of(context).size.width - 20.0) * 0.63 + 20.0,
-                              child: Swiper(
-                                itemBuilder: (BuildContext context, int index) {
-                                  if (paymentMethods[index] is PaymentMethod) {
-                                    return CardWidget(
-                                      card: paymentMethods[index].card,
-                                      padding: const EdgeInsets.only(bottom: 10.0, top: 10.0, left: 10.0, right: 10.0),
-                                    );
-                                  } else {
-                                    // Add new card
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          TransparentRoute(
-                                            builder: (BuildContext context) => PopupWidget(
-                                              child: BlocProvider(
-                                                create: (BuildContext context) => PaymentMethodBloc(),
+                          return Column(
+                            children: <Widget>[
+                              Text(
+                                t('Select a payment method'),
+                                style: TextFactory.h3Style,
+                              ),
+                              Container(
+                                height: (MediaQuery.of(context).size.width - 20.0) * 0.63 + 20.0,
+                                child: Swiper(
+                                  itemBuilder: (BuildContext context, int index) {
+                                    if (paymentMethods[index] is PaymentMethod) {
+                                      return CardWidget(
+                                        card: paymentMethods[index].card,
+                                        padding: const EdgeInsets.only(bottom: 10.0, top: 10.0, left: 10.0, right: 10.0),
+                                      );
+                                    } else {
+                                      // Add new card
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            TransparentRoute(
+                                              builder: (BuildContext context) => PopupWidget(
                                                 child: EditCardPopup(
                                                   onCloseTapped: () => Navigator.of(context).pop(),
                                                 ),
+                                                onCloseTapped: () => Navigator.of(context).pop(),
                                               ),
-                                              onCloseTapped: () => Navigator.of(context).pop(),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: (Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(12.0),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 5.0,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.add,
-                                                color: Colors.grey[600],
-                                                size: 48.0,
-                                              ),
-                                              Text(
-                                                t('Tap to add a new \npayment method'),
-                                                style: TextFactory.h4Style.copyWith(color: Colors.grey[600]),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        )),
-                                      ),
-                                    );
-                                  }
-                                },
-                                itemCount: paymentMethods.length,
-                                control: SwiperControl(
-                                  color: mainThemeColor,
-                                  padding: EdgeInsets.all(15.0),
-                                  size: 20.0,
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: (Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              borderRadius: BorderRadius.circular(12.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 5.0,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.add,
+                                                  color: Colors.grey[600],
+                                                  size: 48.0,
+                                                ),
+                                                Text(
+                                                  t('Tap to add a new \npayment method'),
+                                                  style: TextFactory.h4Style.copyWith(color: Colors.grey[600]),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          )),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  itemCount: paymentMethods.length,
+                                  control: SwiperControl(
+                                    color: mainThemeColor,
+                                    padding: EdgeInsets.all(15.0),
+                                    size: 20.0,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      }
-                  }
-                },
-              ),
+                            ],
+                          );
+                        }
+                    }
+                  },
+                );
+              }),
             ),
           ),
         ];

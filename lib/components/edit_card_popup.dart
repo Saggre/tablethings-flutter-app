@@ -263,12 +263,12 @@ class EditCardPopupState extends State<EditCardPopup> {
                     onPressed: () {
                       if (state is CardNumberState) {
                         if (_formKey.currentState.validate()) {
-                          BlocProvider.of<PaymentMethodBloc>(context).add(AddCardNumber(_formFieldControllers['cardNumber'].text));
+                          BlocProvider.of<PaymentMethodBloc>(context).add(AddCardNumber(_formFieldControllers['cardNumber'].text.toString()));
                         }
                       } else if (state is SecurityInfoState) {
                         if (_formKey.currentState.validate()) {
-                          BlocProvider.of<PaymentMethodBloc>(context)
-                              .add(AddSecurityInfo(_formFieldControllers['expMonth'].text, _formFieldControllers['expYear'].text, _formFieldControllers['cvc'].text));
+                          BlocProvider.of<PaymentMethodBloc>(context).add(AddSecurityInfo(
+                              _formFieldControllers['expMonth'].text.toString(), _formFieldControllers['expYear'].text.toString(), _formFieldControllers['cvv'].text.toString()));
                         }
                       }
                     },

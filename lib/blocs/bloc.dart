@@ -17,11 +17,16 @@ class BlocState {
     this.error = true;
     this.errorMessage = errorMessage;
   }
+
+  @override
+  String toString() {
+    return errorMessage;
+  }
 }
 
 /// State with progress from 0 to 1
 class ProgressBlocState extends BlocState {
-  double progress;
+  double progress = 0.0;
 
   ProgressBlocState();
 

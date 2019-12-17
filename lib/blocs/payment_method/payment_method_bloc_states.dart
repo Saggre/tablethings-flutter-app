@@ -1,5 +1,6 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
+import 'package:tablething/services/stripe/payment_method.dart';
 
 class CardNumberState extends ProgressBlocState {
   CardNumberState() {
@@ -35,7 +36,9 @@ class ApiConnectionState extends ProgressBlocState {
 }
 
 class CardAddedState extends ProgressBlocState {
-  CardAddedState() {
+  final PaymentMethod paymentMethod;
+
+  CardAddedState(this.paymentMethod) {
     progress = 1.0;
   }
 

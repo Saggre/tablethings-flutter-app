@@ -7,23 +7,30 @@ class Stripe {
   final String apiUrl = 'https://europe-west2-ruokamenu.cloudfunctions.net/api/v1/';
 
   /// Adds a payment method for a Stripe customer id
-  /// Returns true on success
-  Future<bool> addPaymentMethod(String customerId, String number, int expMonth, int expYear, String cvv) async {
+  Future<PaymentMethod> addPaymentMethod(String customerId, String number, int expMonth, int expYear, String cvv) async {
+    PaymentMethod paymentMethod;
+
     try {
       http.Response response = await http.post(apiUrl + 'payment/add_payment_method', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'customer_id': customerId,
         'number': number,
-        'exp_month': expMonth,
-        'exp_year': expYear,
+        'exp_month': expMonth.toString(),
+        'exp_year': expYear.toString(),
         'cvv': cvv,
       });
+
+      if (response.statusCode == 200) {
+        paymentMethod = PaymentMethod.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to add payment method');
+      }
     } catch (err) {
-      throw Exception('Failed to add payment method. ' + err.toString());
+      throw Exception(err.toString());
     }
-//TODO all
-    return true;
+
+    return paymentMethod;
   }
 
   /// Gets payment methods attached to a stripe customer id
