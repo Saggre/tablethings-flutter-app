@@ -1,18 +1,46 @@
 import 'package:tablething/blocs/bloc.dart';
-import 'package:tablething/services/stripe/payment_method.dart';
+import 'package:tablething/localization/translate.dart';
 
-class PaymentMethodsOverview extends BlocState {
-  final List<PaymentMethod> paymentMethods;
+class CardNumberState extends ProgressBlocState {
+  CardNumberState() {
+    progress = 0.0;
+  }
 
-  PaymentMethodsOverview(this.paymentMethods) : super();
+  @override
+  String toString() {
+    return t('Add a card number');
+  }
 }
 
-abstract class AddCardState extends BlocState {}
+class SecurityInfoState extends ProgressBlocState {
+  SecurityInfoState() {
+    progress = 0.33;
+  }
 
-class CardNumberState extends AddCardState {}
+  @override
+  String toString() {
+    return t('Add security information');
+  }
+}
 
-class SecurityInfoState extends AddCardState {}
+class ApiConnectionState extends ProgressBlocState {
+  ApiConnectionState() {
+    progress = 0.66;
+  }
 
-class ThreeDSecureState extends AddCardState {}
+  @override
+  String toString() {
+    return t('Sending card');
+  }
+}
 
-// TODO card added state?
+class CardAddedState extends ProgressBlocState {
+  CardAddedState() {
+    progress = 1.0;
+  }
+
+  @override
+  String toString() {
+    return t('Card successfully added');
+  }
+}

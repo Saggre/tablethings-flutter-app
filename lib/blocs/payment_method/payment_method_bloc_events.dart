@@ -1,25 +1,17 @@
 import 'package:tablething/blocs/bloc.dart';
-import 'package:tablething/services/stripe/payment_method.dart';
-import 'package:tablething/services/tablething/user.dart';
 
-class GetPaymentMethods extends BlocEvent {
-  final User user;
+class InitCard extends BlocEvent {}
 
-  GetPaymentMethods(this.user) : super();
+class AddCardNumber extends BlocEvent {
+  final String cardNumber;
+
+  AddCardNumber(this.cardNumber);
 }
 
-class AddPaymentMethod extends BlocEvent {
-  AddPaymentMethod() : super();
-}
+class AddSecurityInfo extends BlocEvent {
+  final String month;
+  final String year;
+  final String cvv;
 
-class RemovePaymentMethod extends BlocEvent {
-  final PaymentMethod paymentMethod;
-
-  RemovePaymentMethod(this.paymentMethod) : super();
-}
-
-class ViewPaymentMethod extends BlocEvent {
-  final PaymentMethod paymentMethod;
-
-  ViewPaymentMethod(this.paymentMethod) : super();
+  AddSecurityInfo(this.month, this.year, this.cvv);
 }

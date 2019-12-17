@@ -1,51 +1,42 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
-import 'package:tablething/localization/translate.dart';
-import 'package:tablething/services/stripe/payment_method.dart';
-import 'package:tablething/services/stripe/stripe.dart';
-import 'package:tablething/services/tablething/user.dart';
-import 'payment_method_bloc_events.dart';
-import 'payment_method_bloc_states.dart';
 export 'payment_method_bloc_events.dart';
 export 'payment_method_bloc_states.dart';
 
-class PaymentMethodBloc extends Bloc<BlocEvent, BlocState> {
-  Stripe _stripeApi = Stripe();
+class PaymentMethodBloc extends Bloc<BlocEvent, ProgressBlocState> {
+  String _cardNumber;
+  int _month;
+  int _year;
+  String _cvv;
 
   @override
-  // Init with empty list
-  BlocState get initialState {
-    return BlocState();
+  ProgressBlocState get initialState {
+    return CardNumberState();
   }
 
   @override
-  Stream<BlocState> mapEventToState(BlocEvent event) async* {
-    if (event is GetPaymentMethods) {
-      print('Getting payment methods for user: ' + event.user.displayName);
+  Stream<ProgressBlocState> mapEventToState(BlocEvent event) async* {
+    if (event is InitCard) {
+      // TODO delete
+    } else if (event is AddCardNumber) {
+      _cardNumber = event.cardNumber;
+      yield SecurityInfoState();
+    } else if (event is AddSecurityInfo) {
+      _month = num.parse(event.month);
+      _year = num.parse(event.year);
+      _cvv = event.cvv;
 
-      if (event.user == null) {
-        yield BlocState.withError(t('User not logged in'));
-        return;
-      }
+      yield ApiConnectionState();
 
-      try {
-        var paymentMethods = await _getPaymentMethodsForUser(event.user);
-        yield PaymentMethodsOverview(paymentMethods);
-      } catch (err) {
-        // TODO error handling
-        print(err.toString());
-        yield BlocState.withError(t('An unknown error occurred'));
-      }
+      // Send card to API
+      // TODO
+
+      () async {
+        await Future.delayed(Duration(seconds: 2));
+      }();
+
+      yield CardAddedState();
     }
-  }
-
-  /// Gets a list of payment methods through stripe api
-  Future<List<PaymentMethod>> _getPaymentMethodsForUser(User user) async {
-    if (user.stripeCustomer == null) {
-      throw Exception('No payment processor in user object');
-    }
-
-    return _stripeApi.getPaymentMethods(user.stripeCustomer.id, 'card');
   }
 }

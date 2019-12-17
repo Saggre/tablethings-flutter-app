@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:provider/provider.dart';
+import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/card_widget.dart';
 import 'package:tablething/components/edit_card_popup.dart';
 import 'package:tablething/components/establishment_info.dart';
@@ -10,7 +12,6 @@ import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/persistent_data.dart';
-import 'package:tablething/screens/payment_method/payment_method_screen.dart';
 import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/user.dart';
@@ -137,8 +138,11 @@ class CheckoutCard extends StatelessWidget {
                                         Navigator.of(context).push(
                                           TransparentRoute(
                                             builder: (BuildContext context) => PopupWidget(
-                                              child: EditCardPopup(
-                                                onCloseTapped: () => Navigator.of(context).pop(),
+                                              child: BlocProvider(
+                                                create: (BuildContext context) => PaymentMethodBloc(),
+                                                child: EditCardPopup(
+                                                  onCloseTapped: () => Navigator.of(context).pop(),
+                                                ),
                                               ),
                                               onCloseTapped: () => Navigator.of(context).pop(),
                                             ),

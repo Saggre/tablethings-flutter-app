@@ -25,7 +25,6 @@ class MainApp extends StatelessWidget {
           BlocProvider<AuthBloc>(builder: (BuildContext context) => AuthBloc()),
           BlocProvider<MapBloc>(builder: (BuildContext context) => MapBloc()),
           BlocProvider<OrderBloc>(builder: (BuildContext context) => OrderBloc()),
-          BlocProvider<PaymentMethodBloc>(builder: (BuildContext context) => PaymentMethodBloc()),
         ],
         child: Provider<PersistentData>(
           create: (context) => PersistentData(),

@@ -128,17 +128,34 @@ app.post(apiVersion + '/establishment/get_products', validate({
 
 /**
  * Creates and adds a payment method for a Stripe user
+ * customer_id
+ * number
+ * exp_month
+ * exp_year
+ * cvv
  */
 app.post(apiVersion + '/payment/add_payment_method', validate({
     body: {
         type: 'object',
         properties: {
-            customer: {
+            customer_id: {
                 type: 'string',
                 required: true
             },
-            payment_method: {
-                type: 'object',
+            number: {
+                type: 'string',
+                required: true
+            },
+            exp_month: {
+                type: 'int',
+                required: true
+            },
+            exp_year: {
+                type: 'int',
+                required: true
+            },
+            cvv: {
+                type: 'string',
                 required: true
             }
         }
@@ -146,15 +163,23 @@ app.post(apiVersion + '/payment/add_payment_method', validate({
 }), async (req, res) => {
     try {
         const paymentMethod = await stripe.paymentMethods.create(
-            req.body.payment_method
+            {
+                type: 'card',
+                card: {
+                    number: req.body.number,
+                    exp_month: req.body.exp_month,
+                    exp_year: req.body.exp_year,
+                    cvc: req.body.cvv,
+                },
+            },
         );
 
         await stripe.paymentMethods.attach(
             paymentMethod.id,
-            {customer: req.body.customer},
+            {customer: req.body.customer_id},
         );
 
-        res.sendStatus(200);
+        res.status(200).json(paymentMethod);
 
     } catch (err) {
         console.log(err.message);
