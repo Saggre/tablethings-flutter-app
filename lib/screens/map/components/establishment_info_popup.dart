@@ -103,7 +103,7 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   BlocProvider.of<OrderBloc>(context).add(
                     GetEstablishmentEvent(
                       establishment.id,
-                      'No table',
+                      'none',
                     ),
                   );
 

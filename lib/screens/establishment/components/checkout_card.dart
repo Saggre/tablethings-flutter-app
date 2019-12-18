@@ -79,7 +79,7 @@ class CheckoutCard extends StatelessWidget {
                       style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
                     ),
                     Text(
-                      tableId, // TODO takeaway
+                      t('Table: ') + tableId, // TODO takeaway
                       style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
                     ),
                   ],
