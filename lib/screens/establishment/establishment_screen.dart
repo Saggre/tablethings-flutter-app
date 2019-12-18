@@ -189,7 +189,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     );
   }
 
-  void _backAction(OrderBlocState currentState) {
+  void _backAction(BlocState currentState) {
     // TODO go back
     print("BACK");
     if (currentState is OrderItemState) {

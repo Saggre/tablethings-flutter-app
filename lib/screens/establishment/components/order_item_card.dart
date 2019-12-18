@@ -24,11 +24,12 @@ class OrderItemCard extends StatelessWidget {
           ),
           TextFactory.h2(t('Add to order')),
           Container(
-            padding: const EdgeInsets.only(left: 15.0),
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
             child: MenuViewItem(
-              width: MediaQuery.of(context).size.width - 15.0,
+              width: MediaQuery.of(context).size.width - 30.0,
               menuItem: orderItem.product,
               establishment: establishment,
+              imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
               onPress: () {},
               buttonStyle: MenuViewItemButtonStyle.none,
               descriptionPadding: 25.0,
