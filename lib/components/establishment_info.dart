@@ -89,6 +89,7 @@ class EstablishmentInfo extends StatelessWidget {
                 key: ValueKey('Rating'),
                 height: 24,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[

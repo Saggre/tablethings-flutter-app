@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:tablething/blocs/order/order_bloc.dart';
 import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/theme/colors.dart';

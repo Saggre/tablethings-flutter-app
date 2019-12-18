@@ -1,6 +1,5 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
@@ -14,8 +13,8 @@ class OrderBlocState extends BlocState {
 }
 
 /// Still loading the establishment's data
-class LoadingState extends OrderBlocState {
-  LoadingState(establishment) : super(establishment);
+class LoadingState extends BlocState {
+  LoadingState() : super();
 }
 
 /// When the menu is shown

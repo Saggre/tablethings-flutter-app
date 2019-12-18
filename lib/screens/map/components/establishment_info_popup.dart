@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
-import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/corner_bar.dart';
 import 'package:tablething/components/establishment_image.dart';
@@ -11,7 +9,6 @@ import 'package:tablething/components/establishment_info.dart';
 import 'package:tablething/components/buttons/single_button.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/fetchable_package.dart';
 import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'package:tablething/theme/theme.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -102,12 +99,6 @@ class EstablishmentInfoPopup extends StatelessWidget {
                 onPressed: () {
                   // Close the popup
                   onCloseTapped();
-
-                  /*Provider.of<PersistentData>(context).setScannedData(
-                    establishment.id,
-                    'No table',
-                    true,
-                  );*/
 
                   BlocProvider.of<OrderBloc>(context).add(
                     GetEstablishmentEvent(

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:provider/provider.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/card_widget.dart';
 import 'package:tablething/components/edit_card_popup.dart';
@@ -11,7 +11,6 @@ import 'package:tablething/components/popup_widget.dart';
 import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/user.dart';
@@ -104,30 +103,59 @@ class CheckoutCard extends StatelessWidget {
                 ],
               ),
               child: BlocBuilder<PaymentMethodBloc, ProgressBlocState>(builder: (context, state) {
-                // TODO this should refresh cards when added
-                return FutureBuilder(
-                  future: user.paymentMethods,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Text('Loading....');
-                      default:
-                        if (snapshot.hasError)
-                          return Text('Error: ${snapshot.error}');
-                        else {
-                          List<dynamic> paymentMethods = List();
-                          paymentMethods.addAll(snapshot.data);
-                          paymentMethods.add(true);
+                return Column(
+                  children: <Widget>[
+                    Text(
+                      t('Select a payment method'),
+                      style: TextFactory.h3Style,
+                    ),
+                    Container(
+                      height: (MediaQuery.of(context).size.width - 20.0) * 0.63 + 20.0,
+                      child: FutureBuilder(
+                        future: user.paymentMethods,
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                color: Colors.transparent,
+                                alignment: Alignment.center,
+                                child: SpinKitPulse(
+                                  color: mainThemeColor,
+                                  size: 128,
+                                ),
+                              );
+                            default:
+                              if (snapshot.hasError)
+                                // TODO error popup
+                                return Container(color: Colors.red);
+                              else {
+                                List<dynamic> paymentMethods = List();
+                                paymentMethods.addAll(snapshot.data);
+                                paymentMethods.add(true);
 
-                          return Column(
-                            children: <Widget>[
-                              Text(
-                                t('Select a payment method'),
-                                style: TextFactory.h3Style,
-                              ),
-                              Container(
-                                height: (MediaQuery.of(context).size.width - 20.0) * 0.63 + 20.0,
-                                child: Swiper(
+                                return Swiper(
+                                  onIndexChanged: (index) {
+                                    if (paymentMethods[index] is PaymentMethod) {
+                                      BlocProvider.of<OrderBloc>(context).add(ChangePaymentMethod(paymentMethods[index]));
+                                    }
+                                  },
+                                  onTap: (index) {
+                                    if (!(paymentMethods[index] is PaymentMethod)) {
+                                      // New card
+                                      BlocProvider.of<PaymentMethodBloc>(context).add(InitCard());
+
+                                      Navigator.of(context).push(
+                                        TransparentRoute(
+                                          builder: (BuildContext context) => PopupWidget(
+                                            child: EditCardPopup(
+                                              onCloseTapped: () => Navigator.of(context).pop(),
+                                            ),
+                                            onCloseTapped: () => Navigator.of(context).pop(),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
                                   itemBuilder: (BuildContext context, int index) {
                                     if (paymentMethods[index] is PaymentMethod) {
                                       return CardWidget(
@@ -136,19 +164,7 @@ class CheckoutCard extends StatelessWidget {
                                       );
                                     } else {
                                       // Add new card
-                                      return GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            TransparentRoute(
-                                              builder: (BuildContext context) => PopupWidget(
-                                                child: EditCardPopup(
-                                                  onCloseTapped: () => Navigator.of(context).pop(),
-                                                ),
-                                                onCloseTapped: () => Navigator.of(context).pop(),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                      return Container(
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: (Container(
@@ -188,13 +204,13 @@ class CheckoutCard extends StatelessWidget {
                                     padding: EdgeInsets.all(15.0),
                                     size: 20.0,
                                   ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                    }
-                  },
+                                );
+                              }
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 );
               }),
             ),

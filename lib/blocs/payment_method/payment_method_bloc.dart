@@ -25,7 +25,11 @@ class PaymentMethodBloc extends Bloc<BlocEvent, ProgressBlocState> {
   @override
   Stream<ProgressBlocState> mapEventToState(BlocEvent event) async* {
     if (event is InitCard) {
-      // TODO delete
+      _cardNumber = null;
+      _month = null;
+      _year = null;
+      _cvv = null;
+      yield CardNumberState();
     } else if (event is AddCardNumber) {
       _cardNumber = event.cardNumber;
       yield SecurityInfoState();

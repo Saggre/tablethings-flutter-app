@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/theme/theme.dart';
@@ -235,6 +236,31 @@ class EditCardPopupState extends State<EditCardPopup> {
                                 ],
                               ),
                             );
+                          } else if (state is ApiConnectionState) {
+                            builder.add(
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                color: Colors.transparent,
+                                alignment: Alignment.center,
+                                child: SpinKitPulse(
+                                  color: mainThemeColor,
+                                  size: 128.0,
+                                ),
+                              ),
+                            );
+                          } else if (state is CardAddedState) {
+                            builder.add(
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                color: Colors.transparent,
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.check,
+                                  color: mainThemeColor,
+                                  size: 128.0,
+                                ),
+                              ),
+                            );
                           }
 
                           return builder;
@@ -270,6 +296,8 @@ class EditCardPopupState extends State<EditCardPopup> {
                           BlocProvider.of<PaymentMethodBloc>(context).add(AddSecurityInfo(
                               _formFieldControllers['expMonth'].text.toString(), _formFieldControllers['expYear'].text.toString(), _formFieldControllers['cvv'].text.toString()));
                         }
+                      } else if (state is CardAddedState) {
+                        widget.onCloseTapped();
                       }
                     },
                   ),

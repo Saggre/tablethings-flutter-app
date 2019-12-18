@@ -1,6 +1,7 @@
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/models/fetchable_package.dart';
+import 'package:tablething/services/stripe/payment_method.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
@@ -71,4 +72,11 @@ class RequestCheckoutEvent extends OrderBlocEvent {
   final User user;
 
   RequestCheckoutEvent(this.order, this.user) : super();
+}
+
+/// Change payment method at checkout
+class ChangePaymentMethod extends OrderBlocEvent {
+  final PaymentMethod paymentMethod;
+
+  ChangePaymentMethod(this.paymentMethod);
 }

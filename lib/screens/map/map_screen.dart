@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/components/layered_button_group/menus/tabbed_food_menu.dart';
-import 'package:tablething/components/login_popup.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tablething/components/popup_widget.dart';
 import 'package:tablething/components/transparent_route.dart';
 import 'package:tablething/localization/translate.dart';
@@ -253,10 +253,18 @@ class MapScreenState extends State<MapScreen> {
                 );
               });
         } else if (state is MapErrorState) {
+          // TODO error popup
           return Container(color: Colors.red);
         }
 
-        return Container(color: Colors.pink);
+        return Container(
+          color: offWhiteColor,
+          alignment: Alignment.center,
+          child: SpinKitRipple(
+            color: mainThemeColor,
+            size: MediaQuery.of(context).size.width * 0.5,
+          ),
+        );
       },
     );
   }

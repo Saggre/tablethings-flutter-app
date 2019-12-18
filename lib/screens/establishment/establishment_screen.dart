@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tablething/blocs/auth/auth_bloc_states.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/components/layered_button_group/layered_button_group.dart';
 import 'package:tablething/components/login_popup.dart';
 import 'package:tablething/components/popup_widget.dart';
-import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/colored_safe_area.dart';
 import 'package:tablething/components/establishment_image.dart';
@@ -43,14 +42,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
     // Delayed to after context is initialized
     () async {
       await Future.delayed(Duration.zero);
-      //final EstablishmentScreenArguments args = ModalRoute.of(context).settings.arguments;
-
-      // TODO handle errors (if there is no establishment)
-      // Get establishment
-      /*print("Getting establishment: " + Provider.of<PersistentData>(context).selectedEstablishment.getFetchId());
-      BlocProvider.of<OrderBloc>(context).add(
-        GetEstablishmentEvent(Provider.of<PersistentData>(context).selectedEstablishment),
-      );*/
     }();
   }
 
@@ -62,20 +53,13 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
         backgroundColor: offWhiteColor,
         body: Stack(
           children: <Widget>[
-            BlocBuilder<OrderBloc, OrderBlocState>(
+            BlocBuilder<OrderBloc, BlocState>(
               builder: (context, state) {
                 Widget built = Container(
                   color: Colors.red,
                 );
 
-                if (state.error) {
-                  // TODO handle error
-                }
-
-                if (state is LoadingState) {
-                  // TODO loading
-                  return CircularProgressIndicator(value: null);
-                } else if (state is EstablishmentState) {
+                if (state is EstablishmentState) {
                   print("Successfully got establishment: " + state.establishment.name);
                   built = EstablishmentCard(
                     key: ValueKey('EstablishmentCard'),
@@ -129,59 +113,73 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   });
                 }
 
-                return WillPopScope(
-                  onWillPop: () async {
-                    _backAction(state);
-                    return false;
-                  },
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(
-                          top: 24,
-                        ),
-                        width: double.infinity,
-                        color: darkThemeColor,
-                        child: ClipRRect(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(32.0),
-                            topLeft: Radius.circular(32.0),
+                if (state is LoadingState) {
+                  return Container(
+                    color: offWhiteColor,
+                    alignment: Alignment.center,
+                    child: SpinKitPulse(
+                      color: mainThemeColor,
+                      size: 128,
+                    ),
+                  );
+                } else if (state is OrderBlocState) {
+                  return WillPopScope(
+                    onWillPop: () async {
+                      _backAction(state);
+                      return false;
+                    },
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(
+                            top: 24,
                           ),
-                          child: Stack(
-                            children: <Widget>[
-                              EstablishmentImage(imageUrl: state.establishment.imageUrl, height: 160.0),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 152.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: offWhiteColor,
+                          width: double.infinity,
+                          color: darkThemeColor,
+                          child: ClipRRect(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             borderRadius: BorderRadius.only(
                               topRight: Radius.circular(32.0),
                               topLeft: Radius.circular(32.0),
                             ),
+                            child: Stack(
+                              children: <Widget>[
+                                EstablishmentImage(imageUrl: state.establishment.imageUrl, height: 160.0),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      AnimatedSwitcher(
-                        key: ValueKey('AnimatedSwitcher'),
-                        child: built,
-                        duration: Duration(milliseconds: 300),
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            child: child,
-                            opacity: animation,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
+                        Padding(
+                          padding: EdgeInsets.only(top: 152.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: offWhiteColor,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(32.0),
+                                topLeft: Radius.circular(32.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        AnimatedSwitcher(
+                          key: ValueKey('AnimatedSwitcher'),
+                          child: built,
+                          duration: Duration(milliseconds: 300),
+                          transitionBuilder: (Widget child, Animation<double> animation) {
+                            return FadeTransition(
+                              child: child,
+                              opacity: animation,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                // TODO return error popup
+                return Container(color: Colors.red);
               },
             ),
             _getButtons(),
@@ -228,7 +226,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
       direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        BlocBuilder<OrderBloc, OrderBlocState>(builder: (context, state) {
+        BlocBuilder<OrderBloc, BlocState>(builder: (context, state) {
           if (state is EstablishmentState) {
             return DualButton(
               properties: DualButtonProperties(

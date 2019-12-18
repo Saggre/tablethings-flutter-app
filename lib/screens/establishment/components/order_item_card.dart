@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
+import 'package:tablething/util/text_factory.dart';
 import 'dropdown_menu.dart';
 import 'menu_view/menu_view_item.dart';
 import 'card_base.dart';
@@ -18,6 +19,10 @@ class OrderItemCard extends StatelessWidget {
     return CardBase(
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 25.0),
+          ),
+          TextFactory.h2(t('Add to order')),
           Container(
             padding: const EdgeInsets.only(left: 15.0),
             child: MenuViewItem(
