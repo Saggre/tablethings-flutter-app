@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:tablething/models/establishment/opening_hour_period.dart';
 import 'package:tablething/services/graph/place.dart';
 import 'package:tablething/services/graph/graph.dart';
+import 'package:tablething/services/tablething/menu/menu.dart';
 import 'cuisine_type_description.dart';
 import 'cuisine_types.dart';
 
@@ -43,6 +44,9 @@ class Establishment {
   @JsonKey(name: 'cuisineTypes', nullable: true)
   final List<int> cuisineTypeValues;
 
+  @JsonKey(nullable: true)
+  Menu menu;
+
   /// Pics
   @JsonKey(nullable: true)
   final String thumbUrl;
@@ -50,6 +54,7 @@ class Establishment {
   final String imageUrl;
 
   /// Variables
+  // TODO transform into future
   @JsonKey(ignore: true)
   Place _placeInformation;
 
@@ -62,8 +67,6 @@ class Establishment {
 
     return _placeInformation;
   }
-
-  // TODO add menu
 
   Currency get currency {
     return Currency.values[currencyValue];

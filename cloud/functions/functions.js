@@ -12,13 +12,10 @@ const db = admin.firestore();
 module.exports.calculateOrderValue = async function (establishmentId, productIds) {
     let orderValue = 0;
 
-    let ref = db.collection('establishments').doc(establishmentId).collection('products');
-    let docs = await ref.get();
+    const products = await getProducts(establishmentId);
 
-    docs.forEach(doc => {
-        console.log(doc.id, '=>', doc.data());
-        const product = doc.data();
-        if (productIds.includes(doc.id)) {
+    products.forEach((product) => {
+        if (productIds.includes(product.id)) {
             orderValue += product.price;
         }
     });
@@ -65,20 +62,22 @@ module.exports.getEstablishments = async function () {
  * @param establishmentId
  * @returns {Promise<any[]>}
  */
-module.exports.getProducts = async function (establishmentId) {
-    let products = Array();
+async function getProducts(establishmentId) {
+    let products = new Map();
 
     let ref = db.collection('establishments').doc(establishmentId).collection('products');
     let docs = await ref.get();
 
     docs.forEach(doc => {
-        products.push(
-            doc.data()
-        );
+        let product = doc.data();
+        product.id = doc.id;
+        products[doc.id] = product;
     });
 
     return products;
-};
+}
+
+module.exports.getProducts = getProducts;
 
 /**
  * Gets user by id

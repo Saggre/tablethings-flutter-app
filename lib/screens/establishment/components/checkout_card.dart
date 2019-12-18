@@ -23,8 +23,9 @@ class CheckoutCard extends StatelessWidget {
   final Establishment establishment;
   final Order order;
   final User user;
+  final String tableId;
 
-  const CheckoutCard({Key key, this.establishment, this.order, this.user}) : super(key: key);
+  const CheckoutCard({Key key, this.establishment, this.order, this.user, this.tableId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +80,7 @@ class CheckoutCard extends StatelessWidget {
                       style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
                     ),
                     Text(
-                      Provider.of<PersistentData>(context).selectedTableId, // TODO takeaway
+                      tableId, // TODO takeaway
                       style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
                     ),
                   ],

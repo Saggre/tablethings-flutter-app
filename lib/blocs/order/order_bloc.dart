@@ -2,11 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/fetchable_package.dart';
-import 'package:tablething/services/api_client_selector.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/services/stripe/payment_method.dart';
-import 'package:tablething/services/stripe/stripe.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/services/tablething/order/order.dart';
 import 'package:tablething/services/tablething/order/order_item.dart';
@@ -14,15 +10,15 @@ import 'order_bloc_states.dart';
 import 'order_bloc_events.dart';
 export 'order_bloc_states.dart';
 export 'order_bloc_events.dart';
+import 'package:tablething/services/tablething/tablething.dart' as Api;
 
 /// Order bloc
 class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   // For getting data from db
-  ApiClient _apiClient = ApiClient();
-  Stripe _stripeApi = Stripe();
   Establishment _establishment;
+  String _tableId;
   Order<MenuItem> _order;
-  Menu _menu;
+  final Api.Tablething _api = Api.Tablething();
 
   @override
   // Init with null
@@ -64,17 +60,10 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   /// Gets an establishment and menu
   Future<OrderBlocState> _getEstablishment(GetEstablishmentEvent event) async {
     try {
-      // If already fetched from db
-      if (event.establishmentPackage.fetchState == FetchState.fetched) {
-        _establishment = event.establishmentPackage.getData();
-      } else {
-        _establishment = await _apiClient.getEstablishment(event.establishmentPackage.getFetchId());
-      }
+      _establishment = await _api.getEstablishment(event.establishmentId);
+      _tableId = event.tableId;
 
-      // TODO specify which menu
-      _menu = await _apiClient.getMenu();
-
-      return EstablishmentState(_establishment, _menu);
+      return EstablishmentState(_establishment);
     } catch (err) {
       print("Error: " + err.toString());
       return BlocState.withError(t('An error occurred')) as EstablishmentState;
@@ -85,7 +74,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
   Future<OrderBlocState> _initOrder(InitOrderEvent event) async {
     _order = Order<MenuItem>();
     if (_establishment != null) {
-      return EstablishmentState(_establishment, _menu);
+      return EstablishmentState(_establishment);
     } else {
       return BlocState.withError(t('An error occurred')) as EstablishmentState;
     }
@@ -114,6 +103,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
     return ShoppingBasketState(
       _establishment,
       _order,
+      _tableId,
     );
   }
 
@@ -131,12 +121,13 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
     // Go to menu in case of empty order after removal
     if (_order.items.length == 0) {
-      return EstablishmentState(_establishment, _menu);
+      return EstablishmentState(_establishment);
     }
 
     return ShoppingBasketState(
       _establishment,
       _order,
+      _tableId,
     );
   }
 
@@ -159,16 +150,16 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       print("Error modifying order item options");
     }
 
-    return ShoppingBasketState(_establishment, _order);
+    return ShoppingBasketState(_establishment, _order, _tableId);
   }
 
   /// Forgets the order item and returns to the last screen
   Future<OrderBlocState> _forgetOrderItem(ForgetOrderItemEvent event) async {
     if (_order.containsItem(event.orderItem)) {
-      return ShoppingBasketState(_establishment, _order);
+      return ShoppingBasketState(_establishment, _order, _tableId);
     }
 
-    return EstablishmentState(_establishment, _menu);
+    return EstablishmentState(_establishment);
   }
 
   Future<OrderBlocState> _goToMenu(RequestMenuEvent event) async {
@@ -176,7 +167,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    return EstablishmentState(_establishment, _menu);
+    return EstablishmentState(_establishment);
   }
 
   Future<OrderBlocState> _goToCheckout(RequestCheckoutEvent event) async {
@@ -184,16 +175,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    /*String defaultPaymentMethodId = event.user?.stripeCustomer?.invoiceSettings?.defaultPaymentMethodId;
-    PaymentMethod defaultPaymentMethod;
-
-    if (defaultPaymentMethodId != null && defaultPaymentMethodId.length > 0) {
-      defaultPaymentMethod = await _stripeApi.getPaymentMethod(defaultPaymentMethodId);
-      print("cc");
-
-    }*/
-
-    return CheckoutState(_establishment, event.order);
+    return CheckoutState(_establishment, event.order, _tableId);
   }
 
   Future<OrderBlocState> _goToShoppingBasket(RequestShoppingBasketEvent event) async {
@@ -201,6 +183,6 @@ class OrderBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       // TODO error
     }
 
-    return ShoppingBasketState(_establishment, _order);
+    return ShoppingBasketState(_establishment, _order, _tableId);
   }
 }

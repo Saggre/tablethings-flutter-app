@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/screens/establishment/components/menu_view/menu_view_item_text.dart';
 import 'package:tablething/services/tablething/menu/menu.dart';
 import 'package:tablething/theme/colors.dart';
 import 'package:tablething/util/text_factory.dart';
@@ -17,6 +16,7 @@ class MenuViewItem extends StatelessWidget {
   final BorderRadius imageRadius;
   final bool wholeAreaIsClickable;
   final String titlePrefix;
+  final double width;
 
   MenuViewItem({
     Key key,
@@ -28,6 +28,7 @@ class MenuViewItem extends StatelessWidget {
     this.imageRadius = BorderRadius.zero,
     this.wholeAreaIsClickable = true,
     this.titlePrefix,
+    @required this.width,
   }) : super(key: key);
 
   @override
@@ -51,33 +52,40 @@ class MenuViewItem extends StatelessWidget {
   }
 
   Widget _getMenuItemCard(BuildContext context) {
-    return Stack(
+    return Row(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(
-            top: descriptionPadding,
-            bottom: descriptionPadding,
-          ),
-          child: MenuViewItemText(
-            menuItem: menuItem,
-            establishment: establishment,
-            titlePrefix: titlePrefix,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 15.0),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: MediaQuery.of(context).size.width * 0.4,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: 80.0,
+        Container(
+          width: width * 0.6,
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: descriptionPadding,
+              bottom: descriptionPadding,
+              right: 10.0,
             ),
-            child: _getImageWithButton(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  establishment.formatCurrency(menuItem.price),
+                  style: TextFactory.h4Style.copyWith(color: darkThemeColor),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    TextFactory.h3((titlePrefix ?? '') + menuItem.name),
+                    Padding(padding: EdgeInsets.only(right: 10.0)),
+                  ],
+                ),
+                TextFactory.p(menuItem.description),
+              ],
+            ),
           ),
+        ),
+        Container(
+
+          width: width * 0.4,
+          height: 100.0,
+          child: _getImageWithButton(),
         ),
       ],
     );
@@ -85,6 +93,8 @@ class MenuViewItem extends StatelessWidget {
 
   _getImageWithButton() {
     return Container(
+      alignment: Alignment.topRight,
+
       decoration: BoxDecoration(
         color: darkThemeColor,
         borderRadius: imageRadius,

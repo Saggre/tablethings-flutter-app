@@ -19,8 +19,9 @@ class OrderItemCard extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 15.0),
+            padding: const EdgeInsets.only(left: 15.0),
             child: MenuViewItem(
+              width: MediaQuery.of(context).size.width - 15.0,
               menuItem: orderItem.product,
               establishment: establishment,
               onPress: () {},

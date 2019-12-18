@@ -16,10 +16,13 @@ class Menu {
   Map<String, dynamic> toJson() => _$MenuToJson(this);
 }
 
+/// Generic menu item type is so that we can build a menu containing only item ids, and fetch the items later
 @JsonSerializable(nullable: false)
 class MenuCategory {
   final String name;
+  @JsonKey(nullable: true)
   final String description;
+  @JsonKey(name: 'products')
   final List<MenuItem> items;
 
   MenuCategory({this.name, this.description, this.items});
@@ -37,12 +40,17 @@ class MenuCategory {
   }
 }
 
+/// A single menu item
 @JsonSerializable(nullable: false)
 class MenuItem implements Product {
   final String id;
+  @JsonKey(nullable: true)
   final String name;
+  @JsonKey(nullable: true)
   final String description;
+  @JsonKey(nullable: true)
   final int price;
+  @JsonKey(nullable: true)
   final String imageUrl;
 
   MenuItem(this.id, this.name, this.description, this.price, this.imageUrl);

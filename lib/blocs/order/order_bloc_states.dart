@@ -20,9 +20,7 @@ class LoadingState extends OrderBlocState {
 
 /// When the menu is shown
 class EstablishmentState extends OrderBlocState {
-  final Menu menu;
-
-  EstablishmentState(establishment, this.menu) : super(establishment);
+  EstablishmentState(establishment) : super(establishment);
 }
 
 /// When an order item is shown
@@ -35,16 +33,19 @@ class OrderItemState extends OrderBlocState {
 /// Shopping basket with all order items shown
 class ShoppingBasketState extends OrderBlocState {
   final Order<MenuItem> order;
+  final String tableId;
 
-  ShoppingBasketState(establishment, this.order) : super(establishment);
+  ShoppingBasketState(establishment, this.order, this.tableId) : super(establishment);
 }
 
 /// Checkout stage where the user can choose payment method etc.
 class CheckoutState extends OrderBlocState {
   final Order<MenuItem> order;
+  final String tableId;
+
   //final PaymentMethod paymentMethod;
 
-  CheckoutState(establishment, this.order) : super(establishment);
+  CheckoutState(establishment, this.order, this.tableId) : super(establishment);
 }
 
 /// Receipt of the payment (or an error in case of unsuccessful payment)

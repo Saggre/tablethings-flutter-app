@@ -10,9 +10,10 @@ class OrderBlocEvent extends BlocEvent {}
 
 /// Event that gets the establishment's data
 class GetEstablishmentEvent extends OrderBlocEvent {
-  final FetchablePackage<String, Establishment> establishmentPackage;
+  final String tableId;
+  final String establishmentId;
 
-  GetEstablishmentEvent(this.establishmentPackage) : super();
+  GetEstablishmentEvent(this.establishmentId, this.tableId) : super();
 }
 
 /// Event for creating a new blank order

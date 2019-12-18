@@ -23,10 +23,12 @@ Establishment _$EstablishmentFromJson(Map<String, dynamic> json) {
     currencyValue: json['currency'] as int,
     priceRangeValue: json['priceRange'] as int,
     cuisineTypeValues:
-        (json['cuisineTypes'] as List).map((e) => e as int).toList(),
+        (json['cuisineTypes'] as List)?.map((e) => e as int)?.toList(),
     thumbUrl: json['thumbUrl'] as String,
     imageUrl: json['imageUrl'] as String,
-  );
+  )..menu = json['menu'] == null
+      ? null
+      : Menu.fromJson(json['menu'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$EstablishmentToJson(Establishment instance) =>
@@ -46,6 +48,7 @@ Map<String, dynamic> _$EstablishmentToJson(Establishment instance) =>
       'currency': instance.currencyValue,
       'priceRange': instance.priceRangeValue,
       'cuisineTypes': instance.cuisineTypeValues,
+      'menu': instance.menu,
       'thumbUrl': instance.thumbUrl,
       'imageUrl': instance.imageUrl,
     };

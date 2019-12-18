@@ -91,12 +91,17 @@ class QRScanScreenState extends State<QRScanScreen> {
 
   /// Navigate to establishment screen and send data to it
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
-    var package = FetchablePackage<String, Establishment>(establishmentId);
-
-    Provider.of<PersistentData>(context).setScannedData(
-      package,
+    /*Provider.of<PersistentData>(context).setScannedData(
+      establishmentId,
       tableId,
       true,
+    );*/
+
+    BlocProvider.of<OrderBloc>(context).add(
+      GetEstablishmentEvent(
+        establishmentId,
+        tableId,
+      ),
     );
 
     Navigator.pushReplacement(
@@ -123,8 +128,7 @@ class QRScanScreenState extends State<QRScanScreen> {
       final FirebaseVisionImageMetadata metadata = FirebaseVisionImageMetadata(
           size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
           planeData: cameraImage.planes
-              .map((currentPlane) =>
-                  FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
+              .map((currentPlane) => FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
               .toList(),
           rawFormat: cameraImage.format.raw,
           rotation: ImageRotation.rotation90);

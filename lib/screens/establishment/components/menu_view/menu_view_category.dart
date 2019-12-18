@@ -21,7 +21,6 @@ class MenuViewCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       color: offWhiteColor,
       child: Column(
@@ -57,23 +56,26 @@ class MenuViewCategory extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: ColumnBuilder(
-              itemCount: menuCategory.items.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  color: offWhiteColor,
-                  child: MenuViewItem(
-                    menuItem: menuCategory.items[index],
-                    establishment: establishment,
-                    onPress: onAddItem,
-                    buttonStyle: MenuViewItemButtonStyle.add,
-                    imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
-                  ),
-                );
-              },
+          Container(
+            color: offWhiteColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: ColumnBuilder(
+                itemCount: menuCategory.items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: MenuViewItem(
+                      width: MediaQuery.of(context).size.width - 30.0,
+                      menuItem: menuCategory.items[index],
+                      establishment: establishment,
+                      onPress: onAddItem,
+                      buttonStyle: MenuViewItemButtonStyle.add,
+                      imageRadius: BorderRadius.only(bottomLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

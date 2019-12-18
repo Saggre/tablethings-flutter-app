@@ -47,10 +47,10 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
 
       // TODO handle errors (if there is no establishment)
       // Get establishment
-      print("Getting establishment: " + Provider.of<PersistentData>(context).selectedEstablishment.getFetchId());
+      /*print("Getting establishment: " + Provider.of<PersistentData>(context).selectedEstablishment.getFetchId());
       BlocProvider.of<OrderBloc>(context).add(
         GetEstablishmentEvent(Provider.of<PersistentData>(context).selectedEstablishment),
-      );
+      );*/
     }();
   }
 
@@ -80,7 +80,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   built = EstablishmentCard(
                     key: ValueKey('EstablishmentCard'),
                     establishment: state.establishment,
-                    menu: state.menu,
+                    menu: state.establishment.menu,
                   );
                 } else if (state is OrderItemState) {
                   built = OrderItemCard(
@@ -93,6 +93,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                   built = ShoppingBasketCard(
                     key: ValueKey('ShoppingBasketCard'),
                     establishment: state.establishment,
+                    tableId: state.tableId,
                     order: state.order,
                   );
                 } else if (state is CheckoutState) {
@@ -102,6 +103,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                         key: ValueKey('CheckoutCard'),
                         establishment: state.establishment,
                         order: state.order,
+                        tableId: state.tableId,
                         user: authState.user,
                       );
                     }
@@ -112,6 +114,7 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                           key: ValueKey('ShoppingBasketCard'),
                           establishment: state.establishment,
                           order: state.order,
+                          tableId: state.tableId,
                         ),
                         PopupWidget(
                           child: LoginPopup(

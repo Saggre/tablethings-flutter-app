@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/components/buttons/dual_button.dart';
 import 'package:tablething/components/corner_bar.dart';
@@ -101,13 +103,17 @@ class EstablishmentInfoPopup extends StatelessWidget {
                   // Close the popup
                   onCloseTapped();
 
-                  var package = FetchablePackage<String, Establishment>(establishment.id);
-                  package.setFetchedData(establishment);
-
-                  Provider.of<PersistentData>(context).setScannedData(
-                    package,
+                  /*Provider.of<PersistentData>(context).setScannedData(
+                    establishment.id,
                     'No table',
                     true,
+                  );*/
+
+                  BlocProvider.of<OrderBloc>(context).add(
+                    GetEstablishmentEvent(
+                      establishment.id,
+                      'No table',
+                    ),
                   );
 
                   // Push establishment screen

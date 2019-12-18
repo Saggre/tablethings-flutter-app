@@ -17,8 +17,9 @@ import 'card_base.dart';
 class ShoppingBasketCard extends StatelessWidget {
   final Establishment establishment;
   final Order<MenuItem> order;
+  final String tableId;
 
-  const ShoppingBasketCard({Key key, this.establishment, this.order}) : super(key: key);
+  const ShoppingBasketCard({Key key, @required this.establishment, @required this.order, @required this.tableId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,7 @@ class ShoppingBasketCard extends StatelessWidget {
                       style: TextFactory.h3Style.copyWith(color: darkThemeColorGradient),
                     ),
                     Text(
-                      Provider.of<PersistentData>(context).selectedTableId, // TODO takeaway
+                      tableId, // TODO takeaway
                       style: TextFactory.h3Style.copyWith(color: Colors.grey[500]),
                     ),
                   ],
@@ -103,6 +104,7 @@ class ShoppingBasketCard extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 15.0),
                   child: MenuViewItem(
+                    width: MediaQuery.of(context).size.width - 30.0,
                     titlePrefix: orderItem.options.quantity == 1 ? null : orderItem.options.quantity.toString() + 'x ',
                     menuItem: orderItem.product,
                     establishment: establishment,

@@ -1,14 +1,19 @@
-/// Abstract class for a product that is orderable through an Order object
-abstract class Product {
-  final String _id;
-  final String _name;
-  final int _price;
+import 'package:json_annotation/json_annotation.dart';
 
-  Product(this._id, this._name, this._price);
+part 'product.g.dart';
 
-  int get price => _price;
+/// Class for a product that is orderable through an Order object
+@JsonSerializable(nullable: false)
+class Product {
+  final String id;
+  final String name;
+  final int price;
+  final String description;
+  final String imageUrl;
 
-  String get name => _name;
+  Product({this.id, this.name, this.price, this.description, this.imageUrl});
 
-  String get id => _id;
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductToJson(this);
 }

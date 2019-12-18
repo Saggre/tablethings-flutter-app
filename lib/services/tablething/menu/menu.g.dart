@@ -22,7 +22,7 @@ MenuCategory _$MenuCategoryFromJson(Map<String, dynamic> json) {
   return MenuCategory(
     name: json['name'] as String,
     description: json['description'] as String,
-    items: (json['items'] as List)
+    items: (json['products'] as List)
         .map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
@@ -32,7 +32,7 @@ Map<String, dynamic> _$MenuCategoryToJson(MenuCategory instance) =>
     <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
-      'items': instance.items,
+      'products': instance.items,
     };
 
 MenuItem _$MenuItemFromJson(Map<String, dynamic> json) {

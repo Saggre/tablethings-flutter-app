@@ -55,6 +55,39 @@ app.post(apiVersion + '/user/get_user', validate({
 });
 
 /**
+ * Gets a menu for an establishment
+ */
+app.post(apiVersion + '/establishment/get_products', validate({
+    body: {
+        type: 'object',
+        properties: {
+            establishment_id: {
+                type: 'string',
+                required: true
+            },
+            product_ids: {
+                type: 'array',
+                required: false
+            }
+        }
+    },
+}), async (req, res) => {
+    try {
+        const establishmentId = req.body.establishment_id;
+
+        const products = await functions.getProducts(establishmentId);
+
+        console.log('Got products for establishment id:', establishmentId);
+
+        res.status(200).json(products);
+
+    } catch (err) {
+        res.status(500).json(getErrorJson(err.message));
+    }
+});
+
+
+/**
  * Gets an establishment with its id
  */
 app.post(apiVersion + '/establishment/get_establishment', validate({
@@ -71,6 +104,13 @@ app.post(apiVersion + '/establishment/get_establishment', validate({
     try {
         const establishmentId = req.body.establishment_id;
         const establishment = await functions.getEstablishment(establishmentId);
+        const products = await functions.getProducts(establishmentId);
+
+        establishment.menu.categories.forEach((menuCategory) => {
+            menuCategory.products = menuCategory.products.map((productId) => {
+                return products[productId];
+            });
+        });
 
         console.log('Got establishment for id:', establishmentId);
 
@@ -88,37 +128,13 @@ app.post(apiVersion + '/establishment/get_establishments', async (req, res) => {
     try {
         const establishments = await functions.getEstablishments();
 
+        establishments.forEach((establishment) => {
+            delete establishment.menu;
+        });
+
         console.log('Got establishments');
 
         res.status(200).json(establishments);
-
-    } catch (err) {
-        console.log(err.message);
-        res.status(500).json(getErrorJson(err.message));
-    }
-});
-
-/**
- * Gets an establishments products by its id
- */
-app.post(apiVersion + '/establishment/get_products', validate({
-    body: {
-        type: 'object',
-        properties: {
-            establishment_id: {
-                type: 'string',
-                required: true
-            },
-        }
-    },
-}), async (req, res) => {
-    try {
-        const establishmentId = req.body.establishment_id;
-        const products = await functions.getProducts(establishmentId);
-
-        console.log('Got products for id:', establishmentId);
-
-        res.status(200).json(products);
 
     } catch (err) {
         console.log(err.message);
