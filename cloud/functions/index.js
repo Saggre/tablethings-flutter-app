@@ -29,16 +29,14 @@ app.post(apiVersion + '/user/get_user', validate({
 
         console.log('Got user for id:', userId);
 
-        let stripeCustomerId = user.stripeCustomerId;
-
-        if (!stripeCustomerId) {
+        if (!user.stripeCustomerId) {
             // TODO create a stripe customer id?
             throw Error('User doesn\'t have a stripe client id');
         }
 
         try {
             user.stripeCustomer = await stripe.customers.retrieve(
-                stripeCustomerId
+                user.stripeCustomerId
             );
 
             delete user.stripeCustomerId;
@@ -345,7 +343,7 @@ exports.createUserData = firebaseFunctions.auth.user().onCreate(async (user) => 
 
         userObject.stripeCustomerId = customer.id;
 
-        await functions.addUser(userObject);
+        await functions.addUser(user.uid, userObject);
 
     } catch (err) {
         console.log('Error adding user: ' + err);

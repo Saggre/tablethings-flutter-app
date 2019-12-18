@@ -68,6 +68,8 @@ class OrderBloc extends Bloc<OrderBlocEvent, BlocState> {
       _establishment = await _api.getEstablishment(event.establishmentId);
       _tableId = event.tableId;
 
+      print("Successfully got establishment: " + _establishment.name);
+
       yield EstablishmentState(_establishment);
     } catch (err) {
       print("Error: " + err.toString());

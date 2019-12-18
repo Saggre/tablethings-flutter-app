@@ -60,7 +60,6 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 );
 
                 if (state is EstablishmentState) {
-                  print("Successfully got establishment: " + state.establishment.name);
                   built = EstablishmentCard(
                     key: ValueKey('EstablishmentCard'),
                     establishment: state.establishment,

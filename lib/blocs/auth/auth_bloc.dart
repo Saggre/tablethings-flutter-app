@@ -31,6 +31,10 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
   @override
   BlocState get initialState => Unauthenticated();
 
+  void refreshPaymentMethods() {
+    _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
+  }
+
   @override
   Stream<BlocState> mapEventToState(BlocEvent event) async* {
     try {
@@ -92,15 +96,15 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
   }
 
   Future<FirebaseUser> _facebookSignIn() async {
+    FirebaseUser user;
+
     final FacebookLoginResult result = await _facebook.logIn(['email']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
 
-        final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-
-        return user;
+        user = (await _auth.signInWithCredential(credential)).user;
 
         break;
       case FacebookLoginStatus.cancelledByUser:
@@ -112,6 +116,8 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
         throw Error();
         break;
     }
+
+    return user;
   }
 
   Future _credentialsSignIn(String email, String password) {

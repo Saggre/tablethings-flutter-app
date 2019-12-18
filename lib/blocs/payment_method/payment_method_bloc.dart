@@ -44,9 +44,10 @@ class PaymentMethodBloc extends Bloc<BlocEvent, ProgressBlocState> {
         // Send card to API
 
         PaymentMethod paymentMethod = await _stripe.addPaymentMethod(_authBloc.currentUser.stripeCustomer.id, _cardNumber, _month, _year, _cvv);
-        _authBloc.currentUser.paymentMethods.then((value) {
+        /*_authBloc.currentUser.paymentMethods.then((value) {
           value.add(paymentMethod);
-        });
+        });*/
+        _authBloc.refreshPaymentMethods();
 
         yield CardAddedState(paymentMethod);
       } catch (err) {
@@ -54,7 +55,7 @@ class PaymentMethodBloc extends Bloc<BlocEvent, ProgressBlocState> {
         yield () {
           var state = ProgressBlocState();
           state.error = true;
-          state.errorMessage = 'Error adding payment method';
+          state.errorMessage = 'Error adding card';
           return state;
         }();
       }

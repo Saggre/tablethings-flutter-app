@@ -296,7 +296,7 @@ class EditCardPopupState extends State<EditCardPopup> {
                           BlocProvider.of<PaymentMethodBloc>(context).add(AddSecurityInfo(
                               _formFieldControllers['expMonth'].text.toString(), _formFieldControllers['expYear'].text.toString(), _formFieldControllers['cvv'].text.toString()));
                         }
-                      } else if (state is CardAddedState) {
+                      } else if (state is CardAddedState || state.error == true) {
                         widget.onCloseTapped();
                       }
                     },

@@ -93,11 +93,12 @@ module.exports.getUser = async function (userId) {
 
 /**
  * Adds user
+ * @param userId
  * @param userObject
  * @returns {Promise<void>}
  */
-module.exports.addUser = async function (userObject) {
-    let ref = db.collection('users').doc(user.uid);
+module.exports.addUser = async function (userId, userObject) {
+    let ref = db.collection('users').doc(userId);
 
     await ref.set(userObject);
 };
