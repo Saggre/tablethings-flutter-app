@@ -57,6 +57,20 @@ class Tablething {
     return establishment;
   }
 
+  /// Gets user and retries for a set amount of times
+  Future<User> getUserWithRetries(String userId, {int retries = 5, Duration timeout = const Duration(milliseconds: 1000)}) async {
+    for (int i = 0; i < retries; i++) {
+      try {
+        User user = await getUser(userId);
+        return user;
+      } catch (err) {}
+      await Future.delayed(timeout);
+      print('Retrying to get user (' + (i + 1).toString() + ' time)');
+    }
+
+    throw Exception('Failed to get user with ' + retries.toString() + ' retries');
+  }
+
   /// Gets user by id
   Future<User> getUser(String userId) async {
     User user;

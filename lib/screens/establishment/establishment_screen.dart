@@ -339,6 +339,35 @@ class EstablishmentScreenState extends State<EstablishmentScreen> {
                 ),
               );
             }
+          } else if (state is CheckoutState) {
+            return DualButton(
+              properties: DualButtonProperties(
+                separatorDirection: DualButtonSeparatorDirection.rightHand,
+              ),
+              rightButtonProperties: SingleButtonProperties(
+                text: t('Order'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  Colors.grey,
+                ],
+                borderRadius: BorderRadius.circular(32.0),
+                onPressed: () {},
+              ),
+              leftButtonProperties: SingleButtonProperties(
+                text: t('Back'),
+                textStyle: TextFactory.buttonStyle,
+                colors: [
+                  darkThemeColorGradient,
+                  darkThemeColor,
+                ],
+                iconData: Icons.arrow_back,
+                borderRadius: BorderRadius.circular(32.0),
+                iconPosition: ButtonIconPosition.beforeText,
+                onPressed: () {
+                  _backAction(state);
+                },
+              ),
+            );
           }
 
           return DualButton(

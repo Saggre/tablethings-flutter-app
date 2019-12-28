@@ -35,6 +35,8 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
     _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
   }
 
+  Future<User> _getUserData(String userId, {int retries = 5}) async {}
+
   @override
   Stream<BlocState> mapEventToState(BlocEvent event) async* {
     try {
@@ -46,7 +48,7 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
           print("Error signing in with Google");
         });
 
-        _currentUser = await _api.getUser(_currentFirebaseUser.uid);
+        _currentUser = await _api.getUserWithRetries(_currentFirebaseUser.uid);
 
         // Get user payment methods
         _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
@@ -62,7 +64,7 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
           print("Error signing in with Facebook");
         });
 
-        _currentUser = await _api.getUser(_currentFirebaseUser.uid);
+        _currentUser = await _api.getUserWithRetries(_currentFirebaseUser.uid);
 
         // Get user payment methods
         _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
