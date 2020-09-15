@@ -2,11 +2,9 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tablething/blocs/bloc.dart';
 import 'package:tablething/localization/translate.dart';
-import 'package:tablething/models/establishment/establishment_barcode.dart';
+import 'package:tablething/models/tablethings/restaurant/barcode.dart' as RestaurantBarcode;
 import 'package:flutter/material.dart';
-import 'package:tablething/screens/establishment/establishment_screen.dart';
 import 'components/lens_cover.dart';
 
 class QRScanResult {}
@@ -14,7 +12,7 @@ class QRScanResult {}
 class QRScanEmptyResult extends QRScanResult {}
 
 class QRScanDataResult extends QRScanResult {
-  final EstablishmentBarcode barcodeData;
+  final RestaurantBarcode.Barcode barcodeData;
 
   QRScanDataResult(this.barcodeData);
 }
@@ -87,7 +85,6 @@ class QRScanScreenState extends State<QRScanScreen> {
 
   /// Navigate to establishment screen and send data to it
   void _pushEstablishmentScreen(String establishmentId, String tableId) {
-
     BlocProvider.of<OrderBloc>(context).add(
       GetEstablishmentEvent(
         establishmentId,
@@ -119,7 +116,8 @@ class QRScanScreenState extends State<QRScanScreen> {
       final FirebaseVisionImageMetadata metadata = FirebaseVisionImageMetadata(
           size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
           planeData: cameraImage.planes
-              .map((currentPlane) => FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
+              .map((currentPlane) =>
+                  FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width))
               .toList(),
           rawFormat: cameraImage.format.raw,
           rotation: ImageRotation.rotation90);
@@ -153,7 +151,7 @@ class QRScanScreenState extends State<QRScanScreen> {
           return QRScanErrorResult(t('Invalid QR-code'));
         }
 
-        return QRScanDataResult(EstablishmentBarcode(establishmentId, tableId));
+        return QRScanDataResult(RestaurantBarcode.Barcode(establishmentId, tableId));
       }
 
       // For loop really returns the first value

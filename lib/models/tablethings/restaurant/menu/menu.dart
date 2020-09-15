@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:tablething/util/string_tools.dart';
+import 'menu_section.dart';
 
 part 'menu.g.dart';
 

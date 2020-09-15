@@ -1,6 +1,6 @@
-class EstablishmentBarcode {
+class Barcode {
   final String establishmentId;
   final String tableId;
 
-  EstablishmentBarcode(this.establishmentId, this.tableId);
+  Barcode(this.establishmentId, this.tableId);
 }
