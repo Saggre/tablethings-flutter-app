@@ -45,7 +45,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "fi.designsivu.tablething"
-        minSdkVersion 21
+        minSdkVersion 28
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -67,6 +67,7 @@ android {
             storePassword keystoreProperties['debugStorePassword']
         }
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -85,6 +86,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.2'
+
+    
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

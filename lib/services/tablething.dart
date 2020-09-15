@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tablething/models/establishment/establishment.dart';
-import 'package:tablething/services/tablething/user.dart';
-import 'menu/menu.dart';
-import 'order/product.dart';
 
-/// Gets data from firebase
+/// Handles data used by the app
 class Tablething {
-  final String apiUrl = 'https://europe-west2-ruokamenu.cloudfunctions.net/api/v1/';
+  final String baseUrl = 'http://localhost:8080';
 
   /// Gets all establishments in db
   /// This function will be removed in the future
@@ -16,7 +12,8 @@ class Tablething {
     List<Establishment> establishments;
 
     try {
-      http.Response response = await http.post(apiUrl + 'establishment/get_establishments', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: {});
+      http.Response response =
+          await http.post(baseUrl + '/establishment/get_establishments', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: {});
       print(response.body);
 
       if (response.statusCode == 200) {
@@ -38,7 +35,7 @@ class Tablething {
     Establishment establishment;
 
     try {
-      http.Response response = await http.post(apiUrl + 'establishment/get_establishment', headers: {
+      http.Response response = await http.post(baseUrl + '/establishment/get_establishment', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'establishment_id': establishmentId,
@@ -76,7 +73,7 @@ class Tablething {
     User user;
 
     try {
-      http.Response response = await http.post(apiUrl + 'user/get_user', headers: {
+      http.Response response = await http.post(baseUrl + '/user/get_user', headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }, body: {
         'user_id': userId,

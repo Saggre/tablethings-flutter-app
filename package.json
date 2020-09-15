@@ -1,0 +1,23 @@
+{
+  "name": "tablethings",
+  "version": "1.0.0",
+  "description": "**Map view**\r Map view is the application's main view. Map view contains a map, and fetches the locations and other data of customer-restaurants to show on the map.\r -> **Restaurant class**",
+  "main": "lib/main.dart",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "models": "flutter pub run build_runner build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saggre/Tablething.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Saggre/Tablething/issues"
+  },
+  "homepage": "https://github.com/Saggre/Tablething#readme"
+}

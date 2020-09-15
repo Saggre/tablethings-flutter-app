@@ -11,7 +11,7 @@ import 'order_bloc_states.dart';
 import 'order_bloc_events.dart';
 export 'order_bloc_states.dart';
 export 'order_bloc_events.dart';
-import 'package:tablething/services/tablething/tablething.dart' as Api;
+import 'file:///C:/Users/sakri/Desktop/Repos/Tablething/lib/services/tablething.dart' as Api;
 
 /// Order bloc
 class OrderBloc extends Bloc<OrderBlocEvent, BlocState> {
@@ -23,9 +23,7 @@ class OrderBloc extends Bloc<OrderBlocEvent, BlocState> {
 
   final Api.Tablething _api = Api.Tablething();
 
-  @override
-  // Init with null
-  BlocState get initialState => LoadingState();
+  OrderBloc() : super(LoadingState());
 
   @override
   Stream<BlocState> mapEventToState(OrderBlocEvent event) async* {

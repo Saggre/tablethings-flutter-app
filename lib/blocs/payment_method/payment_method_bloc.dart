@@ -15,12 +15,7 @@ class PaymentMethodBloc extends Bloc<BlocEvent, ProgressBlocState> {
   int _year;
   String _cvv;
 
-  PaymentMethodBloc(this._authBloc);
-
-  @override
-  ProgressBlocState get initialState {
-    return CardNumberState();
-  }
+  PaymentMethodBloc(this._authBloc) : super(CardNumberState());
 
   @override
   Stream<ProgressBlocState> mapEventToState(BlocEvent event) async* {

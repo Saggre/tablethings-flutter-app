@@ -4,7 +4,7 @@ import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 import 'package:tablething/models/establishment/establishment.dart';
 import 'package:flutter/services.dart';
-import 'package:tablething/services/tablething/tablething.dart' as Api;
+import 'file:///C:/Users/sakri/Desktop/Repos/Tablething/lib/services/tablething.dart' as Api;
 import 'bloc.dart';
 
 class MapBlocEvent extends BlocEvent {}
@@ -45,7 +45,7 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
   bool _permission = false;
   double _minUpdateDist = 100.0; // Moves to user if GPS update is at least minUpdateDist meters away
 
-  MapBloc() {
+  MapBloc() : super(MapLoadingState()) {
     // TODO move when establishments are get in a different way in the future
     add(GetEstablishmentsEvent());
 
@@ -54,12 +54,6 @@ class MapBloc extends Bloc<MapBlocEvent, MapBlocState> {
         UserMovedEvent(LatLng(result.latitude, result.longitude)),
       );
     });
-  }
-
-  @override
-  // Init with empty list
-  MapBlocState get initialState {
-    return MapLoadingState();
   }
 
   @override

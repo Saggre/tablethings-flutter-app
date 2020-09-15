@@ -2,15 +2,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'place.g.dart';
 
+/// Place represents a pair of gps coordinates
 @JsonSerializable(nullable: false)
 class Place {
-  final String id;
-  @JsonKey(name: 'overall_star_rating')
-  final double rating;
-  @JsonKey(name: 'rating_count')
-  final int ratingCount;
-
-  Place({this.id, this.rating, this.ratingCount});
+  final double latitude;
+  final double longitude;
 
   factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
 

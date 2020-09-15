@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fi.designsivu.tablething">
+          package="fi.designsivu.tablething">
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -7,60 +7,62 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:icon="@mipmap/launcher_icon"
-        android:label="Tablething">
+            android:icon="@mipmap/launcher_icon"
+            android:label="Tablething">
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:windowSoftInputMode="adjustResize">
+                android:name=".MainActivity"
+                android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+                android:hardwareAccelerated="true"
+                android:launchMode="singleTop"
+                android:theme="@style/LaunchTheme"
+                android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
                  defined in @style/LaunchTheme). -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <meta-data
-                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-                android:value="true" />
+                    android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+                    android:value="true"/>
             <!-- To download ML model -->
             <meta-data
-                android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-                android:value="barcode" />
+                    android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+                    android:value="barcode"/>
+            <meta-data
+                    android:name="flutterEmbedding"
+                    android:value="2"/>
             <!-- To use multiple models: android:value="ocr,label,barcode,face" -->
         </activity>
 
         <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+                android:name="com.facebook.FacebookActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:label="@string/app_name"/>
         <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
+                android:name="com.facebook.CustomTabActivity"
+                android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="@string/fb_login_protocol_scheme" />
+                <data android:scheme="@string/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
 
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyACJ703qdt8A24grSd1ZvmzXAopuKYwtC0" />
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyACJ703qdt8A24grSd1ZvmzXAopuKYwtC0"/>
 
         <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id"/>
     </application>
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

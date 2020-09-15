@@ -3,6 +3,7 @@ import 'card.dart';
 
 part 'payment_method.g.dart';
 
+/// Stripe Payment method object
 @JsonSerializable(nullable: false)
 class PaymentMethod {
   final String id;

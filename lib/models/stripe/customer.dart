@@ -16,6 +16,7 @@ class InvoiceSettings {
 
 enum TaxExemptStatus { none, exempt, reverse }
 
+/// Stripe Customer object
 @JsonSerializable(nullable: false)
 class Customer {
   final String id;

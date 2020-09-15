@@ -13,6 +13,7 @@ enum Brand {
   unknown,
 }
 
+/// Stripe Card object
 @JsonSerializable(nullable: false)
 class Card {
   final Brand brand;

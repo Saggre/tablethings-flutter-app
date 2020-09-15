@@ -8,7 +8,7 @@ import 'package:tablething/services/stripe/stripe.dart';
 import 'package:tablething/services/tablething/user.dart';
 import 'auth_bloc_states.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:tablething/services/tablething/tablething.dart' as Api;
+import 'file:///C:/Users/sakri/Desktop/Repos/Tablething/lib/services/tablething.dart' as Api;
 
 class AppStartedEvent extends BlocEvent {}
 
@@ -28,8 +28,7 @@ class AuthBloc extends Bloc<BlocEvent, BlocState> {
 
   User get currentUser => _currentUser;
 
-  @override
-  BlocState get initialState => Unauthenticated();
+  AuthBloc() : super(Unauthenticated());
 
   void refreshPaymentMethods() {
     _currentUser.paymentMethods = _stripe.getPaymentMethods(_currentUser.stripeCustomer.id, 'card');
