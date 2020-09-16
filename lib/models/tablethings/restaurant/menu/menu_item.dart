@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:tablething/util/string_tools.dart';
 
 part 'menu_item.g.dart';
-
 
 /// A single menu item
 @JsonSerializable(nullable: false)
@@ -23,11 +21,4 @@ class MenuItem {
 
   Map<String, dynamic> toJson() => _$MenuItemToJson(this);
 
-  String get getName {
-    return StringTools.capitalize(name);
-  }
-
-  String get getDescription {
-    return StringTools.capitalize(description);
-  }
 }

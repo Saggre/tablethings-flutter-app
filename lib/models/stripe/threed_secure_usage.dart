@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+part 'threed_secure_usage.g.dart';
+
 @JsonSerializable(nullable: false)
 class ThreeDSecureUsage {
   final bool supported;

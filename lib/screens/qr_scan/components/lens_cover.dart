@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/localization/translate.dart';
-import 'package:tablething/util/text_factory.dart';
 
 class LensCover extends StatelessWidget {
   const LensCover({
@@ -30,7 +28,7 @@ class LensCover extends StatelessWidget {
               Container(
                 height: requiredPadding,
                 color: color,
-                child: Center(child: TextFactory.button(t('Scan a QR-code'))),
+                child: Center(child: TextFactory.button(t('Scan a QR-code'.i18n))),
               ),
               Expanded(
                   child: Container(

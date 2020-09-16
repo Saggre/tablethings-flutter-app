@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "models": "flutter packages pub run build_runner build --delete-conflicting-outputs --no-fail-on-severe"
+    "models": "flutter packages pub run build_runner build --delete-conflicting-outputs --no-fail-on-severe --verbose"
   },
   "repository": {
     "type": "git",

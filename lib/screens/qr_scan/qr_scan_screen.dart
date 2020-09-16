@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tablething/localization/translate.dart';
 import 'package:tablething/models/tablethings/restaurant/barcode.dart' as RestaurantBarcode;
 import 'package:flutter/material.dart';
 import 'components/lens_cover.dart';

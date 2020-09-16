@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/screens/main_screen.dart';
 import 'package:tablething/theme/colors.dart';
-import 'localization/translate.dart';
+import "package:i18n_extension/i18n_widget.dart";
 
 void main() async {
   SystemChrome.setPreferredOrientations([
@@ -25,12 +25,12 @@ class MainApp extends StatelessWidget {
         child: Provider<PersistentData>(
           create: (context) => PersistentData(),
           child: MaterialApp(
-            title: t('Tablething'),
+            title: 'Tablethings',
             theme: ThemeData(
               // TODO use theme
               primarySwatch: mainThemeMaterialColor,
             ),
-            home: MainScreen(),
+            home: I18n(child: MainScreen()),
             routes: {},
           ),
         ));
