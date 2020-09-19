@@ -9,10 +9,6 @@ import 'package:tablething/theme/colors.dart';
 import "package:i18n_extension/i18n_widget.dart";
 
 void main() async {
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
   runApp(MainApp());
 }
 
@@ -21,6 +17,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return MultiBlocProvider(
         providers: [
           BlocProvider<QRScanBloc>(

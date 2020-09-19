@@ -1,4 +1,4 @@
-class QRScanBlocEvent {}
+abstract class QRScanBlocEvent {}
 
 /// Event to start scanning for QR-codes in camera input
-class StartScanningEvent extends QRScanBlocEvent {}
+class StartScanning extends QRScanBlocEvent {}

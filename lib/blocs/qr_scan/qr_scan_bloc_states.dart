@@ -1,21 +1,29 @@
 import 'package:camera/camera.dart';
-import 'package:tablething/models/tablethings/restaurant/barcode.dart';
+import 'package:tablething/blocs/qr_scan/qr_scan_result.dart';
 
-class QRScanBlocState {}
+abstract class QRScanBlocState {}
 
 /// Scanning is paused
-class PausedState extends QRScanBlocState {}
+class Paused extends QRScanBlocState {}
 
-/// Currently scanning for QR-codes state
-class ScanningState extends QRScanBlocState {
+/// No camera permission
+class NoPermission extends Paused {}
+
+/// Base class for camera-active states
+abstract class Active extends QRScanBlocState {
   CameraController cameraController;
 
-  ScanningState(this.cameraController);
+  Active(this.cameraController);
 }
 
-/// When a QR-code was successfully scanned
-class ScannedQR extends QRScanBlocState {
-  Barcode barcode;
+/// Currently scanning for QR-codes state
+class Scanning extends Active {
+  Scanning(cameraController) : super(cameraController);
+}
 
-  ScannedQR(this.barcode);
+/// When something was scanned
+class Scanned extends Active {
+  QRScanResult scanResult;
+
+  Scanned(this.scanResult, cameraController) : super(cameraController);
 }

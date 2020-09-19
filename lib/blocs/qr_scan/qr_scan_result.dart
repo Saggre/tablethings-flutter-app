@@ -1,21 +1,40 @@
+import 'package:firebase_ml_vision/firebase_ml_vision.dart' show BarcodeValueType;
 import 'package:tablething/models/tablethings/restaurant/barcode.dart';
 
 /// QR-code scan base result
-class QRScanResult {}
+/// These are NOT bloc states, but results from the QR-scanning process
+abstract class QRScanResult {}
 
 /// Result when there is no QR-code in an image
-class QRScanEmptyResult extends QRScanResult {}
+class EmptyResult extends QRScanResult {}
 
-/// Result when there is a valid QR-code in an image
-class QRScanDataResult extends QRScanResult {
+/// Base class when there is a valid QR-code in an image
+abstract class DataResult extends QRScanResult {}
+
+/// Result when a Tablethings QR-code was scanned
+class TablethingsQRResult extends DataResult {
   final Barcode barcode;
 
-  QRScanDataResult(this.barcode);
+  TablethingsQRResult(this.barcode);
+}
+
+/// Result when a non-Tablethings QR-code url was scanned
+class OtherUrlQRResult extends DataResult {
+  final String url;
+
+  OtherUrlQRResult(this.url);
+}
+
+/// Result when a QR-code was scanned, but it has unknown data
+class UnknownQRResult extends DataResult {
+  BarcodeValueType barcodeType;
+
+  UnknownQRResult(this.barcodeType);
 }
 
 /// Result when an error occurred during the scan
-class QRScanErrorResult extends QRScanResult {
-  final String errorText;
+class ErrorResult extends QRScanResult {
+  final String errorMessage;
 
-  QRScanErrorResult(this.errorText);
+  ErrorResult(this.errorMessage);
 }
