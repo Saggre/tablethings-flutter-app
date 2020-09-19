@@ -28,7 +28,7 @@ class LensCover extends StatelessWidget {
               Container(
                 height: requiredPadding,
                 color: color,
-                child: Center(child: TextFactory.button(t('Scan a QR-code'.i18n))),
+                child: Center(child: Text('Scan a QR-code')),
               ),
               Expanded(
                   child: Container(

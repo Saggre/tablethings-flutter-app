@@ -1,6 +1,6 @@
 class Barcode {
-  final String establishmentId;
+  final String restaurantId;
   final String tableId;
 
-  Barcode(this.establishmentId, this.tableId);
+  Barcode(this.restaurantId, this.tableId);
 }

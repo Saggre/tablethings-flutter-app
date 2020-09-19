@@ -286,13 +286,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  flutter_image:
-    dependency: transitive
-    description:
-      name: flutter_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -300,13 +293,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.5"
-  flutter_map:
-    dependency: "direct main"
-    description:
-      name: flutter_map
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.8.2"
   flutter_page_indicator:
     dependency: transitive
     description:
@@ -314,13 +300,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.3"
-  flutter_plugin_android_lifecycle:
-    dependency: transitive
-    description:
-      name: flutter_plugin_android_lifecycle
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.9"
   flutter_rating_bar:
     dependency: "direct main"
     description:
@@ -359,20 +338,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  google_maps_flutter:
-    dependency: "direct main"
-    description:
-      name: google_maps_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.32"
-  google_maps_flutter_platform_interface:
-    dependency: transitive
-    description:
-      name: google_maps_flutter_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.4"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -625,13 +590,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
-  positioned_tap_detector:
-    dependency: transitive
-    description:
-      name: positioned_tap_detector
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   process:
     dependency: transitive
     description:
@@ -708,7 +666,7 @@ packages:
     source: hosted
     version: "1.7.0"
   sprintf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sprintf
       url: "https://pub.dartlang.org"
@@ -791,20 +749,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.6"
-  transparent_image:
-    dependency: transitive
-    description:
-      name: transparent_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
-  tuple:
-    dependency: transitive
-    description:
-      name: tuple
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   typed_data:
     dependency: transitive
     description:
@@ -812,13 +756,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  user_location:
-    dependency: "direct main"
-    description:
-      name: user_location
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   uuid:
     dependency: "direct main"
     description:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:tablething/blocs/qr_scan/qr_scan_bloc.dart';
 import 'package:tablething/models/persistent_data.dart';
 import 'package:tablething/screens/main_screen.dart';
 import 'package:tablething/theme/colors.dart';
@@ -21,7 +22,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [],
+        providers: [
+          BlocProvider<QRScanBloc>(
+            create: (BuildContext context) => QRScanBloc(),
+          ),
+        ],
         child: Provider<PersistentData>(
           create: (context) => PersistentData(),
           child: MaterialApp(
