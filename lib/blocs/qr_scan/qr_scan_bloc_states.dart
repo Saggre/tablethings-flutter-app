@@ -1,5 +1,5 @@
 import 'package:camera/camera.dart';
-import 'package:tablething/blocs/qr_scan/qr_scan_result.dart';
+import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 
 abstract class QRScanBlocState {}
 

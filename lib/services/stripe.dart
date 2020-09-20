@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tablething/models/stripe/payment_method.dart';
+import 'package:tablethings/models/stripe/payment_method.dart';
 
 /// Custom Stripe API
 class Stripe {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/corner_bar.dart';
-import 'package:tablething/theme/theme.dart';
+import 'package:tablethings/components/corner_bar.dart';
+import 'package:tablethings/theme/theme.dart';
 
 /// The app's main app bar
 class MainAppBar extends StatefulWidget {

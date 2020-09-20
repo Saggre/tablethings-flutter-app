@@ -1,5 +1,5 @@
 import 'package:firebase_ml_vision/firebase_ml_vision.dart' show BarcodeValueType;
-import 'package:tablething/models/tablethings/restaurant/barcode.dart';
+import 'package:tablethings/models/tablethings/restaurant/barcode.dart';
 
 /// QR-code scan base result
 /// These are NOT bloc states, but results from the QR-scanning process

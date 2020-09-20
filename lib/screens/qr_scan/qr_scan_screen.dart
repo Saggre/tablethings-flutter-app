@@ -1,9 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tablething/blocs/qr_scan/qr_scan_bloc.dart';
-import 'package:tablething/blocs/qr_scan/qr_scan_bloc_states.dart';
-import 'package:tablething/blocs/qr_scan/qr_scan_result.dart';
+import 'package:tablethings/blocs/qr_scan/qr_scan_bloc.dart';
+import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_states.dart';
+import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 import 'components/lens_cover.dart';
 
 class QRScanScreen extends StatelessWidget {
@@ -21,7 +21,8 @@ class QRScanScreen extends StatelessWidget {
           return Stack(children: <Widget>[
             CameraPreview(state.cameraController),
             LensCover(),
-            Center(child: Text(() {
+            Center(
+                child: Text(() {
               if (state is Scanned) {
                 var result = state.scanResult;
                 if (result is OtherUrlQRResult) {
@@ -34,7 +35,7 @@ class QRScanScreen extends StatelessWidget {
               }
 
               return '';
-            }()))
+            }(), style: Theme.of(context).textTheme.subtitle1))
           ]);
         }
 

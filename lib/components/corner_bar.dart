@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/clip_shadow_path.dart';
-import 'package:tablething/components/clippers/inverted_rounded_rectangle.dart';
+import 'package:tablethings/components/clip_shadow_path.dart';
+import 'package:tablethings/components/clippers/inverted_rounded_rectangle.dart';
 
 class CornerBar extends StatelessWidget {
   final List<Widget> children;

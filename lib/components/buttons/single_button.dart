@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tablething/components/drag_tab.dart';
+import 'package:tablethings/components/drag_tab.dart';
 import 'base_button.dart';
 export 'button_properties.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:tablething/models/graph/place.dart';
+import 'package:tablethings/models/graph/place.dart';
 
 /// For fetching place information from facebook graph place API
 class Graph {

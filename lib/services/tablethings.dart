@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tablething/models/tablethings/restaurant/restaurant.dart';
-import 'package:tablething/models/tablethings/user.dart';
+import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
+import 'package:tablethings/models/tablethings/user.dart';
 
 /// Handles data used by the app
 class Tablethings {
