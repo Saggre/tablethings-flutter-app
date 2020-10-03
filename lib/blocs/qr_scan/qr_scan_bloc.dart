@@ -10,8 +10,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_events.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_states.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
-import 'package:tablethings/models/tablethings/restaurant/barcode.dart'
-    as RestaurantBarcode;
+import 'package:tablethings/models/tablethings/restaurant/barcode.dart' as RestaurantBarcode;
 
 class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   List<CameraDescription> _cameras;
@@ -59,18 +58,15 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
 
         if (result is ErrorResult) {
           // TODO send error
-          print(sprintf(
-              'Error while scanning QR-codes: %s', [result.errorMessage]));
+          print(sprintf('Error while scanning QR-codes: %s', [result.errorMessage]));
         }
 
         if (result is TablethingsQRResult) {
-          print(sprintf('Scanned a QR-code for: restaurant %s, table %s',
-              [result.barcode.restaurantId, result.barcode.tableId]));
+          print(sprintf('Scanned a QR-code for: restaurant %s, table %s', [result.barcode.restaurantId, result.barcode.tableId]));
         } else if (result is OtherUrlQRResult) {
           print(sprintf('Scanned a foreign url: %s', [result.url]));
         } else if (result is UnknownQRResult) {
-          print(sprintf('Scanned an unknown QR-code of type: %s',
-              [result.barcodeType.toString()]));
+          print(sprintf('Scanned an unknown QR-code of type: %s', [result.barcodeType.toString()]));
         }
 
         return Scanned(result, _cameraController);
@@ -95,8 +91,7 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
     Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
 
-    _cameraController = CameraController(_cameras.first, ResolutionPreset.high,
-        enableAudio: false);
+    _cameraController = CameraController(_cameras.first, ResolutionPreset.high, enableAudio: false);
     await _cameraController.initialize();
 
     _cameraController.startImageStream((CameraImage barcodeImage) {
@@ -127,9 +122,8 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   }
 
   /// Scan barcode from image and callback with result
-  void _scanBarcode(
-      CameraImage cameraImage, Function(QRScanResult) callback) async {
-    log('Looking for QR-codes');
+  void _scanBarcode(CameraImage cameraImage, Function(QRScanResult) callback) async {
+    //log('Looking for QR-codes');
 
     if (cameraImage == null) {
       callback(ErrorResult('No camera output detected'));
@@ -139,21 +133,15 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
     try {
       // Create MLKit image from camera image and process it
       final FirebaseVisionImageMetadata metadata = FirebaseVisionImageMetadata(
-          size:
-              Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
+          size: Size(cameraImage.width.toDouble(), cameraImage.height.toDouble()),
           planeData: cameraImage.planes.map((currentPlane) {
-            return FirebaseVisionImagePlaneMetadata(
-                bytesPerRow: currentPlane.bytesPerRow,
-                height: currentPlane.height,
-                width: currentPlane.width);
+            return FirebaseVisionImagePlaneMetadata(bytesPerRow: currentPlane.bytesPerRow, height: currentPlane.height, width: currentPlane.width);
           }).toList(),
           rawFormat: cameraImage.format.raw,
           rotation: ImageRotation.rotation90);
 
-      final BarcodeDetector barcodeDetector =
-          FirebaseVision.instance.barcodeDetector();
-      final List<Barcode> barcodes = await barcodeDetector.detectInImage(
-          FirebaseVisionImage.fromBytes(cameraImage.planes[0].bytes, metadata));
+      final BarcodeDetector barcodeDetector = FirebaseVision.instance.barcodeDetector();
+      final List<Barcode> barcodes = await barcodeDetector.detectInImage(FirebaseVisionImage.fromBytes(cameraImage.planes[0].bytes, metadata));
 
       // For loop really returns the first value
       // TODO what if there are 2 QR-codes next to each other?
@@ -164,16 +152,12 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
           List<String> qrCodeStrings = _parseUrl(url);
 
           // If something is wrong with the parsed values
-          if (qrCodeStrings[0] == null ||
-              qrCodeStrings[1] == null ||
-              qrCodeStrings[0].isEmpty ||
-              qrCodeStrings[1].isEmpty) {
+          if (qrCodeStrings[0] == null || qrCodeStrings[1] == null || qrCodeStrings[0].isEmpty || qrCodeStrings[1].isEmpty) {
             callback(OtherUrlQRResult(url));
             return;
           }
 
-          callback(TablethingsQRResult(
-              RestaurantBarcode.Barcode(qrCodeStrings[0], qrCodeStrings[1])));
+          callback(TablethingsQRResult(RestaurantBarcode.Barcode(qrCodeStrings[0], qrCodeStrings[1])));
           return;
         } else {
           callback(UnknownQRResult(barcode.valueType));
@@ -195,15 +179,12 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
     String cleanUrl = url;
 
     // Replace wrong-way slashes
-    cleanUrl = cleanUrl.replaceAll(
-        RegExp(r'\\'), '/'); // \?extra-data\ => /?extra-data/
+    cleanUrl = cleanUrl.replaceAll(RegExp(r'\\'), '/'); // \?extra-data\ => /?extra-data/
 
     // Remove trailing slash
-    cleanUrl =
-        cleanUrl.replaceAll(RegExp(r'\/$'), ''); // extra-data/ => ?extra-data
+    cleanUrl = cleanUrl.replaceAll(RegExp(r'\/$'), ''); // extra-data/ => ?extra-data
 
-    RegExp idRegExp = RegExp(
-        r'place=([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})'); // Regex for getting restaurant id
+    RegExp idRegExp = RegExp(r'place=([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})'); // Regex for getting restaurant id
     RegExp tableIdRegExp = RegExp(r'table=(\d+)'); // Regex for getting table id
 
     String restaurantId = idRegExp.firstMatch(cleanUrl)?.group(1);

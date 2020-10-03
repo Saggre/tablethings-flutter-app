@@ -11,11 +11,12 @@ enum Currency { eur, usd, gbp }
 @JsonSerializable(nullable: false)
 class Restaurant {
   final String id;
+
   final Address address;
   final String name;
   final String description;
 
-  @JsonKey(name: 'priceRange', nullable: true)
+  @JsonKey(nullable: true)
   final int priceRange;
 
   final String thumbnail;
@@ -24,7 +25,7 @@ class Restaurant {
   @JsonKey(nullable: true)
   final String graphId; // Facebook graph place id
 
-  @JsonKey(name: 'cuisineTypes', nullable: true)
+  @JsonKey(nullable: true)
   final List<int> cuisineTypes;
 
   String activeMenuId;

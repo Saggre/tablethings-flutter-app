@@ -1,72 +1,87 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/user.dart';
 
 /// Handles data used by the app
 class Tablethings {
-  final String baseUrl = 'http://localhost:8080';
+  static final String baseUrl = 'http://192.168.0.2:8080';
+  static String _token = '';
+
+  /// Sets the token used to authenticate requests
+  static void setToken(String token) {
+    _token = token;
+  }
+
+  /// Get errors from result
+  static List<String> getErrors(dynamic result) {
+    if (!result.containsKey('errors')) {
+      return ['Kutsua ei voitu suorittaa'];
+    }
+
+    if (result['errors'].length > 0) {
+      return result['errors'];
+    }
+
+    return [];
+  }
+
+  /// Makes a http request and returns the result object
+  static Future<Map<String, dynamic>> makeRequest(String endpoint, dynamic body) async {
+    try {
+      http.Response response = await http.post(
+        baseUrl + endpoint,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ' + _token,
+          'User-Agent': 'Tablethings/1.0.0',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        var result = json.decode(response.body);
+
+        var errors = getErrors(result);
+
+        if (errors.length > 0) {
+          // TODO handle errors
+        }
+
+        return result;
+      } else {
+        throw Exception('Failed to make request');
+      }
+    } catch (err) {
+      throw Exception(err);
+    }
+  }
 
   /// Gets all establishments in db
   /// This function will be removed in the future? ;D
-  Future<List<Restaurant>> getRestaurants() async {
-    List<Restaurant> restaurants;
-
-    try {
-      http.Response response =
-          await http.post(baseUrl + '/establishment/get_establishments', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: {});
-      print(response.body);
-
-      if (response.statusCode == 200) {
-        restaurants = (json.decode(response.body) as List<dynamic>).map((element) {
-          return Restaurant.fromJson(element);
-        }).toList();
-      } else {
-        throw Exception('Failed to get establishments');
-      }
-    } catch (err) {
-      throw Exception(err.toString());
-    }
-
-    return restaurants;
-  }
+  static Future<List<Restaurant>> getRestaurants() async {}
 
   /// Gets an establishment with id
-  Future<Restaurant> getRestaurant(String id) async {
-    try {
-      http.Response response = await http.post(baseUrl + '/establishment/get_establishment', headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }, body: {
-        'id': id,
-      });
+  static Future<Restaurant> getRestaurant(String id) async {
+    var result = await makeRequest('/restaurant/info', {
+      id: id,
+    });
 
-      if (response.statusCode == 200) {
-        return Restaurant.fromJson(json.decode(response.body));
-      } else {
-        throw Exception('Failed to get restaurant');
-      }
-    } catch (err) {
-      throw Exception(err.toString());
-    }
+    return Restaurant.fromJson(result['restaurant']);
   }
 
   /// Gets an user with id
-  Future<User> getUser(String id) async {
-    try {
-      http.Response response = await http.post(baseUrl + '/user/get_user', headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }, body: {
-        'id': id,
-      });
+  static Future<Map<String, dynamic>> getUser(String id) async {}
 
-      if (response.statusCode == 200) {
-        return User.fromJson(json.decode(response.body));
-      } else {
-        throw Exception('Failed to get user');
-      }
-    } catch (err) {
-      throw Exception(err.toString());
-    }
+  /// Gets a token for guest user
+  static Future<Map<String, dynamic>> authGuest() async {
+    var result = await makeRequest('/auth/guest', {});
+
+    return {
+      'token': result['token'],
+      'user': User.fromJson(result['user']),
+    };
   }
 }

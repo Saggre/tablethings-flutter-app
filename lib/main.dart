@@ -6,7 +6,9 @@ import 'package:tablethings/blocs/qr_scan/qr_scan_bloc.dart';
 import 'package:tablethings/models/persistent_data.dart';
 import 'package:tablethings/screens/main_screen.dart';
 import 'package:tablethings/theme/colors.dart';
-import "package:i18n_extension/i18n_widget.dart";
+import 'package:i18n_extension/i18n_widget.dart';
+
+import 'blocs/auth/auth_bloc.dart';
 
 void main() async {
   runApp(MainApp());
@@ -28,6 +30,9 @@ class MainApp extends StatelessWidget {
           BlocProvider<QRScanBloc>(
             create: (BuildContext context) => QRScanBloc(),
           ),
+          BlocProvider<AuthBloc>(
+            create: (BuildContext context) => AuthBloc(),
+          ),
         ],
         child: Provider<PersistentData>(
           create: (context) => PersistentData(),
@@ -37,11 +42,9 @@ class MainApp extends StatelessWidget {
               // TODO use theme
               primarySwatch: mainThemeMaterialColor,
               textTheme: TextTheme(
-                headline1:
-                    TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-                headline6:
-                    TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-                bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+                headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+                headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+                bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: Colors.white),
                 subtitle1: TextStyle(color: Colors.white),
               ),
             ),

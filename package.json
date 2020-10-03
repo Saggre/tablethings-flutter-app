@@ -19,5 +19,6 @@
   "bugs": {
     "url": "https://github.com/Saggre/Tablething/issues"
   },
-  "homepage": "https://github.com/Saggre/Tablething#readme"
+  "homepage": "https://github.com/Saggre/Tablething#readme",
+  "dependencies": {}
 }

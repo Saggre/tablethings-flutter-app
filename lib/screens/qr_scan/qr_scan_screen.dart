@@ -9,7 +9,7 @@ import 'components/lens_cover.dart';
 class QRScanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: BlocBuilder<QRScanBloc, QRScanBlocState>(
+    return BlocBuilder<QRScanBloc, QRScanBlocState>(
       builder: (context, state) {
         if (state is Paused) {
           if (state is NoPermission) {
@@ -41,6 +41,6 @@ class QRScanScreen extends StatelessWidget {
 
         return Text('Yeet');
       },
-    ));
+    );
   }
 }
