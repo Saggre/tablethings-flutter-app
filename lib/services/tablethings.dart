@@ -59,11 +59,7 @@ class Tablethings {
     }
   }
 
-  /// Gets all establishments in db
-  /// This function will be removed in the future? ;D
-  static Future<List<Restaurant>> getRestaurants() async {}
-
-  /// Gets an establishment with id
+  /// Gets a restaurant with id
   static Future<Restaurant> getRestaurant(String id) async {
     var result = await makeRequest('/restaurant/info', {
       id: id,

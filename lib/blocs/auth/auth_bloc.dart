@@ -26,6 +26,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         _token = result['token'];
 
         log('Authenticated as a guest');
+
+        Tablethings.setToken(_token);
         yield GuestAuth(_currentUser, _token);
       } catch (ex) {
         log('Error during guest authentication: ' + ex.toString());
