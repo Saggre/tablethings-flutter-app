@@ -6,11 +6,9 @@ part 'menu_item.g.dart';
 @JsonSerializable(nullable: false)
 class MenuItem {
   final String id;
-  @JsonKey(nullable: true)
   final String name;
   @JsonKey(nullable: true)
   final String description;
-  @JsonKey(nullable: true)
   final int price;
   @JsonKey(nullable: true)
   final List<String> images;

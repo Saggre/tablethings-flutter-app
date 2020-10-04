@@ -76,7 +76,7 @@ class MainScreen extends StatelessWidget {
                   if (state is QRScanView) {
                     return QRScanScreen();
                   } else if (state is RestaurantView) {
-                    return RestaurantScreen(state.restaurant);
+                    return RestaurantScreen(state.restaurant, state.menu);
                   }
 
                   return Text('Wtf happen :D');
@@ -94,7 +94,7 @@ class MainScreen extends StatelessWidget {
 
                           return Text('Not authenticated');
                         } else if (state is GuestAuth) {
-                          return Text('Guest authenticated');
+                          return Text('Guest authenticated: ' + state.currentUser.username);
                         }
 
                         return Text('Other auth');

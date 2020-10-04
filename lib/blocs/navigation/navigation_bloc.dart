@@ -15,7 +15,8 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
   String _token;
 
   NavigationBloc() : super(QRScanView()) {
-    //add(AuthenticateGuest());
+    // Debug
+    add(ViewRestaurant('110ec58a-a0f2-4ac4-8393-c866d813b8d1'));
   }
 
   @override
@@ -23,9 +24,9 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
     if (event is ViewQRScan) {
       yield QRScanView();
     } else if (event is ViewRestaurant) {
-      Restaurant restaurant = await Tablethings.getRestaurant(event.restaurantId);
+      var combo = await Tablethings.getAll(event.restaurantId);
 
-      yield RestaurantView(restaurant);
+      yield RestaurantView(combo['restaurant'], combo['menu']);
     }
     /*else if (event is ViewProfile) {
       yield ProfileView();

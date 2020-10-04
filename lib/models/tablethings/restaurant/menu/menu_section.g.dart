@@ -11,7 +11,7 @@ MenuSection _$MenuSectionFromJson(Map<String, dynamic> json) {
     json['id'] as String,
     json['name'] as String,
     json['description'] as String,
-    (json['products'] as List)
+    (json['items'] as List)
         .map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
@@ -22,5 +22,5 @@ Map<String, dynamic> _$MenuSectionToJson(MenuSection instance) =>
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'products': instance.items,
+      'items': instance.items,
     };

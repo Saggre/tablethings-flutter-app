@@ -1,3 +1,4 @@
+import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/user.dart';
 
@@ -9,8 +10,9 @@ class QRScanView extends NavigationBlocState {}
 /// Show restaurant screen
 class RestaurantView extends NavigationBlocState {
   Restaurant restaurant;
+  Menu menu;
 
-  RestaurantView(this.restaurant);
+  RestaurantView(this.restaurant, this.menu);
 }
 
 /// Show profile screen

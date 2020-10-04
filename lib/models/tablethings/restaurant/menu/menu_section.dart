@@ -11,7 +11,6 @@ class MenuSection {
   final String name;
   @JsonKey(nullable: true)
   final String description;
-  @JsonKey(name: 'products')
   final List<MenuItem> items;
 
   MenuSection(this.id, this.name, this.description, this.items);

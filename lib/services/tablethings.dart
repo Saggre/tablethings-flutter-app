@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/user.dart';
 
@@ -18,7 +19,7 @@ class Tablethings {
   /// Get errors from result
   static List<String> getErrors(dynamic result) {
     if (!result.containsKey('errors')) {
-      return ['Kutsua ei voitu suorittaa'];
+      return ['No response'];
     }
 
     if (result['errors'].length > 0) {
@@ -47,22 +48,47 @@ class Tablethings {
         var errors = getErrors(result);
 
         if (errors.length > 0) {
-          // TODO handle errors
+          errors.forEach((error) {
+            log(error);
+          });
+
+          throw Exception(errors[0]);
         }
 
         return result;
       } else {
-        throw Exception('Failed to make request');
+        throw Exception('Failed to make request. Code ' + response.statusCode.toString());
       }
     } catch (err) {
       throw Exception(err);
     }
   }
 
-  /// Gets a restaurant with id
+  /// Gets restaurant and its active menu with restaurantIOd
+  static Future<Map<String, dynamic>> getAll(String id) async {
+    var result = await makeRequest('/restaurant/all', {
+      'id': id,
+    });
+
+    return {
+      'restaurant': Restaurant.fromJson(result['restaurant']),
+      'menu': Menu.fromJson(result['menu']),
+    };
+  }
+
+  /// Gets a menu with menuId
+  static Future<Menu> getMenu(String id) async {
+    var result = await makeRequest('/restaurant/menu', {
+      'id': id,
+    });
+
+    return Menu.fromJson(result['menu']);
+  }
+
+  /// Gets a restaurant with restaurantId
   static Future<Restaurant> getRestaurant(String id) async {
     var result = await makeRequest('/restaurant/info', {
-      id: id,
+      'id': id,
     });
 
     return Restaurant.fromJson(result['restaurant']);
