@@ -11,3 +11,6 @@ class ProfileView extends NavigationBlocState {}
 
 /// Show cart screen
 class CartView extends NavigationBlocState {}
+
+/// Show checkout screen
+class CheckoutView extends NavigationBlocState {}

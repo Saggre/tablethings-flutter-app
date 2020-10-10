@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablethings/blocs/cart/cart_bloc.dart';
 import 'package:tablethings/blocs/cart/cart_bloc_states.dart';
-import 'package:tablethings/blocs/navigation/navigation_bloc.dart';
-import 'package:tablethings/blocs/navigation/navigation_bloc_events.dart';
-import 'package:tablethings/blocs/qr_scan/qr_scan_bloc.dart';
-import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_states.dart';
 
-class CartScreen extends StatelessWidget {
+class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartBlocState>(
@@ -33,12 +29,6 @@ class CartScreen extends StatelessWidget {
 
                   return list;
                 }()),
-              ),
-              RaisedButton(
-                onPressed: () {
-                  BlocProvider.of<NavigationBloc>(context).add(ViewCheckout());
-                },
-                child: Text('Checkout'),
               )
             ],
           );

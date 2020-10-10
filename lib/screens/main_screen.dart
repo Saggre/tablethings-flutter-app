@@ -13,6 +13,7 @@ import 'package:tablethings/blocs/session/session_bloc.dart';
 import 'package:tablethings/blocs/session/session_bloc_events.dart';
 import 'package:tablethings/screens/restaurant/restaurant_screen.dart';
 import 'cart/cart_screen.dart';
+import 'checkout/checkout_screen.dart';
 import 'qr_scan/qr_scan_screen.dart';
 
 /// Main screen that acts as a parent to other screens (and animates their transitions?)
@@ -63,6 +64,8 @@ class MainScreen extends StatelessWidget {
                   return 'My profile';
                 } else if (state is CartView) {
                   return 'Cart';
+                } else if (state is CheckoutView) {
+                  return 'Checkout';
                 }
 
                 return '';
@@ -86,7 +89,12 @@ class MainScreen extends StatelessWidget {
               currentIndex: 0,
               selectedItemColor: Colors.amber[800],
               onTap: (int index) {
+                if (index != 0) {
+                  context.bloc<QRScanBloc>().add(StopScanning());
+                }
+
                 if (index == 0) {
+                  context.bloc<QRScanBloc>().add(StartScanning());
                   context.bloc<NavigationBloc>().add(ViewQRScan());
                 } else if (index == 1) {
                   context.bloc<NavigationBloc>().add(ViewRestaurant());
@@ -104,6 +112,8 @@ class MainScreen extends StatelessWidget {
                     return RestaurantScreen();
                   } else if (state is CartView) {
                     return CartScreen();
+                  } else if (state is CheckoutView) {
+                    return CheckoutScreen();
                   }
 
                   // TODO profile screen

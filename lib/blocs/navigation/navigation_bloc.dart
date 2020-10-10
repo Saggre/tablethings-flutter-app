@@ -18,6 +18,8 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
       yield CartView();
     } else if (event is ViewProfile) {
       yield ProfileView();
+    } else if (event is ViewCheckout) {
+      yield CheckoutView();
     }
   }
 }

@@ -45,6 +45,16 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   }
 
   @override
+  void add(QRScanBlocEvent event) async {
+    if (event is StopScanning) {
+      // Stop blocking stream before handling event
+      await _scanResultStream?.close();
+    }
+
+    super.add(event);
+  }
+
+  @override
   Stream<QRScanBlocState> mapEventToState(QRScanBlocEvent event) async* {
     if (event is StartScanning) {
       if (!await _startScanning()) {
@@ -113,8 +123,6 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   /// Stops any ongoing scanning
   Future<void> _stopScanning() async {
     log('Stopping scanning');
-
-    await _scanResultStream?.close();
 
     try {
       await _cameraController?.stopImageStream();

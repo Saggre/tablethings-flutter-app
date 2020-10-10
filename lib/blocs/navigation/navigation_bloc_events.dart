@@ -11,3 +11,6 @@ class ViewProfile extends NavigationBlocEvent {}
 
 // View cart
 class ViewCart extends NavigationBlocEvent {}
+
+// View checkout
+class ViewCheckout extends NavigationBlocEvent {}
