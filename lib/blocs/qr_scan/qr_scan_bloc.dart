@@ -11,15 +11,18 @@ import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_events.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_states.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 import 'package:tablethings/models/tablethings/restaurant/barcode.dart' as RestaurantBarcode;
+import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 
 class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   List<CameraDescription> _cameras;
   CameraController _cameraController;
   StreamController<QRScanResult> _scanResultStream;
   int _scanTimeout;
+  Restaurant _latestScannedRestaurant;
 
   QRScanBloc() : super(Paused()) {
     _scanTimeout = 500;
+    _latestScannedRestaurant = null;
 
     // Call start scanning
     add(StartScanning());
@@ -30,13 +33,10 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
       if (event == AppLifecycleState.resumed.toString()) {
         add(StartScanning());
       } else if (event == AppLifecycleState.detached.toString()) {
-        await _scanResultStream.close();
         add(StopScanning());
       } else if (event == AppLifecycleState.inactive.toString()) {
-        await _scanResultStream.close();
         add(StopScanning());
       } else if (event == AppLifecycleState.paused.toString()) {
-        await _scanResultStream.close();
         add(StopScanning());
       }
 
@@ -113,6 +113,8 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
   /// Stops any ongoing scanning
   Future<void> _stopScanning() async {
     log('Stopping scanning');
+
+    await _scanResultStream?.close();
 
     try {
       await _cameraController?.stopImageStream();

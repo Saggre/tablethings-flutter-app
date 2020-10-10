@@ -11,8 +11,10 @@ import 'package:tablethings/services/tablethings.dart';
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   User _currentUser;
   String _token;
+  int _authRetryTimeout;
 
   AuthBloc() : super(NoAuth()) {
+    _authRetryTimeout = 1000;
     add(AuthenticateGuest());
   }
 
@@ -31,8 +33,16 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         yield GuestAuth(_currentUser, _token);
       } catch (ex) {
         log('Error during guest authentication: ' + ex.toString());
+        _retryAuth(event);
         yield AuthError();
       }
     }
+  }
+
+  /// Retry auth after a while
+  _retryAuth(AuthBlocEvent event) {
+    Future.delayed(Duration(milliseconds: _authRetryTimeout), () {
+      add(event);
+    });
   }
 }

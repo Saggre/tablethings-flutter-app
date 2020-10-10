@@ -12,9 +12,11 @@ import 'package:i18n_extension/i18n_widget.dart';
 
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_bloc_states.dart';
+import 'blocs/cart/cart_bloc.dart';
 import 'blocs/navigation/navigation_bloc.dart';
 import 'blocs/navigation/navigation_bloc_states.dart';
 import 'blocs/qr_scan/qr_scan_bloc_states.dart';
+import 'blocs/session/session_bloc.dart';
 
 void main() async {
   runApp(MainApp());
@@ -41,6 +43,12 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider<NavigationBloc>(
           create: (BuildContext context) => NavigationBloc(),
+        ),
+        BlocProvider<CartBloc>(
+          create: (BuildContext context) => CartBloc(),
+        ),
+        BlocProvider<SessionBloc>(
+          create: (BuildContext context) => SessionBloc(),
         ),
       ],
       child: MaterialApp(

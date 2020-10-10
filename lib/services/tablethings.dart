@@ -59,39 +59,51 @@ class Tablethings {
       } else {
         throw Exception('Failed to make request. Code ' + response.statusCode.toString());
       }
-    } catch (err) {
-      throw Exception(err);
+    } catch (ex) {
+      throw Exception(ex);
     }
   }
 
   /// Gets restaurant and its active menu with restaurantIOd
   static Future<Map<String, dynamic>> getAll(String id) async {
-    var result = await makeRequest('/restaurant/all', {
-      'id': id,
-    });
+    try {
+      var result = await makeRequest('/restaurant/all', {
+        'id': id,
+      });
 
-    return {
-      'restaurant': Restaurant.fromJson(result['restaurant']),
-      'menu': Menu.fromJson(result['menu']),
-    };
+      return {
+        'restaurant': Restaurant.fromJson(result['restaurant']),
+        'menu': Menu.fromJson(result['menu']),
+      };
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 
   /// Gets a menu with menuId
   static Future<Menu> getMenu(String id) async {
-    var result = await makeRequest('/restaurant/menu', {
-      'id': id,
-    });
+    try {
+      var result = await makeRequest('/restaurant/menu', {
+        'id': id,
+      });
 
-    return Menu.fromJson(result['menu']);
+      return Menu.fromJson(result['menu']);
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 
   /// Gets a restaurant with restaurantId
   static Future<Restaurant> getRestaurant(String id) async {
-    var result = await makeRequest('/restaurant/info', {
-      'id': id,
-    });
+    try {
+      var result = await makeRequest('/restaurant/info', {
+        'id': id,
+      });
 
-    return Restaurant.fromJson(result['restaurant']);
+      return Restaurant.fromJson(result['restaurant']);
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 
   /// Gets an user with id
@@ -99,11 +111,15 @@ class Tablethings {
 
   /// Gets a token for guest user
   static Future<Map<String, dynamic>> authGuest() async {
-    var result = await makeRequest('/auth/guest', {});
+    try {
+      var result = await makeRequest('/auth/guest', {});
 
-    return {
-      'token': result['token'],
-      'user': User.fromJson(result['user']),
-    };
+      return {
+        'token': result['token'],
+        'user': User.fromJson(result['user']),
+      };
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 }

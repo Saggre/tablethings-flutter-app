@@ -4,15 +4,10 @@ abstract class NavigationBlocEvent {}
 class ViewQRScan extends NavigationBlocEvent {}
 
 /// Show restaurant screen
-class ViewRestaurant extends NavigationBlocEvent {
-  String restaurantId;
-
-  ViewRestaurant(this.restaurantId);
-}
+class ViewRestaurant extends NavigationBlocEvent {}
 
 /// Show profile screen
-class ViewProfile extends NavigationBlocEvent {
-  String userId;
+class ViewProfile extends NavigationBlocEvent {}
 
-  ViewProfile(this.userId);
-}
+// View cart
+class ViewCart extends NavigationBlocEvent {}
