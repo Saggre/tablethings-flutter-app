@@ -12,6 +12,7 @@ import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 import 'package:tablethings/blocs/session/session_bloc.dart';
 import 'package:tablethings/blocs/session/session_bloc_events.dart';
 import 'package:tablethings/screens/restaurant/restaurant_screen.dart';
+import 'auth/auth_screen.dart';
 import 'cart/cart_screen.dart';
 import 'checkout/checkout_screen.dart';
 import 'qr_scan/qr_scan_screen.dart';
@@ -66,6 +67,8 @@ class MainScreen extends StatelessWidget {
                   return 'Cart';
                 } else if (state is CheckoutView) {
                   return 'Checkout';
+                } else if (state is AuthView) {
+                  return 'Auth';
                 }
 
                 return '';
@@ -114,6 +117,8 @@ class MainScreen extends StatelessWidget {
                     return CartScreen();
                   } else if (state is CheckoutView) {
                     return CheckoutScreen();
+                  } else if (state is AuthView) {
+                    return AuthScreen();
                   }
 
                   // TODO profile screen
@@ -133,7 +138,7 @@ class MainScreen extends StatelessWidget {
 
                           return Text('Not authenticated');
                         } else if (state is GuestAuth) {
-                          return Text('Guest authenticated: ' + state.currentUser.username);
+                          return Text('Guest authenticated: ' + state.currentUser.email);
                         }
 
                         return Text('Other auth');

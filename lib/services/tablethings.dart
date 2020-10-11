@@ -107,7 +107,17 @@ class Tablethings {
   }
 
   /// Gets an user with id
-  static Future<Map<String, dynamic>> getUser(String id) async {}
+  static Future<User> getUser(String id) async {}
+
+  /// Authenticate with email
+  static Future<Map<String, dynamic>> authEmail(String email, String password) async {
+
+  }
+
+  /// Create a user
+  static Future<Map<String, dynamic>> createUser(String email, String password) async {
+
+  }
 
   /// Gets a token for guest user
   static Future<Map<String, dynamic>> authGuest() async {

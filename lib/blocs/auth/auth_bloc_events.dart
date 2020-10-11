@@ -2,11 +2,11 @@ abstract class AuthBlocEvent {}
 
 class AuthenticateGuest extends AuthBlocEvent {}
 
-class AuthenticateUsername extends AuthBlocEvent {
-  String username;
+class AuthenticateEmail extends AuthBlocEvent {
+  String email;
   String password;
 
-  AuthenticateUsername(this.username, this.password);
+  AuthenticateEmail(this.email, this.password);
 }
 
 // TODO auth with google, fb..

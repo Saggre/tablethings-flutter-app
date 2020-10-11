@@ -20,6 +20,8 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
       yield ProfileView();
     } else if (event is ViewCheckout) {
       yield CheckoutView();
+    } else if (event is ViewAuth) {
+      yield AuthView(event.authViewType, event.requiredAuthLevel, event.nextScreen);
     }
   }
 }

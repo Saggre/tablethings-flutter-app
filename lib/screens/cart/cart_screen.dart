@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tablethings/blocs/auth/auth_bloc.dart';
+import 'package:tablethings/blocs/auth/auth_bloc_states.dart';
+import 'package:tablethings/blocs/auth/auth_levels.dart';
 import 'package:tablethings/blocs/cart/cart_bloc.dart';
 import 'package:tablethings/blocs/cart/cart_bloc_states.dart';
 import 'package:tablethings/blocs/navigation/navigation_bloc.dart';
@@ -34,11 +37,20 @@ class CartScreen extends StatelessWidget {
                   return list;
                 }()),
               ),
-              RaisedButton(
-                onPressed: () {
-                  BlocProvider.of<NavigationBloc>(context).add(ViewCheckout());
+              BlocBuilder<AuthBloc, AuthBlocState>(
+                builder: (context, state) {
+                  return RaisedButton(
+                    onPressed: () {
+                      if (state.authLevel >= AuthLevel.normalAuth) {
+                        BlocProvider.of<NavigationBloc>(context).add(ViewCheckout());
+                        return;
+                      }
+
+                      BlocProvider.of<NavigationBloc>(context).add(ViewAuth(AuthLevel.normalAuth, ViewCheckout()));
+                    },
+                    child: Text('Checkout'),
+                  );
                 },
-                child: Text('Checkout'),
               )
             ],
           );
