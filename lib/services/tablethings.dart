@@ -4,7 +4,10 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
+import 'package:tablethings/models/tablethings/tablethings_error.dart';
 import 'package:tablethings/models/tablethings/user.dart';
+
+import 'exceptions.dart';
 
 /// Handles data used by the app
 class Tablethings {
@@ -17,16 +20,16 @@ class Tablethings {
   }
 
   /// Get errors from result
-  static List<String> getErrors(dynamic result) {
+  static List<TablethingsError> getErrors(dynamic result) {
     if (!result.containsKey('errors')) {
-      return ['No response'];
+      return [
+        TablethingsError('No response'),
+      ];
     }
 
-    if (result['errors'].length > 0) {
-      return result['errors'];
-    }
+    List<TablethingsError> errors = List<TablethingsError>.from(result['errors'].map((x) => TablethingsError.fromJson(x)));
 
-    return [];
+    return errors;
   }
 
   /// Makes a http request and returns the result object
@@ -42,22 +45,19 @@ class Tablethings {
         body: body,
       );
 
+      var result = json.decode(response.body);
+      var errors = getErrors(result);
+
+      if (errors.length > 0) {
+        throw TablethingsAPIException(response.statusCode, errors);
+      }
+
       if (response.statusCode == 200) {
-        var result = json.decode(response.body);
-
-        var errors = getErrors(result);
-
-        if (errors.length > 0) {
-          errors.forEach((error) {
-            log(error);
-          });
-
-          throw Exception(errors[0]);
-        }
-
         return result;
       } else {
-        throw Exception('Failed to make request. Code ' + response.statusCode.toString());
+        throw TablethingsAPIException(response.statusCode, [
+          TablethingsError('Request failed'),
+        ]);
       }
     } catch (ex) {
       throw Exception(ex);
@@ -76,7 +76,7 @@ class Tablethings {
         'menu': Menu.fromJson(result['menu']),
       };
     } catch (ex) {
-      throw Exception(ex);
+      throw ex;
     }
   }
 
@@ -89,7 +89,7 @@ class Tablethings {
 
       return Menu.fromJson(result['menu']);
     } catch (ex) {
-      throw Exception(ex);
+      throw ex;
     }
   }
 
@@ -102,7 +102,7 @@ class Tablethings {
 
       return Restaurant.fromJson(result['restaurant']);
     } catch (ex) {
-      throw Exception(ex);
+      throw ex;
     }
   }
 
@@ -111,12 +111,36 @@ class Tablethings {
 
   /// Authenticate with email
   static Future<Map<String, dynamic>> authEmail(String email, String password) async {
+    try {
+      var result = await makeRequest('/auth/login', {
+        'email': email,
+        'password': password,
+      });
 
+      return {
+        'token': result['token'],
+        'user': User.fromJson(result['user']),
+      };
+    } catch (ex) {
+      throw ex;
+    }
   }
 
   /// Create a user
   static Future<Map<String, dynamic>> createUser(String email, String password) async {
+    try {
+      var result = await makeRequest('/auth/create', {
+        'email': email,
+        'password': password,
+      });
 
+      return {
+        'token': result['token'],
+        'user': User.fromJson(result['user']),
+      };
+    } catch (ex) {
+      throw ex;
+    }
   }
 
   /// Gets a token for guest user
@@ -129,7 +153,7 @@ class Tablethings {
         'user': User.fromJson(result['user']),
       };
     } catch (ex) {
-      throw Exception(ex);
+      throw ex;
     }
   }
 }

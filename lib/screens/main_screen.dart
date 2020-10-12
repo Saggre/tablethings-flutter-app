@@ -139,6 +139,8 @@ class MainScreen extends StatelessWidget {
                           return Text('Not authenticated');
                         } else if (state is GuestAuth) {
                           return Text('Guest authenticated: ' + state.currentUser.email);
+                        } else if (state is EmailAuth) {
+                          return Text('Email authenticated: ' + state.currentUser.email);
                         }
 
                         return Text('Other auth');

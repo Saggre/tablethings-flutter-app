@@ -54,6 +54,12 @@ class AuthScreen extends StatelessWidget {
                         BlocProvider.of<AuthBloc>(context).add(AuthenticateEmail(_fieldControllers['email'].text, _fieldControllers['password'].text));
                       },
                       child: Text('Login'),
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        BlocProvider.of<NavigationBloc>(context).add(ViewAuth(navState.requiredAuthLevel, navState.nextScreen, AuthViewType.register));
+                      },
+                      child: Text('Register instead'),
                     )
                   ],
                 );
@@ -75,6 +81,18 @@ class AuthScreen extends StatelessWidget {
                         labelText: 'Password',
                       ),
                     ),
+                    RaisedButton(
+                      onPressed: () {
+                        BlocProvider.of<AuthBloc>(context).add(RegisterEmail(_fieldControllers['email'].text, _fieldControllers['password'].text));
+                      },
+                      child: Text('Register'),
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        BlocProvider.of<NavigationBloc>(context).add(ViewAuth(navState.requiredAuthLevel, navState.nextScreen));
+                      },
+                      child: Text('Login instead'),
+                    )
                   ],
                 );
               }

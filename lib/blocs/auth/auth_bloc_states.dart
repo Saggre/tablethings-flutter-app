@@ -15,7 +15,10 @@ class NoAuth extends AuthBlocState {
 }
 
 /// When an error occurs during authentication
-class AuthError extends NoAuth {}
+class AuthError extends NoAuth {
+  int errorCode;
+  List<String> errorMessages;
+}
 
 class Authenticated extends AuthBlocState {
   User currentUser;
@@ -32,6 +35,6 @@ class GuestAuth extends Authenticated {
 }
 
 /// Authenticated
-class RegularAuth extends Authenticated {
-  RegularAuth(User currentUser, String token) : super(AuthLevel.normalAuth, currentUser, token);
+class EmailAuth extends Authenticated {
+  EmailAuth(User currentUser, String token) : super(AuthLevel.normalAuth, currentUser, token);
 }
