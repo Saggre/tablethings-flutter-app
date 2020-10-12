@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:stripedart/stripedart.dart';
 import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/tablethings_error.dart';
@@ -152,6 +153,19 @@ class Tablethings {
         'token': result['token'],
         'user': User.fromJson(result['user']),
       };
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get Stripe account details
+  static Future<Account> getStripeAccount(String stripeAccountId) async {
+    try {
+      var result = await makeRequest('/payment/user', {
+        'id': stripeAccountId,
+      });
+
+      return Account.fromJson(result['user']);
     } catch (e) {
       rethrow;
     }

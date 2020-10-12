@@ -58,6 +58,7 @@ dependencies:
   sprintf: ^4.0.0
   permission_handler: ^5.0.0
   jwt_decoder: ^1.0.0
+  stripedart: ^1.0.3
 
 dev_dependencies:
   build_runner: ^1.10.0
