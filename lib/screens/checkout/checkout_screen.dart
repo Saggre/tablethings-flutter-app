@@ -1,3 +1,8 @@
+import 'package:credit_card_slider/card_background.dart';
+import 'package:credit_card_slider/card_company.dart';
+import 'package:credit_card_slider/card_network_type.dart';
+import 'package:credit_card_slider/credit_card_widget.dart';
+import 'package:credit_card_slider/validity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tablethings/blocs/cart/cart_bloc.dart';
@@ -29,6 +34,19 @@ class CheckoutScreen extends StatelessWidget {
 
                   return list;
                 }()),
+              ),
+              CreditCard(
+                cardBackground: SolidColorCardBackground(Colors.purple),
+                cardNetworkType: CardNetworkType.visaBasic,
+                cardHolderName: 'Joni Pusenius',
+                cardNumber: '1234 **** **** ****',
+                company: CardCompany.sbi,
+                validity: Validity(
+                  validThruMonth: 1,
+                  validThruYear: 21,
+                  validFromMonth: 1,
+                  validFromYear: 16,
+                ),
               ),
             ],
           );

@@ -6,6 +6,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:tablethings/blocs/auth/auth_bloc_events.dart';
 import 'package:tablethings/blocs/auth/auth_bloc_states.dart';
 import 'package:tablethings/models/tablethings/user.dart';
+import 'package:tablethings/services/exceptions.dart';
 import 'package:tablethings/services/tablethings.dart';
 
 class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
@@ -31,6 +32,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         Tablethings.setToken(_token);
 
         yield GuestAuth(_currentUser, _token);
+      } on TablethingsAPIException catch (e) {
+        yield AuthException(e.code, e.errors);
       } catch (ex) {
         log('Error during guest authentication: ' + ex.toString());
         _retryAuth(event);
@@ -47,8 +50,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         Tablethings.setToken(_token);
 
         yield EmailAuth(_currentUser, _token);
-      } catch (ex, s) { // TODO catch tablethings errors
-        log('Error during email authentication: ' + ex.toString());
+      } on TablethingsAPIException catch (e) {
+        yield AuthException(e.code, e.errors);
+      } catch (e, s) {
+        log('Error during email authentication: ' + e.toString());
         log(s.toString());
         _retryAuth(event);
         yield AuthError();
@@ -64,8 +69,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         Tablethings.setToken(_token);
 
         yield EmailAuth(_currentUser, _token);
-      } catch (ex) {
-        log('Error during email registration: ' + ex.toString());
+      } on TablethingsAPIException catch (e) {
+        yield AuthException(e.code, e.errors);
+      } catch (e) {
+        log('Error during email registration: ' + e.toString());
         _retryAuth(event);
         yield AuthError();
       }

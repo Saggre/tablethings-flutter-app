@@ -59,8 +59,8 @@ class Tablethings {
           TablethingsError('Request failed'),
         ]);
       }
-    } catch (ex) {
-      throw Exception(ex);
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -75,8 +75,8 @@ class Tablethings {
         'restaurant': Restaurant.fromJson(result['restaurant']),
         'menu': Menu.fromJson(result['menu']),
       };
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -88,8 +88,8 @@ class Tablethings {
       });
 
       return Menu.fromJson(result['menu']);
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -101,8 +101,8 @@ class Tablethings {
       });
 
       return Restaurant.fromJson(result['restaurant']);
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -121,8 +121,8 @@ class Tablethings {
         'token': result['token'],
         'user': User.fromJson(result['user']),
       };
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -138,8 +138,8 @@ class Tablethings {
         'token': result['token'],
         'user': User.fromJson(result['user']),
       };
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -152,8 +152,8 @@ class Tablethings {
         'token': result['token'],
         'user': User.fromJson(result['user']),
       };
-    } catch (ex) {
-      throw ex;
+    } catch (e) {
+      rethrow;
     }
   }
 }

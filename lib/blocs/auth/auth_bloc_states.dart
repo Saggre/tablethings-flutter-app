@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:tablethings/models/tablethings/tablethings_error.dart';
 import 'package:tablethings/models/tablethings/user.dart';
 
 import 'auth_levels.dart';
@@ -14,11 +15,16 @@ class NoAuth extends AuthBlocState {
   NoAuth() : super(AuthLevel.noAuth);
 }
 
-/// When an error occurs during authentication
-class AuthError extends NoAuth {
+/// When an exception occurs during auth and it can be caught
+class AuthException extends NoAuth {
   int errorCode;
-  List<String> errorMessages;
+  List<TablethingsError> errors;
+
+  AuthException(this.errorCode, this.errors);
 }
+
+/// When an error that can't be caught occurs during authentication
+class AuthError extends NoAuth {}
 
 class Authenticated extends AuthBlocState {
   User currentUser;

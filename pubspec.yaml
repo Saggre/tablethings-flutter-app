@@ -36,6 +36,7 @@ dependencies:
   flutter_swiper: ^1.1.6
   auto_size_text: ^2.1.0
   flutter_spinkit: ^4.1.1
+  credit_card_slider: ^1.0.1
 
   # QR-scan
   firebase_ml_vision: ^0.9.6

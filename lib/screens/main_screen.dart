@@ -132,8 +132,10 @@ class MainScreen extends StatelessWidget {
                     children: [
                       BlocBuilder<AuthBloc, AuthBlocState>(builder: (context, state) {
                         if (state is NoAuth) {
-                          if (state is AuthError) {
-                            return Text('Auth error');
+                          if (state is AuthException) {
+                            return Text(state.errors.first.message);
+                          } else if (state is AuthError) {
+                            return Text('Auth error :(');
                           }
 
                           return Text('Not authenticated');
