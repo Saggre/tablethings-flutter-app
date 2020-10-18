@@ -111,10 +111,14 @@ class QRScanBloc extends Bloc<QRScanBlocEvent, QRScanBlocState> {
 
       stopwatch.reset();
 
-      // Check if there is a QR-code in current image
-      _scanBarcode(barcodeImage, (scanResult) {
-        _scanResultStream.add(scanResult);
-      });
+      try {
+        // Check if there is a QR-code in current image
+        _scanBarcode(barcodeImage, (scanResult) {
+          _scanResultStream?.add(scanResult);
+        });
+      } catch (e) {
+        log('Error in image stream');
+      }
     });
 
     return true;

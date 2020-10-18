@@ -7,6 +7,7 @@ import 'package:tablethings/blocs/qr_scan/qr_scan_bloc.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 import 'package:tablethings/models/persistent_data.dart';
 import 'package:tablethings/screens/main_screen.dart';
+import 'package:tablethings/services/tablethings.dart';
 import 'package:tablethings/theme/colors.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 
@@ -27,6 +28,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Tablethings.init();
+
     // Set orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

@@ -46,7 +46,7 @@ class CartScreen extends StatelessWidget {
                         return;
                       }
 
-                      BlocProvider.of<NavigationBloc>(context).add(ViewAuth(AuthLevel.normalAuth, ViewCheckout()));
+                      BlocProvider.of<NavigationBloc>(context).add(ViewLoginAuth(AuthLevel.normalAuth, ViewCheckout()));
                     },
                     child: Text('Checkout'),
                   );

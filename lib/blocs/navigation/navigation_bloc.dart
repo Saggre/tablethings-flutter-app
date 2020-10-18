@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'navigation_bloc_events.dart';
@@ -21,7 +20,13 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
     } else if (event is ViewCheckout) {
       yield CheckoutView();
     } else if (event is ViewAuth) {
-      yield AuthView(event.authViewType, event.requiredAuthLevel, event.nextScreen);
+      if (event is ViewLoginAuth) {
+        yield LoginAuthView(event.requiredAuthLevel, event.nextScreen);
+      } else if (event is ViewRegisterAuth) {
+        yield RegisterAuthView(event.requiredAuthLevel, event.nextScreen);
+      }
+    } else if (event is ViewPaymentMethods) {
+      yield PaymentMethodsView();
     }
   }
 }

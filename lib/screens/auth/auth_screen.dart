@@ -6,7 +6,6 @@ import 'package:tablethings/blocs/auth/auth_bloc_states.dart';
 import 'package:tablethings/blocs/navigation/navigation_bloc.dart';
 import 'package:tablethings/blocs/navigation/navigation_bloc_events.dart';
 import 'package:tablethings/blocs/navigation/navigation_bloc_states.dart';
-import 'package:tablethings/blocs/navigation/view_types.dart';
 
 class AuthScreen extends StatelessWidget {
   Map<String, TextEditingController> _fieldControllers;
@@ -31,7 +30,7 @@ class AuthScreen extends StatelessWidget {
               }
             },
             builder: (context, authState) {
-              if (navState.authViewType == AuthViewType.login) {
+              if (navState is ViewLoginAuth) {
                 // Login
                 return Column(
                   children: [
@@ -57,13 +56,13 @@ class AuthScreen extends StatelessWidget {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        BlocProvider.of<NavigationBloc>(context).add(ViewAuth(navState.requiredAuthLevel, navState.nextScreen, AuthViewType.register));
+                        BlocProvider.of<NavigationBloc>(context).add(ViewRegisterAuth(navState.requiredAuthLevel, navState.nextScreen));
                       },
                       child: Text('Register instead'),
                     )
                   ],
                 );
-              } else if (navState.authViewType == AuthViewType.register) {
+              } else if (navState is ViewRegisterAuth) {
                 // Register
                 return Column(
                   children: [
@@ -89,7 +88,7 @@ class AuthScreen extends StatelessWidget {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        BlocProvider.of<NavigationBloc>(context).add(ViewAuth(navState.requiredAuthLevel, navState.nextScreen));
+                        BlocProvider.of<NavigationBloc>(context).add(ViewLoginAuth(navState.requiredAuthLevel, navState.nextScreen));
                       },
                       child: Text('Login instead'),
                     )

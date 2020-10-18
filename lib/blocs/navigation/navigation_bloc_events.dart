@@ -1,5 +1,3 @@
-import 'package:tablethings/blocs/navigation/view_types.dart';
-
 abstract class NavigationBlocEvent {}
 
 /// Show QR-scan screen
@@ -11,17 +9,35 @@ class ViewRestaurant extends NavigationBlocEvent {}
 /// Show profile screen
 class ViewProfile extends NavigationBlocEvent {}
 
-// View cart
+/// View cart
 class ViewCart extends NavigationBlocEvent {}
 
-// View checkout
+/// View checkout
 class ViewCheckout extends NavigationBlocEvent {}
 
-// View auth
-class ViewAuth extends NavigationBlocEvent {
-  final AuthViewType authViewType;
+/// View payment methods
+abstract class ViewPaymentMethods extends NavigationBlocEvent {}
+
+/// Form to add a new payment method
+class AddPaymentMethod extends ViewPaymentMethods {}
+
+/// General payment methods view
+class BrowsePaymentMethods extends ViewPaymentMethods {}
+
+/// View auth
+abstract class ViewAuth extends NavigationBlocEvent {
   final int requiredAuthLevel;
   final NavigationBlocEvent nextScreen;
 
-  ViewAuth(this.requiredAuthLevel, this.nextScreen, [this.authViewType = AuthViewType.login]);
+  ViewAuth(this.requiredAuthLevel, this.nextScreen);
+}
+
+/// View login
+class ViewLoginAuth extends ViewAuth {
+  ViewLoginAuth(requiredAuthLevel, nextScreen) : super(requiredAuthLevel, nextScreen);
+}
+
+/// View registration
+class ViewRegisterAuth extends ViewAuth {
+  ViewRegisterAuth(requiredAuthLevel, nextScreen) : super(requiredAuthLevel, nextScreen);
 }

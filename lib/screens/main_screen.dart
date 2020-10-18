@@ -11,6 +11,7 @@ import 'package:tablethings/blocs/qr_scan/qr_scan_bloc_states.dart';
 import 'package:tablethings/blocs/qr_scan/qr_scan_result.dart';
 import 'package:tablethings/blocs/session/session_bloc.dart';
 import 'package:tablethings/blocs/session/session_bloc_events.dart';
+import 'package:tablethings/screens/payment_methods/payment_methods_screen.dart';
 import 'package:tablethings/screens/restaurant/restaurant_screen.dart';
 import 'auth/auth_screen.dart';
 import 'cart/cart_screen.dart';
@@ -71,8 +72,21 @@ class MainScreen extends StatelessWidget {
                   return 'Auth';
                 }
 
-                return '';
+                return 'Error';
               }()),
+              actions: [
+                Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        context.bloc<NavigationBloc>().add(BrowsePaymentMethods());
+                      },
+                      child: Icon(
+                        Icons.account_circle,
+                        size: 26.0,
+                      ),
+                    )),
+              ],
             ),
             bottomNavigationBar: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
@@ -119,6 +133,8 @@ class MainScreen extends StatelessWidget {
                     return CheckoutScreen();
                   } else if (state is AuthView) {
                     return AuthScreen();
+                  } else if (state is PaymentMethodsView) {
+                    return PaymentMethodsScreen();
                   }
 
                   // TODO profile screen

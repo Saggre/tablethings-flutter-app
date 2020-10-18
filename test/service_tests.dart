@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:stripedart/stripedart.dart';
 import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/user.dart';
@@ -21,7 +20,6 @@ void main() {
   Menu _menu;
 
   User _currentUser;
-  Account _currentStripeCustomer;
 
   // For user creation
   String email = generateRandomString(10) + '@gmail.com';
@@ -74,9 +72,9 @@ void main() {
     expect(all['restaurant'].id, _id);
   });
 
-  test('Can get Stripe account?', () async {
-    _currentStripeCustomer = await Tablethings.getStripeAccount(_currentUser.stripeCustomerId);
+  /*test('Can get Stripe account?', () async {
+    _currentStripeCustomer = await Tablethings.getStripeCustomer(_currentUser.stripeCustomerId);
     print(_currentStripeCustomer.toJson().toString());
     expect(_currentStripeCustomer.id.length > 5, true);
-  });
+  });*/
 }

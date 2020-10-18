@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
-import 'package:stripedart/stripedart.dart';
+import 'package:stripe_sdk/stripe_sdk.dart';
 import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/tablethings_error.dart';
@@ -14,6 +14,17 @@ import 'exceptions.dart';
 class Tablethings {
   static final String baseUrl = 'http://192.168.0.2:8080';
   static String _token = '';
+  static bool _started = false;
+
+  /// Init
+  static void init() {
+    if (_started) {
+      return;
+    }
+
+    _started = true;
+    Stripe.init("pk_test_CbhXG22cFhXLklWXPwxUSkSK00K9B6N4q2");
+  }
 
   /// Sets the token used to authenticate requests
   static void setToken(String token) {
@@ -159,7 +170,7 @@ class Tablethings {
   }
 
   /// Get Stripe account details
-  static Future<Account> getStripeAccount(String stripeAccountId) async {
+/*static Future<Account> getStripeAccount(String stripeAccountId) async {
     try {
       var result = await makeRequest('/payment/user', {
         'id': stripeAccountId,
@@ -169,5 +180,5 @@ class Tablethings {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 }
