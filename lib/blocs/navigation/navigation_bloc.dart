@@ -26,7 +26,11 @@ class NavigationBloc extends Bloc<NavigationBlocEvent, NavigationBlocState> {
         yield RegisterAuthView(event.requiredAuthLevel, event.nextScreen);
       }
     } else if (event is ViewPaymentMethods) {
-      yield PaymentMethodsView();
+      if (event is ViewBrowsePaymentMethods) {
+        yield BrowsePaymentMethodsView();
+      } else if (event is ViewAddPaymentMethod) {
+        yield AddPaymentMethodView();
+      }
     }
   }
 }

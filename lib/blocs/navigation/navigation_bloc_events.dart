@@ -19,10 +19,10 @@ class ViewCheckout extends NavigationBlocEvent {}
 abstract class ViewPaymentMethods extends NavigationBlocEvent {}
 
 /// Form to add a new payment method
-class AddPaymentMethod extends ViewPaymentMethods {}
+class ViewAddPaymentMethod extends ViewPaymentMethods {}
 
 /// General payment methods view
-class BrowsePaymentMethods extends ViewPaymentMethods {}
+class ViewBrowsePaymentMethods extends ViewPaymentMethods {}
 
 /// View auth
 abstract class ViewAuth extends NavigationBlocEvent {

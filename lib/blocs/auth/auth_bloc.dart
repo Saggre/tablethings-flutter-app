@@ -22,6 +22,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   @override
   Stream<AuthBlocState> mapEventToState(AuthBlocEvent event) async* {
     if (event is AuthenticateGuest) {
+      // Log in as a guest to perform actions without an account
+
       try {
         var result = await Tablethings.authGuest();
         _currentUser = result['user'];
@@ -40,6 +42,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         yield AuthError();
       }
     } else if (event is AuthenticateEmail) {
+      // Log in with email
+
       try {
         var result = await Tablethings.authEmail(event.email, event.password);
         _currentUser = result['user'];
@@ -59,6 +63,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         yield AuthError();
       }
     } else if (event is RegisterEmail) {
+      // Register with email
+
       try {
         var result = await Tablethings.createUser(event.email, event.password);
         _currentUser = result['user'];
@@ -76,6 +82,14 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         _retryAuth(event);
         yield AuthError();
       }
+    } else if (event is AddPaymentMethod) {
+      // Add a payment method to the logged in user
+
+      if (_currentUser == null || _currentUser.isGuest()) {
+        return;
+      }
+
+      //Tablethings.
     }
   }
 

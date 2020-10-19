@@ -1,6 +1,8 @@
+import 'package:tablethings/models/stripe/card.dart';
+
 abstract class AuthBlocEvent {
   int retryCount;
-  int maxRetries;
+  final int maxRetries;
 
   AuthBlocEvent([this.maxRetries = 0]) {
     retryCount = 0;
@@ -14,8 +16,8 @@ class AuthenticateGuest extends AuthBlocEvent {
 
 /// Login with email
 class AuthenticateEmail extends AuthBlocEvent {
-  String email;
-  String password;
+  final String email;
+  final String password;
 
   AuthenticateEmail(
     this.email,
@@ -25,10 +27,16 @@ class AuthenticateEmail extends AuthBlocEvent {
 
 /// Create new account with email
 class RegisterEmail extends AuthBlocEvent {
-  String email;
-  String password;
+  final String email;
+  final String password;
 
   RegisterEmail(this.email, this.password) : super(0);
 }
 
 // TODO auth with google, fb..
+
+class AddPaymentMethod extends AuthBlocEvent {
+  final Card card;
+
+  AddPaymentMethod(this.card);
+}

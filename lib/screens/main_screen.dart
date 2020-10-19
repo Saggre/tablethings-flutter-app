@@ -79,7 +79,7 @@ class MainScreen extends StatelessWidget {
                     padding: EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                       onTap: () {
-                        context.bloc<NavigationBloc>().add(BrowsePaymentMethods());
+                        context.bloc<NavigationBloc>().add(ViewBrowsePaymentMethods());
                       },
                       child: Icon(
                         Icons.account_circle,

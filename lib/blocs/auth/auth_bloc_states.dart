@@ -17,8 +17,8 @@ class NoAuth extends AuthBlocState {
 
 /// When an exception occurs during auth and it can be caught
 class AuthException extends NoAuth {
-  int errorCode;
-  List<TablethingsError> errors;
+  final int errorCode;
+  final List<TablethingsError> errors;
 
   AuthException(this.errorCode, this.errors);
 }
@@ -27,8 +27,8 @@ class AuthException extends NoAuth {
 class AuthError extends NoAuth {}
 
 class Authenticated extends AuthBlocState {
-  User currentUser;
-  String token;
+  final User currentUser;
+  final String token;
 
   Authenticated(authLevel, this.currentUser, this.token) : super(authLevel);
 }

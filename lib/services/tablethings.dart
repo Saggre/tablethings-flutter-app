@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
-import 'package:stripe_sdk/stripe_sdk.dart';
+import 'package:tablethings/models/stripe/card.dart';
+import 'package:tablethings/models/stripe/customer.dart';
 import 'package:tablethings/models/tablethings/restaurant/menu/menu.dart';
 import 'package:tablethings/models/tablethings/restaurant/restaurant.dart';
 import 'package:tablethings/models/tablethings/tablethings_error.dart';
@@ -15,16 +16,6 @@ class Tablethings {
   static final String baseUrl = 'http://192.168.0.2:8080';
   static String _token = '';
   static bool _started = false;
-
-  /// Init
-  static void init() {
-    if (_started) {
-      return;
-    }
-
-    _started = true;
-    Stripe.init("pk_test_CbhXG22cFhXLklWXPwxUSkSK00K9B6N4q2");
-  }
 
   /// Sets the token used to authenticate requests
   static void setToken(String token) {
@@ -169,16 +160,29 @@ class Tablethings {
     }
   }
 
-  /// Get Stripe account details
-/*static Future<Account> getStripeAccount(String stripeAccountId) async {
+  /// Add a payment method
+  static Future<Card> addPaymentMethod(Card card) async {
     try {
-      var result = await makeRequest('/payment/user', {
-        'id': stripeAccountId,
+      await makeRequest('/payment/addcard', {
+        'card': card.toJson(),
       });
 
-      return Account.fromJson(result['user']);
+      return card;
     } catch (e) {
       rethrow;
     }
-  }*/
+  }
+
+  /// Get Stripe account details
+  static Future<Customer> getStripeAccount(String stripeCustomerId) async {
+    try {
+      var result = await makeRequest('/payment/customer', {
+        'id': stripeCustomerId,
+      });
+
+      return Customer.fromJson(result['customer']);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

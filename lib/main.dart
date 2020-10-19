@@ -28,8 +28,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Tablethings.init();
-
     // Set orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
