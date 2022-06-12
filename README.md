@@ -1,24 +1,46 @@
-# Ruokamenu
+# QR-code Restaurant Menu App
 
-## Customer-eater app version
+**This project has been abandoned since 2020.** In order to continue, the project needs to be documented and refactored
+for more robust coding standards, and to work with a more recent Flutter version. It's not recommended trying to compile
+the project before this has been done.
 
-### Views
+The app allows a restaurant's customer to open their menu and make orders simply by scanning a qr-code present at the
+table. The restaurant receives notifications about new customers and orders in real time.
 
-**Map view**
-Map view is the application's main view. Map view contains a map, and fetches the locations and other data of customer-restaurants to show on the map.
--> **Restaurant class**
+## User flow
 
-**Scanner view**
-In the scanner view, a user is able to scan a qr-code. The QR-code contains information laid out in the QR-code section.
+1. A customer enters the restaurant and is seated at a table.
+2. The customer scans a QR-code present at the table. If the customer does not have this application installed, the
+   customer will be prompted to install it (this is up to the scanned website to execute).
+3. The app opens to the restaurant's menu, and a new customer session starts automatically.
+4. The restaurant will receive a notification after the customer has completed their order in the app, which includes
+   all the necessary order details, for example, order lines and customer table number.
+5. The customer can at any point make a new order, that will be sent to the restaurant right away.
+6. The app uses GPS to automatically detect when customers have left the restaurant, so the restaurant can be notified
+   for cleaning and seating capacity control.
+7. After the transaction is complete, it will be visible in the customer's order list.
 
 ## QR-code
 
-The QR-code contains an url in the following form:
-https://domain.com/restaurant-id/table-id/
-This url should be parsed without entering the url to minimize traffic.
+QR-codes are scanned with `firebase-ml-vision` using `firebase-ml-vision-barcode-model`.
 
-**Restaurant ID** is an ID assigned to each customer-restaurant.
+The QR-code contains a url of the following form:
+`https://<app-domain>/<restaurant-id>/<table-id>/`
 
-**Table ID** is an ID assigned to each table in the aforementioned restaurant.
+- `restaurant-id` is an identifier assigned to each restaurant.
+- `table-id` is an identifier assigned to each table in the aforementioned restaurant.
 
-## Database structure
+## Application design
+
+The app uses BLoC pattern via the `bloc` library and implements it with `flutter_bloc` state-reactive components.
+
+## UI Designs / Screenshots
+
+<p float="left">
+  <img alt="" src="https://i.imgur.com/KCqynts.png" width="300" />
+  <img alt="" src="https://i.imgur.com/lgUG4HG.png" width="300" />
+  <img alt="" src="https://i.imgur.com/0xsJJCo.png" width="300" />
+  <img alt="" src="https://i.imgur.com/QcUVccu.png" width="300" />
+  <img alt="" src="https://i.imgur.com/Woe1x0A.png" width="300" />
+</p>
+
