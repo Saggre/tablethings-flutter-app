@@ -34,6 +34,16 @@ The QR-code contains a url of the following form:
 
 The app uses BLoC pattern via the `bloc` library and implements it with `flutter_bloc` state-reactive components.
 
+## Development
+
+### Update launcher icon using `flutter_launcher_icons`
+
+- `flutter pub run flutter_launcher_icons:main`
+
+### Update db models using `json_annotation`
+
+- `flutter pub run build_runner build`
+
 ## UI Designs / Screenshots
 
 <p float="left">
