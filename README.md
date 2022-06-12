@@ -1,4 +1,4 @@
-# QR-code Restaurant Menu App
+# QR-code Restaurant Menu App (WIP)
 
 **This project has been abandoned since 2020.** In order to continue, the project needs to be documented and refactored
 for more robust coding standards, and to work with a more recent Flutter version. It's not recommended trying to compile
