@@ -4,8 +4,8 @@
 for more robust coding standards, and to work with a more recent Flutter version. It's not recommended trying to compile
 the project before this has been done.
 
-The app allows a restaurant's customer to open their menu and make orders simply by scanning a qr-code present at the
-table. The restaurant receives notifications about new customers and orders in real time.
+The app makes it easy for customers to order from a restaurant simply by scanning a qr-code present at the table.
+Restaurants will appreciate receiving notifications about new customers and orders in real time.
 
 ## User flow
 
